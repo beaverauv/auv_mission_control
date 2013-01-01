@@ -1,6 +1,6 @@
 #include <auv_mission_control/TaskGate.h>
 
-double thisDepth = -0.25;
+double thisDepth = -.6;
 
 TaskGate::TaskGate(){
 }
@@ -65,7 +65,7 @@ int TaskGate::execute(){
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
 
         while(ros::ok){
-          pm_.setPlantState(AXIS_HEAVE, pm_.getYaw());
+          pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
 
           currentDepth = pm_.getDepth();
           double error = fabs(currentDepth - thisDepth);
@@ -83,13 +83,13 @@ int TaskGate::execute(){
 
           startTimer = false;
           rosInfoCounter++;
-          if(true)//error < .01)
+          if(error < .01)
             break;
           ros::spinOnce();
           gateRate.sleep();
         }
 
-        ROS_INFO("Near depth setoint of %f; currently at %f. Starting depth timer.", -1.25, pm_.getDepth());
+        ROS_INFO("Near depth setoint of %f; currently at %f. Starting depth timer.", thisDepth, pm_.getDepth());
         pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
         pm_.setPlantState(AXIS_YAW, pm_.getYaw());
@@ -122,7 +122,7 @@ int TaskGate::execute(){
         }
 
 
-        while(ros::ok && goToDepth_time.getTime() < 5){//just chill
+        while(ros::ok && goToDepth_time.getTime() < 2){//just chill
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
           pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());
@@ -166,7 +166,7 @@ int TaskGate::execute(){
         }
 
 
-        while(driveForwards_time.getTime() < 5){
+        while(driveForwards_time.getTime() < 52){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
           pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());

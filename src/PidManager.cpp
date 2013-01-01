@@ -172,12 +172,10 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
       std_msgs::Float64 msgSetpointHeave;
       if (input_type == INPUT_DEPTH){
-        paramHeave.kP = 0.6;//.;
-        paramHeave.kD = 0;//.;
+        paramHeave.kP = 2;//.;
+        paramHeave.kD = 1;//.;
         paramHeave.kI = 0;//30.;
       	paramHeave.Kp_scale = 100;
-        paramHeave.Kd_scale = 100;
-        paramHeave.Ki_scale = 100;
         //set tuning for surge axis on depth sensor
         //subscribe to this as plant state
         //publish setpoint
@@ -211,16 +209,16 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
       ROS_INFO("set yaw called");
 
     if (input_type == INPUT_IMU_POS){
-      paramYaw.kP = .5;
+      paramYaw.kP = .003;
       paramYaw.kD = 0;
       paramYaw.kI = 0;
-      paramHeave.Kp_scale = .1;
+      paramHeave.Kp_scale = .01;
       //subscribe to this as plant state
       //publish setpoint
     }
 
     else if (input_type == INPUT_CAM_FRONT){
-      paramYaw.kP = .5;
+      paramYaw.kP = .005;
       paramYaw.kD = 1.5;
       paramYaw.kI = 3.5;
       paramHeave.Kp_scale = .01;

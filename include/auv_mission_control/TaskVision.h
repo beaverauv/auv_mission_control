@@ -35,9 +35,8 @@ public:
 private:
 
   Camera cam_;
-
-  cv::Scalar sRedMin = cv::Scalar(0, 0, 123);
-  cv::Scalar sRedMax = cv::Scalar(68, 152, 239);
+  cv::Scalar sRedMin = cv::Scalar(116, 0, 0);
+  cv::Scalar sRedMax = cv::Scalar(255, 255, 255);
 
   cv::Scalar sGreenMin = cv::Scalar(0, 0, 0);
   cv::Scalar sGreenMax = cv::Scalar(255, 255, 255);

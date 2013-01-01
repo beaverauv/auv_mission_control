@@ -18,7 +18,7 @@ int TaskBuoy::execute(){
 
         pm_.setZero(AXIS_YAW);
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);
         // pm_.taskDelay(5);
 	currentColor = COLOR_RED;
 	  depthCounter = 0;
@@ -37,10 +37,9 @@ int TaskBuoy::execute(){
                 switch(action){
 
                   case 0:{
-                    pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);
+                    pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);//-2.75);
 		    double errorBuoy = fabs(-2.75 - pm_.getDepth());
-                    if(false)
-		    //if(errorBuoy >= .2)
+		    if(errorBuoy >= .2)
                       action = 0;
                     else
                       action = 1;
@@ -52,12 +51,13 @@ int TaskBuoy::execute(){
 			waitTimer.start();
 		        waitCounter++;
 		    }
-
-```		    if(waitTimer.getTime() < 10){
+		    ROS_INFO("waiting for centering to complete");
+		    if(waitTimer.getTime() < 12){
                       pm_.setControlEffort(AXIS_SURGE, 0);
                     }
                     else{
-		`     pm_.setControlEffort(AXIS_SURGE, 15);
+	              ROS_INFO("GOING FORWARDS");
+		      pm_.setControlEffort(AXIS_SURGE, 15);
                     }
                       pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 360);
