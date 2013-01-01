@@ -39,7 +39,11 @@ Camera cam;
           ROS_INFO("START");
           mainTimer.start();
           timerStarted = true;
-        }
+          while(mainTimer.getTime() < 20){
+            ros::spinOnce;
+            stateRate.sleep();
+          }
+	}
         else
           currentState = 0;
         break;
@@ -52,7 +56,8 @@ Camera cam;
 
         ROS_INFO("EXECUTING GATE TASK");
         TaskGateVision gateVision(&pm, &cam);
-        int outcome = gateVision.execute();
+        int outcome = 10;
+	//int outcome = gateVision.execute();
         ROS_INFO("outcome %d", outcome);
 
         if (outcome == succeeded)
