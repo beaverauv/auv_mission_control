@@ -47,9 +47,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
    FILES
-   pid_input.msg
-   pid_plantState.msg
-   pid_setpoint.msg
+   axes.msg
  )
 
 ## Generate services in the 'srv' folder

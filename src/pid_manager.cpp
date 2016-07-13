@@ -6,8 +6,7 @@
 #include "std_msgs/Bool.h"
 #include <sstream>
 #include <auv_motor_control/pid_enable.h>
-#include <auv_mission_control/pid_plantState.h>
-#include <auv_mission_control/pid_setpoint.h>
+#include <auv_mission_control/axes.h>
 #include <dynamic_reconfigure/DoubleParameter.h>
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
@@ -47,7 +46,7 @@ Pid_Parameters parameters_yaw;
 auv_motor_control::pid_enable enable_pid;
 
 
-void visionPlant_callback(const auv_mission_control::pid_plantState::ConstPtr& vision){
+void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
   plant_surge_vision = vision->surge;
   plant_sway_vision = vision->sway;
   plant_heave_vision = vision->heave;
