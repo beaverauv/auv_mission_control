@@ -8,12 +8,13 @@ class Task_Gate: public Task{
 public:
   Task_Gate (){}
   Task_Gate(Pid_Manager* pm);
-  virtual ~Task_Gate();
+  ~Task_Gate();
 
   void execute();
 
 private:
   //variables go here;
+  Pid_Manager* pm;
 };
 
 #endif

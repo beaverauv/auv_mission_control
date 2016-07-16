@@ -51,10 +51,7 @@ add_message_files(
  )
 
 ## Generate services in the 'srv' folder
-add_service_files(
-   FILES
 
- )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -191,14 +188,14 @@ catkin_install_python(PROGRAMS
 # catkin_add_nosetests(test)
 
 
-#add_executable(pid_manager src/pid_manager.cpp)
-#target_link_libraries(pid_manager ${catkin_LIBRARIES})
-#add_dependencies(pid_manager auv_mission_control_generate_messages_cpp)
+add_executable(pid_manager src/pid_manager.cpp)
+target_link_libraries(pid_manager ${catkin_LIBRARIES})
+add_dependencies(pid_manager auv_mission_control_generate_messages_cpp)
 
-#add_executable(task_gate src/tasks/task_gate.cpp)
-#target_link_libraries(task_gate ${catkin_LIBRARIES})
-#add_dependencies(task_gate auv_mission_control_generate_messages_cpp)
+add_executable(task_gate src/tasks/task_gate.cpp)
+target_link_libraries(task_gate ${catkin_LIBRARIES})
+add_dependencies(task_gate auv_mission_control_generate_messages_cpp)
 
-#add_executable(state_machine src/state_machine.cpp)
-#target_link_libraries(state_machine ${catkin_LIBRARIES})
-#add_dependencies(state_machine auv_mission_control_generate_messages_cpp)
+add_executable(state_machine src/state_machine.cpp)
+target_link_libraries(state_machine ${catkin_LIBRARIES})
+add_dependencies(state_machine auv_mission_control_generate_messages_cpp)

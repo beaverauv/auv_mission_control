@@ -11,8 +11,9 @@ int main(int argc, char **argv){
 bool killSwitch = 0;
 bool startSwitch;
 int currentState = 0; //init
+ros::NodeHandle nh;
 
-Pid_Manager pm;
+Pid_Manager pm(nh);
 
   while(ros::ok){ //careful
 
@@ -29,7 +30,7 @@ Pid_Manager pm;
       }
 
       case 1: { //gate
-        Task_Gate gate(pm);
+        Task_Gate gate(&pm);
         gate.excecute();
 
       }

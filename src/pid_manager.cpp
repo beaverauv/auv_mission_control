@@ -1,16 +1,5 @@
-#include <auv_mission_control/pid_parameters.h>
 #include <auv_mission_control/pid_manager.h>
-#include "ros/ros.h"
-#include "std_msgs/String.h"
-#include "std_msgs/Float64.h"
-#include "std_msgs/Bool.h"
-#include <sstream>
-#include <auv_motor_control/pid_enable.h>
-#include <auv_mission_control/axes.h>
-#include <dynamic_reconfigure/DoubleParameter.h>
-#include <dynamic_reconfigure/Reconfigure.h>
-#include <dynamic_reconfigure/Config.h>
-#include <string>
+
 
 Pid_Parameters parameters_surge;
 Pid_Parameters parameters_sway;
@@ -27,40 +16,44 @@ void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
   plant_yaw_vision = vision->yaw;
 }
 */
-/*
-void depth_callBack(const std_msgs::Float64::ConstPtr& depth){
-  plant_heave_depth = depth->data;
-}
-*/
 
-
-int main(int argc, char **argv){
-  ros::init(argc, argv, "PID_Manager");
-  ros::NodeHandle n;
-  ros::Subscriber vision_plant_sub = n.subscribe("pid_plantState_vision", 100, visionPlant_callback);
-//  ros::Subscriber imu_plant_sub = n.subscribe("pid_plantState_IMU", 100, IMU_callback);
-
-
-  ros::Subscriber depth_plant_sub = n.subscribe("pid_plantState_depth", 100, depth_callBack);
-  //setpoint publishers
-  ros::Publisher state_surge_pub = n.advertise<std_msgs::Float64>("state_surge", 10);
-  ros::Publisher state_sway_pub = n.advertise<std_msgs::Float64>("state_sway", 10);
-  ros::Publisher state_heave_pub = n.advertise<std_msgs::Float64>("state_heave", 10);
-  ros::Publisher state_roll_pub = n.advertise<std_msgs::Float64>("state_roll", 10);
-  ros::Publisher state_pitch_pub = n.advertise<std_msgs::Float64>("state_pitch", 10);
-  ros::Publisher state_yaw_pub = n.advertise<std_msgs::Float64>("state_yaw", 10);
-  //plant state publishers
-  ros::Publisher setpoint_surge_pub = n.advertise<std_msgs::Float64>("setpoint_surge", 10);
-  ros::Publisher setpoint_sway_pub = n.advertise<std_msgs::Float64>("setpoint_sway", 10);
-  ros::Publisher setpoint_heave_pub = n.advertise<std_msgs::Float64>("setpoint_heave", 10);
-  ros::Publisher setpoint_roll_pub = n.advertise<std_msgs::Float64>("setpoint_roll", 10);
-  ros::Publisher setpoint_pitch_pub = n.advertise<std_msgs::Float64>("setpoint_pitch", 10);
-  ros::Publisher setpoint_yaw_pub = n.advertise<std_msgs::Float64>("setpoint_yaw", 10);
-
+void Pid_Manager::depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg){
+  depth = depth_msg->data;
 }
 
-Pid_Manager::Pid_Manager(){
+
+
+
+
+Pid_Manager::Pid_Manager(ros::NodeHandle* nh){
+
   //zero all sensors
+
+//   ros::Subscriber vision_plant_sub = nh.subscribe("/pid_plantState_vision", 100, visionPlant_callback);
+// //  ros::Subscriber imu_plant_sub = nh.subscribe("pid_plantState_IMU", 100, IMU_callback);
+
+this->nh = nh;
+//
+//
+  // ros::Subscriber depth_plant_sub = nh.subscribe("/pid_plantState_depth", 100, depth_plant_callBack);
+
+  ros::Subscriber depth_sub = nh.subscribe("/depth", 100, Pid_Manager::depth_callBack);
+  //setpoint publishers
+  ros::Publisher state_surge_pub = nh.advertise<std_msgs::Float64>("state_surge", 10);
+  ros::Publisher state_sway_pub = nh.advertise<std_msgs::Float64>("state_sway", 10);
+  ros::Publisher state_heave_pub = nh.advertise<std_msgs::Float64>("state_heave", 10);
+  ros::Publisher state_roll_pub = nh.advertise<std_msgs::Float64>("state_roll", 10);
+  ros::Publisher state_pitch_pub = nh.advertise<std_msgs::Float64>("state_pitch", 10);
+  ros::Publisher state_yaw_pub = nh.advertise<std_msgs::Float64>("state_yaw", 10);
+  //plant state publishers
+  ros::Publisher setpoint_surge_pub = nh.advertise<std_msgs::Float64>("setpoint_surge", 10);
+  ros::Publisher setpoint_sway_pub = nh.advertise<std_msgs::Float64>("setpoint_sway", 10);
+  ros::Publisher setpoint_heave_pub = nh.advertise<std_msgs::Float64>("setpoint_heave", 10);
+  ros::Publisher setpoint_roll_pub = nh.advertise<std_msgs::Float64>("setpoint_roll", 10);
+  ros::Publisher setpoint_pitch_pub = nh.advertise<std_msgs::Float64>("setpoint_pitch", 10);
+  ros::Publisher setpoint_yaw_pub = nh.advertise<std_msgs::Float64>("setpoint_yaw", 10);
+
+
   this->setpoint_set(AXIS_SURGE, INPUT_IMU_POS, 0.0);
   this->setpoint_set(AXIS_SWAY, INPUT_IMU_POS, 0.0);
   this->setpoint_set(AXIS_HEAVE, INPUT_DEPTH, 0.0);
@@ -69,8 +62,10 @@ Pid_Manager::Pid_Manager(){
   this->setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0.0);
 }
 
+Pid_Manager::
 
-void Pid_Manager::setpoint_set((int axis, std::string input_type, double value)){
+
+void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
   if (axis == AXIS_SURGE){
     std_msgs::Float64 setpoint_surge;
     if (input_type == INPUT_IMU_POS){
@@ -254,6 +249,15 @@ void Pid_Manager::setpoint_set((int axis, std::string input_type, double value))
     ROS_ERROR("The axis %s", axis.c_str(), "does not exist");
   }
 
+}
+
+
+void Pid_Manager::setPlantState(int axis, double plantValue, ){
+
+}
+
+double Pid_Manager::getDepth(){
+  return depth;
 }
 
 
