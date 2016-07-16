@@ -1,14 +1,23 @@
-#include "task_gate.h"
-#include "pid_manager.h"
+#include "auv_mission_control/task_gate.h"
+#include "auv_mission_control/pid_manager.h"
+#include <cmath>
 
 double surgeSpeed = 40;
 double previousDepth;
+double distanceFromEdge_left;
+double distanceFromEdge_right;
+bool outOfSight;
+double plantState_sway;
+double plantState_heave;
+double setpoint_sway;
+double setpoint_heave;
 
-Task_Gate::Task_Gate(pid_manager* pm){
+
+Task_Gate::Task_Gate(Pid_Manager* pm){
   this->pm = pm;
 }
 
-void task_buoy::execute(){
+void Task_Gate::execute(){
 
   pm.onlyPID_set(true);
   pm.pidEnable("ALL", true);//turns on all 6 pid controllers
@@ -34,7 +43,7 @@ void task_buoy::execute(){
       if(!outOfSight){
 
 
-        if (abs(plantState_sway - setpoint_sway) > 20 || abs(plantState_heave - setpoint_heave) > 20){//SOME REASONABLE DEADBAND
+        if (fabs(plantState_sway - setpoint_sway) > 20 || fabs(plantState_heave - setpoint_heave) > 20){//SOME REASONABLE DEADBAND
           pm.setpoint_set("SURGE", "IMU_VEL", 0); //makes it so the robot doesn't try to move forward if the sway and heave are outside of a DEADBAND
         }
 
@@ -51,7 +60,7 @@ void task_buoy::execute(){
 
         else{ // if out of sight...
 
-          zero("IMU_SURGE");
+          pm.zero("IMU_SURGE");
           pm.setpoint_set("HEAVE", "DEPTH_SENSOR", previousDepth);
           pm.setpoint_set("SURGE", "IMU_POS", 5); //go forward 5 meters to get through gate
           pm.setpoint_set("SWAY", "IMU_VEL", 0);

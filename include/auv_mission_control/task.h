@@ -1,5 +1,6 @@
 #ifndef TASK_H
 #define TASK_H
+#include <vector>
 
 class Task {
   public:
