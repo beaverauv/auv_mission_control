@@ -1,12 +1,11 @@
 #ifndef TASK_GATE_H
 #define TASK_GATE_H
 
-#include "task.h"
 #include "auv_mission_control/pid_manager.h"
 
 class Task_Gate{
 public:
-  Task_Gate (){}
+  Task_Gate();
   Task_Gate(Pid_Manager* pm);
   ~Task_Gate();
 
@@ -14,7 +13,7 @@ public:
 
 private:
   //variables go here;
-  Pid_Manager* pm;
+  Pid_Manager pm_;
 };
 
 #endif

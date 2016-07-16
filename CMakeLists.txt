@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
+
 project(auv_mission_control)
+
+
+add_definitions("-std=c++11")
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -150,8 +155,8 @@ include_directories(
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-catkin_install_python(PROGRAMS
-                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+#catkin_install_python(PROGRAMS
+ #                     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables and/or libraries for installation
 # install(TARGETS auv_mission_control auv_mission_control_node
@@ -187,15 +192,21 @@ catkin_install_python(PROGRAMS
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-
-add_executable(pid_manager src/pid_manager.cpp)
-target_link_libraries(pid_manager ${catkin_LIBRARIES})
-add_dependencies(pid_manager auv_mission_control_generate_messages_cpp)
-
-add_executable(task_gate src/tasks/task_gate.cpp)
-target_link_libraries(task_gate ${catkin_LIBRARIES})
-add_dependencies(task_gate auv_mission_control_generate_messages_cpp)
-
-add_executable(state_machine src/state_machine.cpp)
+add_library(state_machine
+	src/pid_manager.cpp
+	src/tasks/task_gate.cpp
+)
 target_link_libraries(state_machine ${catkin_LIBRARIES})
-add_dependencies(state_machine auv_mission_control_generate_messages_cpp)
+add_dependencies(state_machine
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+
+add_executable(state_machine_cont src/state_machine.cpp)
+
+target_link_libraries(state_machine_cont ${catkin_LIBRARIES} state_machine)
+add_dependencies(state_machine_cont
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+

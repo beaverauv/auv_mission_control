@@ -1,12 +1,12 @@
 #include <auv_mission_control/pid_manager.h>
 
 
-Pid_Parameters parameters_surge;
-Pid_Parameters parameters_sway;
-Pid_Parameters parameters_heave;
-Pid_Parameters parameters_roll;
-Pid_Parameters parameters_pitch;
-Pid_Parameters parameters_yaw;
+pid_parameters parameters_surge;
+pid_parameters parameters_sway;
+pid_parameters parameters_heave;
+pid_parameters parameters_roll;
+pid_parameters parameters_pitch;
+pid_parameters parameters_yaw;
 
 /*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
@@ -22,36 +22,38 @@ void Pid_Manager::depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg){
 }
 
 
+Pid_Manager::Pid_Manager(){
+
+}
 
 
-
-Pid_Manager::Pid_Manager(ros::NodeHandle* nh){
+Pid_Manager::Pid_Manager(ros::NodeHandle* nh) : nh_(*nh){
 
   //zero all sensors
 
-//   ros::Subscriber vision_plant_sub = nh.subscribe("/pid_plantState_vision", 100, visionPlant_callback);
-// //  ros::Subscriber imu_plant_sub = nh.subscribe("pid_plantState_IMU", 100, IMU_callback);
+//   ros::Subscriber vision_plant_sub = nh->subscribe("/pid_plantState_vision", 100, visionPlant_callback);
+// //  ros::Subscriber imu_plant_sub = nh->subscribe("pid_plantState_IMU", 100, IMU_callback);
 
-this->nh = nh;
 //
 //
-  // ros::Subscriber depth_plant_sub = nh.subscribe("/pid_plantState_depth", 100, depth_plant_callBack);
+  // ros::Subscriber depth_plant_sub = nh->subscribe("/pid_plantState_depth", 100, depth_plant_callBack);
 
-  ros::Subscriber depth_sub = nh.subscribe("/depth", 100, Pid_Manager::depth_callBack);
+  ros::Subscriber depth_sub = nh->subscribe("/depth", 100, &Pid_Manager::depth_callBack, this);
   //setpoint publishers
-  ros::Publisher state_surge_pub = nh.advertise<std_msgs::Float64>("state_surge", 10);
-  ros::Publisher state_sway_pub = nh.advertise<std_msgs::Float64>("state_sway", 10);
-  ros::Publisher state_heave_pub = nh.advertise<std_msgs::Float64>("state_heave", 10);
-  ros::Publisher state_roll_pub = nh.advertise<std_msgs::Float64>("state_roll", 10);
-  ros::Publisher state_pitch_pub = nh.advertise<std_msgs::Float64>("state_pitch", 10);
-  ros::Publisher state_yaw_pub = nh.advertise<std_msgs::Float64>("state_yaw", 10);
+   setpoint_surge_pub = nh->advertise<std_msgs::Float64>("setpoint_surge", 10);
+   setpoint_sway_pub = nh->advertise<std_msgs::Float64>("setpoint_sway", 10);
+   setpoint_heave_pub = nh->advertise<std_msgs::Float64>("setpoint_heave", 10);
+   setpoint_roll_pub = nh->advertise<std_msgs::Float64>("setpoint_roll", 10);
+   setpoint_pitch_pub = nh->advertise<std_msgs::Float64>("setpoint_pitch", 10);
+   setpoint_yaw_pub = nh->advertise<std_msgs::Float64>("setpoint_yaw", 10);
+
   //plant state publishers
-  ros::Publisher setpoint_surge_pub = nh.advertise<std_msgs::Float64>("setpoint_surge", 10);
-  ros::Publisher setpoint_sway_pub = nh.advertise<std_msgs::Float64>("setpoint_sway", 10);
-  ros::Publisher setpoint_heave_pub = nh.advertise<std_msgs::Float64>("setpoint_heave", 10);
-  ros::Publisher setpoint_roll_pub = nh.advertise<std_msgs::Float64>("setpoint_roll", 10);
-  ros::Publisher setpoint_pitch_pub = nh.advertise<std_msgs::Float64>("setpoint_pitch", 10);
-  ros::Publisher setpoint_yaw_pub = nh.advertise<std_msgs::Float64>("setpoint_yaw", 10);
+   state_surge_pub = nh->advertise<std_msgs::Float64>("state_surge", 10);
+   state_sway_pub = nh->advertise<std_msgs::Float64>("state_sway", 10);
+   state_heave_pub = nh->advertise<std_msgs::Float64>("state_heave", 10);
+   state_roll_pub = nh->advertise<std_msgs::Float64>("state_roll", 10);
+   state_pitch_pub = nh->advertise<std_msgs::Float64>("state_pitch", 10);
+   state_yaw_pub = nh->advertise<std_msgs::Float64>("state_yaw", 10);
 
 
   this->setpoint_set(AXIS_SURGE, INPUT_IMU_POS, 0.0);
@@ -62,10 +64,11 @@ this->nh = nh;
   this->setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0.0);
 }
 
-Pid_Manager::
+Pid_Manager::~Pid_Manager(){
 
+}
 
-void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
+void Pid_Manager::setpoint_set(int axis, int input_type, double value){
   if (axis == AXIS_SURGE){
     std_msgs::Float64 setpoint_surge;
     if (input_type == INPUT_IMU_POS){
@@ -95,12 +98,12 @@ void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
       //same deal
     }
     else {
-      cout << "The specified input_type does not exist";
+    //  cout << "The specified input_type does not exist";
       ROS_ERROR("The input_type does not exist for axis SURGE");
     }
 
     setpoint_surge.data = value;
-    surge_pub.publish(setpoint_surge);
+    setpoint_surge_pub.publish(setpoint_surge);
   }
 
   else if (axis == AXIS_SWAY){
@@ -135,12 +138,12 @@ void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
         //same deal
       }
       else {
-        cout << "The specified input_type does not exist";
+        //cout << "The specified input_type does not exist";
         ROS_ERROR("The input_type does not exist for axis SWAY");
       }
 
       setpoint_sway.data = value;
-      sway_pub.publish(setpoint_sway);
+      setpoint_sway_pub.publish(setpoint_sway);
   }
 
   else if (axis == AXIS_HEAVE){
@@ -164,12 +167,12 @@ void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
       }
 
       else {
-        cout << "The specified input_type does not exist";
+        // << "The specified input_type does not exist";
         ROS_ERROR("The input_type does not exist for axis HEAVE");
       }
 
       setpoint_heave.data = value;
-      heave_pub.publish(setpoint_heave);
+      setpoint_heave_pub.publish(setpoint_heave);
   }
 
   else if (axis == AXIS_ROLL){
@@ -184,11 +187,11 @@ void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
     }
 
     else {
-      cout << "The specified input_type for 'ROLL' does not exist";
+      //cout << "The specified input_type for 'ROLL' does not exist";
       ROS_ERROR("The input_type does not exist for axis ROLL");
     }
       setpoint_roll.data = value;
-      roll_pub.publish(setpoint_roll);
+      setpoint_roll_pub.publish(setpoint_roll);
   }
 
   else if (axis == AXIS_PITCH){
@@ -203,12 +206,12 @@ void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
     }
 
     else {
-      cout << "The specified input_type for 'PITCH' does not exist";
+    //  cout << "The specified input_type for 'PITCH' does not exist";
       ROS_ERROR("The input_type does not exist for axis PITCH");
     }
 
     setpoint_pitch.data = value;
-    pitch_pub.publish(setpoint_pitch);
+    setpoint_pitch_pub.publish(setpoint_pitch);
 
   }
   else if (axis == AXIS_YAW){
@@ -236,31 +239,32 @@ void Pid_Manager::setpoint_set((int axis, int input_type, double value)){
       //same deal
     }
     else{
-      cout << "the specified input_type for axis 'YAW' does not exist";
+    //  cout << "the specified input_type for axis 'YAW' does not exist";
       ROS_ERROR("The input_type does not exist for axis YAW");
     }
 
     setpoint_yaw.data = value;
-    yaw_pub.publish(setpoint_yaw);
+    setpoint_yaw_pub.publish(setpoint_yaw);
   }
 
   else{
-    cout << "the specified axis does not exist";
-    ROS_ERROR("The axis %s", axis.c_str(), "does not exist");
+  //  cout << "the specified axis does not exist";
+    ROS_ERROR("The axis %d %s", axis, "does not exist");
   }
 
 }
 
 
-void Pid_Manager::setPlantState(int axis, double plantValue, ){
+void Pid_Manager::setPlantState(int axis, double plantValue){
 
 }
+
+void Pid_Manager::zero(int sensor){
+
+}
+
+
 
 double Pid_Manager::getDepth(){
   return depth;
-}
-
-
-void pid_defaults(){
-
 }
