@@ -79,6 +79,9 @@ public:
   void zero(int sensor);
   void pidInit_all();
   void pidEnable(int axis, bool enabled);
+  bool getTimeout();
+  bool getStart();
+  bool getKill();
 
 
 
