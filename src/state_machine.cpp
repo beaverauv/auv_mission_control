@@ -30,9 +30,21 @@ Pid_Manager pm(&nh);
         break;
       }
 
-      case 1: { //gate
+      case 1:{ //go to depth
+
+      }
+      case 2: { //gate
         Task_Gate gate(&pm);
-        gate.execute();
+        int outcome = gate.excecute();
+
+        if (outcome == succeeded)
+          currentState = 3;
+        else if (outcome == timeout)
+          currentState = 8;
+        else if (outcome == kill)
+          currentState = 9;
+        else
+          currentState = 9;
 
       }
 

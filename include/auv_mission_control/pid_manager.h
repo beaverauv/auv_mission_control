@@ -12,6 +12,7 @@
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
 
+
 //Axis definitions
 #define AXIS_SURGE 0
 #define AXIS_SWAY 1
@@ -35,7 +36,6 @@ struct pid_parameters {
   double ki;
 };
 
-
 class Pid_Manager{
 private:
   double plant_surge;
@@ -45,6 +45,7 @@ private:
   double plant_pitch;
   double plant_yaw;
   double depth;
+
   ros::NodeHandle nh_;
   ros::Publisher setpoint_surge_pub;
   ros::Publisher setpoint_sway_pub;
@@ -61,6 +62,10 @@ private:
   ros::Publisher state_pitch_pub;
   ros::Publisher state_yaw_pub;
 
+  double timeSinceStart;
+  bool startSwitch;
+  bool killSwitch;
+  bool timeout;
 
 
 
@@ -82,7 +87,6 @@ public:
   bool getTimeout();
   bool getStart();
   bool getKill();
-
 
 
 };

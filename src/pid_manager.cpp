@@ -21,6 +21,14 @@ void Pid_Manager::depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg){
   depth = depth_msg->data;
 }
 
+void Pid_Manager::start_callBack(const std_msgs::Bool::ConstPtr& start_msg){
+  start = start_msg->data;
+}
+
+void Pid_Manager::kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg){
+  kill = kill_msg->data;
+}
+
 
 Pid_Manager::Pid_Manager(){
 
@@ -56,11 +64,11 @@ Pid_Manager::Pid_Manager(ros::NodeHandle* nh) : nh_(*nh){
    state_yaw_pub = nh->advertise<std_msgs::Float64>("state_yaw", 10);
 
 
+
   this->setpoint_set(AXIS_SURGE, INPUT_IMU_POS, 0.0);
   this->setpoint_set(AXIS_SWAY, INPUT_IMU_POS, 0.0);
   this->setpoint_set(AXIS_HEAVE, INPUT_DEPTH, 0.0);
-  this->setpoint_set(AXIS_ROLL, INPUT_IMU_POS, 0.0);
-  this->setpoint_set(AXIS_PITCH, INPUT_IMU_POS, 0.0);
+
   this->setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0.0);
 }
 
@@ -214,6 +222,7 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
     setpoint_pitch_pub.publish(setpoint_pitch);
 
   }
+
   else if (axis == AXIS_YAW){
     std_msgs::Float64 setpoint_yaw;
 
@@ -257,12 +266,30 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
 
 void Pid_Manager::setPlantState(int axis, double plantValue){
 
+  std_msgs::Float64 msg;
+  msg.data = plantValue;
+
+  if(axis == AXIS_SURGE)
+    state_surge_pub.publish(msg.data);
+  else if(axis == AXIS_SWAY)
+    state_sway_pub.publish(msg.data);
+  else if(axis == AXIS_HEAVE)
+    state_heave_pub.publish(msg.data);
+  else if(axis == AXIS_YAW)
+    state_yaw_pub.publish(msg.data);
 }
 
 void Pid_Manager::zero(int sensor){
 
 }
 
+bool Pid_Manager::getKill(){
+  return killSwitch;
+}
+
+bool Pid_Manager::getStart(){
+  return startSwitch;
+}
 
 
 double Pid_Manager::getDepth(){

@@ -2,6 +2,7 @@
 #define TASK_GATE_H
 
 #include "auv_mission_control/pid_manager.h"
+#include "outcomes.h"
 
 class Task_Gate{
 public:
@@ -9,7 +10,7 @@ public:
   Task_Gate(Pid_Manager* pm);
   ~Task_Gate();
 
-  void execute();
+  int execute();
 
 private:
   //variables go here;

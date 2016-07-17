@@ -23,17 +23,26 @@ Task_Gate::~Task_Gate(){
 
 }
 
-void Task_Gate::execute(){
+int Task_Gate::execute(){
 
   //pm_.pidEnable("ALL", true);//turns on all 6 pid controllers
   bool completed = false;
 
 
+  pm->zero(AXIS_YAW);
+
   while(true){ // change so it's while keep running, some value that determines whether to keep running
 
-    pm_.setpoint_set(AXIS_ROLL, INPUT_IMU_POS, 0); //roll pitch and yaw always at 0, straight ahead
-    pm_.setpoint_set(AXIS_PITCH, INPUT_IMU_POS, 0);
-    pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
+
+    if(pm->getKill()){
+      return kill;
+    }
+
+    if(pm->getTimeout()){
+      return timeout;
+    }
+
+    pm->setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
 
     //Create a bounding box around the entire contours. Find the distance from the edges of each to the edges of the screen.
 
@@ -69,6 +78,7 @@ void Task_Gate::execute(){
           pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, previousDepth);
           pm_.setpoint_set(AXIS_SURGE, INPUT_IMU_VEL, 5); //go forward 5 meters to get through gate
           pm_.setpoint_set(AXIS_SWAY, INPUT_IMU_VEL, 0);
+          return succeeded;
         }
 
     }
