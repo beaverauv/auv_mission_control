@@ -68,6 +68,14 @@ private:
   bool timeout;
 
 
+  pid_parameters parameters_surge;
+  pid_parameters parameters_sway;
+  pid_parameters parameters_heave;
+  pid_parameters parameters_roll;
+  pid_parameters parameters_pitch;
+  pid_parameters parameters_yaw;
+
+
 
 public:
 
@@ -78,7 +86,6 @@ public:
 
   void setpoint_set(int axis, int input_type, double value);
   void plantState_get(int axis);
-  void depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg);
   void setPlantState(int axis, double plantValue);
   double getDepth();
   void zero(int sensor);
@@ -87,6 +94,11 @@ public:
   bool getTimeout();
   bool getStart();
   bool getKill();
+
+  void depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg);
+  void start_callBack(const std_msgs::Bool::ConstPtr& start_msg);
+  void kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg);
+
 
 
 };

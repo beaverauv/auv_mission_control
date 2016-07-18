@@ -1,0 +1,7 @@
+<launch>
+
+  <node pkg="auv_mission_control" type="state_machine_cont" name="$(anon mission_control)">
+  </node>
+
+
+</launch>

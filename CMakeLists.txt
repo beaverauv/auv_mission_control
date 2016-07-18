@@ -14,7 +14,12 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
+  cv_bridge
 )
+
+
+find_package(OpenCV 2.4.11)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,6 +122,7 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
   include/
+${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -194,9 +200,10 @@ include_directories(
 
 add_library(state_machine
 	src/pid_manager.cpp
+	src/CameraManager.cpp
 	src/tasks/task_gate.cpp
 )
-target_link_libraries(state_machine ${catkin_LIBRARIES})
+target_link_libraries(state_machine ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})
 add_dependencies(state_machine
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
@@ -204,7 +211,7 @@ add_dependencies(state_machine
 
 add_executable(state_machine_cont src/state_machine.cpp)
 
-target_link_libraries(state_machine_cont ${catkin_LIBRARIES} state_machine)
+target_link_libraries(state_machine_cont ${catkin_LIBRARIES} state_machine  ${OpenCV_LIBRARIES})
 add_dependencies(state_machine_cont
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}

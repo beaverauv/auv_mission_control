@@ -1,13 +1,6 @@
 #include <auv_mission_control/pid_manager.h>
 
 
-pid_parameters parameters_surge;
-pid_parameters parameters_sway;
-pid_parameters parameters_heave;
-pid_parameters parameters_roll;
-pid_parameters parameters_pitch;
-pid_parameters parameters_yaw;
-
 /*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
   plant_surge_vision = vision->surge;
@@ -22,11 +15,11 @@ void Pid_Manager::depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg){
 }
 
 void Pid_Manager::start_callBack(const std_msgs::Bool::ConstPtr& start_msg){
-  start = start_msg->data;
+  startSwitch = start_msg->data;
 }
 
 void Pid_Manager::kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg){
-  kill = kill_msg->data;
+  killSwitch = kill_msg->data;
 }
 
 
@@ -261,6 +254,7 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
     ROS_ERROR("The axis %d %s", axis, "does not exist");
   }
 
+
 }
 
 
@@ -291,6 +285,9 @@ bool Pid_Manager::getStart(){
   return startSwitch;
 }
 
+bool Pid_Manager::getTimeout(){
+
+}
 
 double Pid_Manager::getDepth(){
   return depth;

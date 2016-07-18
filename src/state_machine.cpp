@@ -5,19 +5,22 @@
 #include "math.h"
 #include "auv_mission_control/pid_manager.h"
 #include "auv_mission_control/task_gate.h"
+#include <auv_mission_control/CameraManager.h>
 
 int main(int argc, char **argv){
 
 bool killSwitch = 0;
 bool startSwitch;
-int currentState = 0; //init
+int currentState = 1; //init
 ros::init(argc, argv, "state_machine");
 ros::NodeHandle nh;
 
+
 Pid_Manager pm(&nh);
+CameraManager cam;
 
   while(ros::ok){ //careful
-
+    ros::spinOnce();
     switch(currentState){
       case 0: {//init
         //calibrate sensors
@@ -34,8 +37,8 @@ Pid_Manager pm(&nh);
 
       }
       case 2: { //gate
-        Task_Gate gate(&pm);
-        int outcome = gate.excecute();
+        Task_Gate gate(&pm, &cam);
+        int outcome = gate.execute();
 
         if (outcome == succeeded)
           currentState = 3;

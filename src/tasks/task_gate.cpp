@@ -16,7 +16,7 @@ Task_Gate::Task_Gate(){
 }
 
 
-Task_Gate::Task_Gate(Pid_Manager* pm) : pm_(*pm){
+Task_Gate::Task_Gate(Pid_Manager* pm, CameraManager* cam) : pm_(*pm), cam_(*cam){
 }
 
 Task_Gate::~Task_Gate(){
@@ -29,20 +29,21 @@ int Task_Gate::execute(){
   bool completed = false;
 
 
-  pm->zero(AXIS_YAW);
+  pm_.zero(AXIS_YAW);
 
-  while(true){ // change so it's while keep running, some value that determines whether to keep running
+  while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
+  ros::spinOnce();
 
 
-    if(pm->getKill()){
+    if(pm_.getKill()){
       return kill;
     }
 
-    if(pm->getTimeout()){
+    if(pm_.getTimeout()){
       return timeout;
     }
 
-    pm->setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
+    pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
 
     //Create a bounding box around the entire contours. Find the distance from the edges of each to the edges of the screen.
 
@@ -80,6 +81,8 @@ int Task_Gate::execute(){
           pm_.setpoint_set(AXIS_SWAY, INPUT_IMU_VEL, 0);
           return succeeded;
         }
+
+
 
     }
 
