@@ -21,7 +21,7 @@ int Task_Gate::execute(){
   pm_.zero(AXIS_YAW);
   pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
   pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
-  sleep(5);
+  pm_.taskDelay(5);
 
   while(true){ // change so it's while keep running, some value that determines whether to keep running
 
@@ -30,7 +30,7 @@ int Task_Gate::execute(){
       return kill;
     }
 
-    if(pm_.getTimeout()){
+    if(getTimeout()){
       return timeout;
     }
 

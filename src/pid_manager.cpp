@@ -1,5 +1,4 @@
-#include <auv_mission_control/pid_manager.h>
-
+#include "auv_mission_control/pid_manager.h"
 
 pid_parameters parameters_surge;
 pid_parameters parameters_sway;
@@ -31,7 +30,6 @@ void Pid_Manager::kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg){
 
 
 Pid_Manager::Pid_Manager(){
-
 }
 
 
@@ -334,8 +332,9 @@ void Pid_Manager::pidEnable(int axis, bool enabled){
   else if (axis == AXIS_YAW){
     yaw_enable_pub.publish(enablePid);
   }
+
 }
 
-bool Pid_Manager::getTimeout(){
-  return false;//OLIVER FIX THIS
+void Pid_Manager::taskDelay(int seconds){
+  ros::Duration(seconds).sleep();
 }

@@ -2,6 +2,7 @@
 #define TASK_GATE_H
 
 #include "auv_mission_control/pid_manager.h"
+#include "auv_mission_control/state_machine.h"
 #include "outcomes.h"
 #include <unistd.h>
 double surgeSpeed = 40;

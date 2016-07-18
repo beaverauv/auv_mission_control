@@ -69,8 +69,7 @@ private:
 
 
   ros::Publisher control_effort_pub;
-  
-  double timeSinceStart;
+
   bool startSwitch;
   bool killSwitch;
   bool timeout;
@@ -95,11 +94,10 @@ public:
   void zero(int sensor);
   void pidInit_all();
   void pidEnable(int axis, bool enabled);
-  bool getTimeout();
   bool getStart();
   bool getKill();
   void controlEffort_set(int speed); //manually set controlEffort (surge only), must disable PID first
-
+  void taskDelay(int seconds);
 
 };
 
