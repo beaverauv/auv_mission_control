@@ -6,6 +6,8 @@
 #include "auv_mission_control/pid_manager.h"
 #include "auv_mission_control/task_gate.h"
 #include <auv_mission_control/CameraManager.h>
+#include <auv_mission_control/state_machine.h>
+
 
 int main(int argc, char **argv){
 
@@ -42,7 +44,7 @@ CameraManager cam;
 
         if (outcome == succeeded)
           currentState = 3;
-        else if (outcome == timeout)
+        else if (outcome == timeout || getTimeout())
           currentState = 8;
         else if (outcome == kill)
           currentState = 9;
@@ -61,4 +63,20 @@ CameraManager cam;
     }
 
   }
+
+}
+
+void startTimer(){
+  startTime = ros::Time::now();
+}
+
+ros::Duration timeSinceStart(){
+  return ros::Time::now() - startTime;
+}
+
+bool getTimeout(){
+  if (timeSinceStart <= 0)
+    return true;
+  else
+    return false;
 }

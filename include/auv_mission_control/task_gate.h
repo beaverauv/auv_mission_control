@@ -3,7 +3,20 @@
 
 #include "auv_mission_control/pid_manager.h"
 #include <auv_mission_control/CameraManager.h>
+#include "auv_mission_control/state_machine.h"
 #include "outcomes.h"
+#include <unistd.h>
+double surgeSpeed = 40;
+double previousDepth;
+double distanceFromEdge_left;
+double distanceFromEdge_right;
+bool outOfSight;
+double plantState_sway;
+double plantState_heave;
+double setpoint_sway;
+double setpoint_heave;
+double setpoint_surge;
+double plantState_surge;
 
 class Task_Gate{
 public:

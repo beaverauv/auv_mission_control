@@ -1,5 +1,4 @@
-#include <auv_mission_control/pid_manager.h>
-
+#include "auv_mission_control/pid_manager.h"
 
 /*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
@@ -24,7 +23,6 @@ void Pid_Manager::kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg){
 
 
 Pid_Manager::Pid_Manager(){
-
 }
 
 
@@ -56,7 +54,12 @@ Pid_Manager::Pid_Manager(ros::NodeHandle* nh) : nh_(*nh){
    state_pitch_pub = nh->advertise<std_msgs::Float64>("state_pitch", 10);
    state_yaw_pub = nh->advertise<std_msgs::Float64>("state_yaw", 10);
 
+   control_effort_pub = nh->advertise<std_msgs::Float64>("controlEffort_surge", 10);
 
+   surge_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_surge", 10);
+   sway_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_sway", 10);
+   heave_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_heave", 10);
+   yaw_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_yaw", 10);
 
   this->setpoint_set(AXIS_SURGE, INPUT_IMU_POS, 0.0);
   this->setpoint_set(AXIS_SWAY, INPUT_IMU_POS, 0.0);
@@ -264,13 +267,13 @@ void Pid_Manager::setPlantState(int axis, double plantValue){
   msg.data = plantValue;
 
   if(axis == AXIS_SURGE)
-    state_surge_pub.publish(msg.data);
+    state_surge_pub.publish(msg);
   else if(axis == AXIS_SWAY)
-    state_sway_pub.publish(msg.data);
+    state_sway_pub.publish(msg);
   else if(axis == AXIS_HEAVE)
-    state_heave_pub.publish(msg.data);
+    state_heave_pub.publish(msg);
   else if(axis == AXIS_YAW)
-    state_yaw_pub.publish(msg.data);
+    state_yaw_pub.publish(msg);
 }
 
 void Pid_Manager::zero(int sensor){
@@ -291,4 +294,44 @@ bool Pid_Manager::getTimeout(){
 
 double Pid_Manager::getDepth(){
   return depth;
+}
+
+void Pid_Manager::controlEffort_set(int speed){
+  std_msgs::Float64 effortMsg;
+  effortMsg.data = speed;
+  control_effort_pub.publish(effortMsg);
+}
+
+void Pid_Manager::setCamera(int camera){ //OLIVER FIX THIS
+  if (camera == INPUT_CAM_FRONT)
+    bool x = true;//do something;
+  else
+    bool x = false;
+    //do something else;
+}
+
+void Pid_Manager::pidEnable(int axis, bool enabled){
+  std_msgs::Bool enablePid;
+  enablePid.data = enabled;
+
+  if (axis == AXIS_SURGE){
+    surge_enable_pub.publish(enablePid);
+  }
+
+  else if (axis == AXIS_SWAY){
+    sway_enable_pub.publish(enablePid);
+  }
+
+  else if (axis == AXIS_HEAVE){
+    heave_enable_pub.publish(enablePid);
+  }
+
+  else if (axis == AXIS_YAW){
+    yaw_enable_pub.publish(enablePid);
+  }
+
+}
+
+void Pid_Manager::taskDelay(int seconds){
+  ros::Duration(seconds).sleep();
 }
