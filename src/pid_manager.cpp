@@ -296,11 +296,7 @@ double Pid_Manager::getDepth(){
   return depth;
 }
 
-void Pid_Manager::controlEffort_set(int speed){
-  std_msgs::Float64 effortMsg;
-  effortMsg.data = speed;
-  control_effort_pub.publish(effortMsg);
-}
+
 
 void Pid_Manager::setCamera(int camera){ //OLIVER FIX THIS
   if (camera == INPUT_CAM_FRONT)
@@ -330,6 +326,27 @@ void Pid_Manager::pidEnable(int axis, bool enabled){
     yaw_enable_pub.publish(enablePid);
   }
 
+}
+
+void Pid_Manager::controlEffort_set(int speed){
+  std_msgs::Float64 effortMsg;
+  effortMsg.data = speed;
+
+  if (axis == AXIS_SURGE){
+    surgeEffort_pub.publish(effortMsg);
+  }
+
+  else if (axis == AXIS_SWAY){
+    swayEffort_pub.publish(effortMsg);
+  }
+
+  else if (axis == AXIS_HEAVE){
+    heaveEffort_pub.publish(effortMsg);
+  }
+
+  else if (axis == AXIS_YAW){
+    yawEffort_pub.publish(effortMsg);
+  }
 }
 
 void Pid_Manager::taskDelay(int seconds){

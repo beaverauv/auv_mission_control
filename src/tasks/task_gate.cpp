@@ -34,7 +34,6 @@ int Task_Gate::execute(){
     if(getTimeout()){
       return timeout;
     }
-    pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
 
     if (distanceFromEdge_right < 20 && distanceFromEdge_left < 20){//some reasonable deadband
       outOfSight = true;
@@ -47,15 +46,16 @@ int Task_Gate::execute(){
     if(!outOfSight){
 
 
-      if (fabs(plantState_sway - setpoint_sway) > 30){//SOME REASONABLE DEADBAND
-        pm_.setpoint_set(AXIS_SURGE, INPUT_IMU_VEL, 0); //makes it so the robot doesn't try to move forward if the sway and heave are outside of a DEADBAND
+      if (fabs(plantState_sway - setpoint_sway) > 40){//SOME REASONABLE DEADBAND
+        pm_.controlEffort_set(AXIS_SURGE, 0); //makes it so the robot doesn't try to move forward if the sway and heave are outside of a DEADBAND
+
       }
 
       else{
-        pm_.setpoint_set(AXIS_SURGE, INPUT_IMU_VEL, surgeSpeed); //random number for now, will need to be replaced by testing. Will probably be a percent, but idk
+        pm_.controlEffort_set(AXIS_SURGE,3ws surgeSpeed); //random number for now, will need to be replaced by testing. Will probably be a percent, but idk
       }
 
-      pm_.setpoint_set(AXIS_SWAY, INPUT_CAM_FRONT, 0);
+
 
     }
 

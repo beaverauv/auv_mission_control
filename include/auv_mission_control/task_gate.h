@@ -6,7 +6,7 @@
 #include "auv_mission_control/state_machine.h"
 #include "outcomes.h"
 #include <unistd.h>
-double surgeSpeed = 40;
+double surgeSpeed = 25;
 double previousDepth;
 double distanceFromEdge_left;
 double distanceFromEdge_right;

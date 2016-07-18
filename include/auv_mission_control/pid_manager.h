@@ -105,7 +105,7 @@ public:
   bool getStart();
   bool getKill();
 
-  void controlEffort_set(int speed); //manually set controlEffort (surge only), must disable PID first
+  void controlEffort_set(int axis, int speed); //manually set controlEffort, must disable PID first
   void taskDelay(int seconds);
 
   bool getTimeout();
