@@ -35,7 +35,7 @@ Pid_Manager pm(&nh);
       }
       case 2: { //gate
         Task_Gate gate(&pm);
-        int outcome = gate.excecute();
+        int outcome = gate.execute();
 
         if (outcome == succeeded)
           currentState = 3;

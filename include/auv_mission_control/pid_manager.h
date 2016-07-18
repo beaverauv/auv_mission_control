@@ -29,7 +29,6 @@
 #define INPUT_IMU_VEL 3
 #define INPUT_DEPTH 4
 
-
 struct pid_parameters {
   double kp;
   double kd;
@@ -62,6 +61,15 @@ private:
   ros::Publisher state_pitch_pub;
   ros::Publisher state_yaw_pub;
 
+  //enable publishers
+  ros::Publisher surge_enable_pub;
+  ros::Publisher sway_enable_pub;
+  ros::Publisher heave_enable_pub;
+  ros::Publisher yaw_enable_pub;
+
+
+  ros::Publisher control_effort_pub;
+  
   double timeSinceStart;
   bool startSwitch;
   bool killSwitch;
@@ -79,7 +87,10 @@ public:
   void setpoint_set(int axis, int input_type, double value);
   void plantState_get(int axis);
   void depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg);
+  void start_callBack(const std_msgs::Bool::ConstPtr& start_msg);
+  void kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg);
   void setPlantState(int axis, double plantValue);
+  void setCamera(int camera); //choose which camera is in use
   double getDepth();
   void zero(int sensor);
   void pidInit_all();
@@ -87,6 +98,7 @@ public:
   bool getTimeout();
   bool getStart();
   bool getKill();
+  void controlEffort_set(int speed); //manually set controlEffort (surge only), must disable PID first
 
 
 };
