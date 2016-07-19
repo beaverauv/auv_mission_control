@@ -1,4 +1,5 @@
 #include "auv_mission_control/task_gate_vision.h"
+#include <opencv2/imgproc/imgproc.hpp>
 #include <cmath>
 
 Task_Gate_Vision::Task_Gate_Vision(){
@@ -22,12 +23,12 @@ int Task_Gate_Vision::execute(){
   cv::namedWindow("Original", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("controlGate", CV_WINDOW_AUTOSIZE);
 
-  cv::createTrackbar("minR", "controlGate", %minR, 255);
-  cv::createTrackbar("maxR", "controlGate", %maxR, 255);
-  cv::createTrackbar("minG", "controlGate", %minG, 255);
-  cv::createTrackbar("maxG", "controlGate", %maxG, 255);
-  cv::createTrackbar("minB", "controlGate", %minB, 255);
-  cv::createTrackbar("maxB", "controlGate", %maxB, 255);
+  cv::createTrackbar("minR", "controlGate", &minR, 255);
+  cv::createTrackbar("maxR", "controlGate", &maxR, 255);
+  cv::createTrackbar("minG", "controlGate", &minG, 255);
+  cv::createTrackbar("maxG", "controlGate", &maxG, 255);
+  cv::createTrackbar("minB", "controlGate", &minB, 255);
+  cv::createTrackbar("maxB", "controlGate", &maxB, 255);
 
 
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
@@ -36,13 +37,20 @@ int Task_Gate_Vision::execute(){
 
   pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
 
-  cam_.updateCameras();
+  cam_.update();
 
-  cv::Mat original = cam_.getFrontCamera();
-  cv::Mat imgHSV = original;
+  cv::Mat original;
+
+  if (camInUse == INPUT_CAM_FRONT){
+    original = cam_.getFront();
+  }
+  else{
+    original = cam_.getBottom();
+  }
+//  cv::Mat imgHSV = original;
   cv::Mat imgThresh;
 
-  cv::inRange(original, cv::Scalar(minR, minG, minB), cv::Scalar(maxR, maxG, maxB) imgThresh);
+  cv::inRange(original, cv::Scalar(minR, minG, minB), cv::Scalar(maxR, maxG, maxB), imgThresh);
   cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
   cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10,10)));
 
@@ -57,12 +65,12 @@ int Task_Gate_Vision::execute(){
   double posYdouble = (double)posY;
   double posXcorrected = 640 - posXdouble;
 
-  minR = ;
-  maxR = ;
-  minG = ;
-  maxG = ;
-  minB = ;
-  maxB = ;
+  // minR = 0;
+  // maxR = 0;
+  // minG = 0;
+  // maxG = 0;
+  // minB = 0;
+  // maxB = 0;
 
 
   if(pm_.getKill()){
@@ -98,6 +106,7 @@ int Task_Gate_Vision::execute(){
     }
 
     case 1:{//start going forward, use vision for 10 sec
+      camInUse = INPUT_CAM_FRONT;
       pm_.pidEnable(AXIS_SWAY, true);
       pm_.pidEnable(AXIS_YAW, true);
       pm_.pidEnable(AXIS_HEAVE, true);
@@ -123,7 +132,7 @@ int Task_Gate_Vision::execute(){
         pm_.zero(IMU_YAW);
       }
 
-      pm_.setCamera(INPUT_CAM_BTM);
+      camInUse = INPUT_CAM_BTM;
       pm_.pidEnable(AXIS_SWAY, false);
       pm_.pidEnable(AXIS_YAW, true);
       pm_.pidEnable(AXIS_HEAVE, true);
@@ -140,7 +149,7 @@ int Task_Gate_Vision::execute(){
         pm_.pidEnable(AXIS_SURGE, true);
         pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setpoint_set(AXIS_SURGE, INPUT_CAM_BTM, 240);
-        if(fabs(plantState_surge - setpoint_surge) <= 20){
+        if(fabs(posYdouble - setpoint_surge) <= 20){
           finalTimer.start();
           if(finalTimer.getTime() >= 3){
             ROS_INFO("All done. Hopefully I'm in the right place. Sorry if I'm not, I understand that could be highly frustrating. Congrats on the good work if I am. Really well done, champ.");//What's a robot without an attitude?
@@ -157,6 +166,8 @@ int Task_Gate_Vision::execute(){
     case 3:
       return succeeded;
 
+    default:
+      break;
 
   }//switch
   }//while ros::ok

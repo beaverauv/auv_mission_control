@@ -35,6 +35,7 @@ private:
   cv::Scalar lowYellow = cv::Scalar(0,0,0);
   cv::Scalar highYellow = cv::Scalar(79, 193, 255);
 
+
 };
 
 #endif

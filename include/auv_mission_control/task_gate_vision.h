@@ -39,6 +39,15 @@ private:
   double setpoint_heave;
   double setpoint_surge;
   double plantState_surge;
+  int camInUse;
+
+  int minR = 0;
+  int maxR = 255;
+  int minG = 0;
+  int maxG = 255;
+  int minB = 0;
+  int maxB = 255;
+
 
 };
 
