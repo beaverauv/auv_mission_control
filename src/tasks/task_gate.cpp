@@ -1,11 +1,8 @@
 #include "auv_mission_control/task_gate.h"
-<<<<<<< Updated upstream
-=======
 #include "auv_mission_control/pid_manager.h"
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
->>>>>>> Stashed changes
 #include <cmath>
 
 
@@ -23,7 +20,6 @@ Task_Gate::~Task_Gate(){
 
 int Task_Gate::execute(){
 
-<<<<<<< Updated upstream
   //pm_.pidEnable("ALL", true);//turns on all 6 pid controllers
 
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
@@ -47,36 +43,6 @@ int Task_Gate::execute(){
           action = 1;
           ROS_INFO("Done going to depth. At depth %f", pm_.getDepth());
         break;
-=======
-
-
-  while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
-  ros::spinOnce();
-    // if(pm_.getKill()){
-    //   return kill;
-    // }
-    // if(getTimeout()){
-    //   return timeout;
-    // }
-
-    pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
-
-    
-    // if (distanceFromEdge_right < 20 && distanceFromEdge_left < 20){//some reasonable deadband
-    //   outOfSight = true;
-    // }
-    // else{            ///probs dont want incase state of checked condition changes...
-    //   outOfSight = false;
-    // }
-
-
-    if(!outOfSight){
-
-
-      if (fabs(plantState_sway - setpoint_sway) > 40){//SOME REASONABLE DEADBAND
-        pm_.controlEffort_set(AXIS_SURGE, 0); //makes it so the robot doesn't try to move forward if the sway and heave are outside of a DEADBAND
-
->>>>>>> Stashed changes
       }
 
       case 1: {

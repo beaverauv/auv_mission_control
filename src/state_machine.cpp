@@ -14,12 +14,8 @@ int main(int argc, char **argv){
 
 bool killSwitch = 0;
 bool startSwitch;
-<<<<<<< Updated upstream
 int currentState = 0; //init
 double timeSinceStart;
-=======
-int currentState = 2; //init
->>>>>>> Stashed changes
 ros::init(argc, argv, "state_machine");
 ros::NodeHandle nh;
 
@@ -48,15 +44,11 @@ ROS_ERROR("here");
         break;
       }
 
-<<<<<<< Updated upstream
-      case 1: { //gate
-=======
       case 1:{ //go to depth
 
       }
       case 2: { //gate
-      
->>>>>>> Stashed changes
+
         Task_Gate gate(&pm, &cam);
         int outcome = gate.execute();
         ROS_INFO("EXECUTING GATE TASK");
