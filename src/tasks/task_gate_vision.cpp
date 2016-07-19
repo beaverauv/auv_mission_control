@@ -15,10 +15,56 @@ Task_Gate_Vision::~Task_Gate_Vision(){
 int Task_Gate_Vision::execute(){
 
   pm_.setCamera(INPUT_CAM_FRONT);
+  pm_.zero(AXIS_YAW);
+  pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
+  pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+
+  cv::namedWindow("Original", CV_WINDOW_AUTOSIZE);
+  cv::namedWindow("controlGate", CV_WINDOW_AUTOSIZE);
+
+  cv::createTrackbar("minR", "controlGate", %minR, 255);
+  cv::createTrackbar("maxR", "controlGate", %maxR, 255);
+  cv::createTrackbar("minG", "controlGate", %minG, 255);
+  cv::createTrackbar("maxG", "controlGate", %maxG, 255);
+  cv::createTrackbar("minB", "controlGate", %minB, 255);
+  cv::createTrackbar("maxB", "controlGate", %maxB, 255);
+
 
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
 
   ros::spinOnce();
+
+  pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
+
+  cam_.updateCameras();
+
+  cv::Mat original = cam_.getFrontCamera();
+  cv::Mat imgHSV = original;
+  cv::Mat imgThresh;
+
+  cv::inRange(original, cv::Scalar(minR, minG, minB), cv::Scalar(maxR, maxG, maxB) imgThresh);
+  cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+  cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10,10)));
+
+  cv::Moments oMoments = cv::moments(imgThresh);
+
+  int dM01 = oMoments.m01;
+  int dM10 = oMoments.m10;
+  double dArea = oMoments.m00;
+  int posX = dM10 / dArea;
+  int posY = dM01 / dArea;
+  double posXdouble = (double)posX;
+  double posYdouble = (double)posY;
+  double posXcorrected = 640 - posXdouble;
+
+  minR = ;
+  maxR = ;
+  minG = ;
+  maxG = ;
+  minB = ;
+  maxB = ;
+
+
   if(pm_.getKill()){
     return kill;
   }
