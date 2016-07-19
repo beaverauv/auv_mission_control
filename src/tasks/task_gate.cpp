@@ -10,7 +10,7 @@ Task_Gate::Task_Gate(){
 }
 
 
-Task_Gate::Task_Gate(Pid_Manager* pm, CameraManager* cam) : pm_(*pm), cam_(*cam){
+Task_Gate::Task_Gate(Pid_Manager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
   ROS_ERROR("TASK GATE INIT");
 }
 

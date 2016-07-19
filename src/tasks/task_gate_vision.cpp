@@ -5,7 +5,7 @@ Task_Gate_Vision::Task_Gate_Vision(){
 }
 
 
-Task_Gate_Vision::Task_Gate_Vision(Pid_Manager* pm, CameraManager* cam) : pm_(*pm), cam_(*cam){
+Task_Gate_Vision::Task_Gate_Vision(Pid_Manager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
 }
 
 Task_Gate_Vision::~Task_Gate_Vision(){

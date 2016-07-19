@@ -87,6 +87,8 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
       ROS_ERROR("The input_type does not exist for axis SURGE");
     }
 
+    this->updateParameters(AXIS_SURGE);
+
     setpoint_surge.data = value;
     setpoint_surge_pub.publish(setpoint_surge);
   }
@@ -112,6 +114,8 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
         //cout << "The specified input_type does not exist";
         ROS_ERROR("The input_type does not exist for axis SWAY");
       }
+
+      this->updateParameters(AXIS_SWAY);
 
       setpoint_sway.data = value;
       setpoint_sway_pub.publish(setpoint_sway);
@@ -142,49 +146,12 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
         ROS_ERROR("The input_type does not exist for axis HEAVE");
       }
 
+      this->updateParameters(AXIS_HEAVE);
+
       setpoint_heave.data = value;
       setpoint_heave_pub.publish(setpoint_heave);
   }
 
-  else if (axis == AXIS_ROLL){
-
-    std_msgs::Float64 setpoint_roll;
-
-    if (input_type == INPUT_IMU_POS){
-      parameters_roll.kp = 1;
-      parameters_roll.kd = 1;
-      parameters_roll.ki = 1;
-      //you get it by now
-    }
-
-    else {
-      //cout << "The specified input_type for 'ROLL' does not exist";
-      ROS_ERROR("The input_type does not exist for axis ROLL");
-    }
-      setpoint_roll.data = value;
-      setpoint_roll_pub.publish(setpoint_roll);
-  }
-
-  else if (axis == AXIS_PITCH){
-
-    std_msgs::Float64 setpoint_pitch;
-
-    if (input_type == INPUT_IMU_POS){
-      parameters_pitch.kp = 1;
-      parameters_pitch.kd = 1;
-      parameters_pitch.ki = 1;
-      //you get it by now
-    }
-
-    else {
-    //  cout << "The specified input_type for 'PITCH' does not exist";
-      ROS_ERROR("The input_type does not exist for axis PITCH");
-    }
-
-    setpoint_pitch.data = value;
-    setpoint_pitch_pub.publish(setpoint_pitch);
-
-  }
 
   else if (axis == AXIS_YAW){
     std_msgs::Float64 setpoint_yaw;
@@ -214,6 +181,8 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
     //  cout << "the specified input_type for axis 'YAW' does not exist";
       ROS_ERROR("The input_type does not exist for axis YAW");
     }
+
+    this->updateParameters(AXIS_YAW);
 
     setpoint_yaw.data = value;
     setpoint_yaw_pub.publish(setpoint_yaw);
@@ -318,4 +287,87 @@ void Pid_Manager::controlEffort_set(int axis, int speed){
 
 void Pid_Manager::taskDelay(int seconds){
   ros::Duration(seconds).sleep();
+}
+
+
+void Pid_Manager::updateParameters(int axis){
+  dynamic_reconfigure::ReconfigureRequest srv_req;
+  dynamic_reconfigure::ReconfigureResponse srv_resp;
+  dynamic_reconfigure::DoubleParameter double_param;
+  dynamic_reconfigure::Config conf;
+
+  if (axis == AXIS_SURGE){
+     double_param.name = "Kp";
+     double_param.value = parameters_surge.kp;
+     conf.doubles.push_back(double_param);
+
+     double_param.name = "Ki";
+     double_param.value = parameters_surge.ki;
+     conf.doubles.push_back(double_param);
+
+     double_param.name = "Kd";
+     double_param.value = parameters_surge.kd;
+     conf.doubles.push_back(double_param);
+     srv_req.config = conf;
+
+     ros::service::call("/surge_pid/set_parameters", srv_req, srv_resp);
+
+  }
+
+  else if (axis == AXIS_SWAY){
+    double_param.name = "Kp";
+    double_param.value = parameters_sway.kp;
+    conf.doubles.push_back(double_param);
+
+    double_param.name = "Ki";
+    double_param.value = parameters_sway.ki;
+    conf.doubles.push_back(double_param);
+
+    double_param.name = "Kd";
+    double_param.value = parameters_sway.kd;
+    conf.doubles.push_back(double_param);
+
+    srv_req.config = conf;
+
+    ros::service::call("/sway_pid/set_parameters", srv_req, srv_resp);
+
+  }
+
+  else if (axis == AXIS_HEAVE){
+    double_param.name = "Kp";
+    double_param.value = parameters_heave.kp;
+    conf.doubles.push_back(double_param);
+
+    double_param.name = "Ki";
+    double_param.value = parameters_heave.ki;
+    conf.doubles.push_back(double_param);
+
+    double_param.name = "Kd";
+    double_param.value = parameters_heave.kd;
+    conf.doubles.push_back(double_param);
+
+    srv_req.config = conf;
+
+    ros::service::call("/heave_pid/set_parameters", srv_req, srv_resp);
+
+  }
+
+  else if (axis == AXIS_YAW){
+    double_param.name = "Kp";
+    double_param.value = parameters_yaw.kp;
+    conf.doubles.push_back(double_param);
+
+    double_param.name = "Ki";
+    double_param.value = parameters_yaw.ki;
+    conf.doubles.push_back(double_param);
+
+    double_param.name = "Kd";
+    double_param.value = parameters_yaw.kd;
+    conf.doubles.push_back(double_param);
+
+    srv_req.config = conf;
+
+    ros::service::call("/yaw_pid/set_parameters", srv_req, srv_resp);
+
+  }
 }

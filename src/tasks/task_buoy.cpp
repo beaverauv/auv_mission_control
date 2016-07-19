@@ -2,7 +2,7 @@ Task_Buoy::Task_Buoy(){
 }
 
 
-Task_Buoy::Task_Buoy(Pid_Manager* pm, CameraManager* cam) : pm_(*pm), cam_(*cam){
+Task_Buoy::Task_Buoy(Pid_Manager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
         ROS_ERROR("TASK GATE INIT");
 }
 
@@ -112,7 +112,7 @@ int Task_Buoy::execute(){
 
                 if (dArea > minObjectArea) {
                         objectFound = 1;
-                        
+
                 }
 
                 else{

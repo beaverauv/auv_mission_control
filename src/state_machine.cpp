@@ -21,7 +21,7 @@ ros::NodeHandle nh;
 
 
 Pid_Manager pm(&nh);
-CameraManager cam;
+Camera cam;
 ROS_ERROR("here");
   while(ros::ok){ //careful
 

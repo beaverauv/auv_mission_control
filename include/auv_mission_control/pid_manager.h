@@ -12,6 +12,10 @@
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
 #include <auv_mission_control/single_use_timer.h>
+#include <dynamic_reconfigure/DoubleParameter.h>
+#include <dynamic_reconfigure/Reconfigure.h>
+#include <dynamic_reconfigure/Config.h>
+
 
 //Axis definitions
 #define AXIS_SURGE 0
@@ -83,8 +87,6 @@ private:
   pid_parameters parameters_surge;
   pid_parameters parameters_sway;
   pid_parameters parameters_heave;
-  pid_parameters parameters_roll;
-  pid_parameters parameters_pitch;
   pid_parameters parameters_yaw;
 
 
@@ -115,7 +117,7 @@ public:
   void taskDelay(int seconds);
 
   bool getTimeout();
-
+  void updateParameters(int axis);
 
 };
 

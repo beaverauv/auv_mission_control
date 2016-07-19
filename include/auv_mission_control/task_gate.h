@@ -2,7 +2,7 @@
 #define TASK_GATE_H
 
 #include "auv_mission_control/pid_manager.h"
-#include <auv_mission_control/CameraManager.h>
+#include <auv_mission_control/Camera.h>
 #include "auv_mission_control/state_machine.h"
 #include "outcomes.h"
 #include <unistd.h>
@@ -14,7 +14,7 @@ class Task_Gate{
 
 public:
   Task_Gate();
-  Task_Gate(Pid_Manager* pm, CameraManager* cam);
+  Task_Gate(Pid_Manager* pm, Camera* cam);
   ~Task_Gate();
 
   int execute();
@@ -22,7 +22,7 @@ public:
 private:
   //variables go here;
   Pid_Manager pm_;
-  CameraManager cam_;
+  Camera cam_;
 
 
   int minR = 0; // R_MIN

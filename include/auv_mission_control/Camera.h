@@ -4,7 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
 
-class CameraManager {
+class Camera {
 private:
   cv::VideoCapture frontCap;
   cv::VideoCapture bottomCap;
@@ -14,11 +14,11 @@ private:
   cv::Mat lastBottomImage;
 
 public:
-  CameraManager();
-  ~CameraManager();
-  cv::Mat getFrontCamera();
-  cv::Mat getBottomCamera();
-  void updateCameras();
+  Camera();
+  ~Camera();
+  cv::Mat getFront();
+  cv::Mat getBottom();
+  void update();
 
 };
 

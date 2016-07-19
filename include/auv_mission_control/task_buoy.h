@@ -2,7 +2,7 @@
 #define TASK_BUOY_H
 
 #include "auv_mission_control/pid_manager.h"
-#include <auv_mission_control/CameraManager.h>
+#include <auv_mission_control/Camera.h>
 #include "auv_mission_control/state_machine.h"
 #include "outcomes.h"
 #include <unistd.h>
@@ -10,7 +10,7 @@
 class Task_Buoy{
 public:
   Task_Buoy();
-  Task_Buoy(Pid_Manager* pm, CameraManager* cam);
+  Task_Buoy(Pid_Manager* pm, Camera* cam);
   ~Task_Buoy();
 
   int execute();

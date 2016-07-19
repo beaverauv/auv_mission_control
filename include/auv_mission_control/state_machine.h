@@ -3,7 +3,7 @@
 
 #include "auv_mission_control/pid_manager.h"
 #include "auv_mission_control/task_gate.h"
-#include <auv_mission_control/CameraManager.h>
+#include <auv_mission_control/Camera.h>
 
 bool getTimeout();
 

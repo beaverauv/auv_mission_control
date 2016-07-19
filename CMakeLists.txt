@@ -200,7 +200,7 @@ ${OpenCV_INCLUDE_DIRS}
 
 add_library(state_machine
 	src/pid_manager.cpp
-	src/CameraManager.cpp
+	src/Camera.cpp
 	src/tasks/task_gate.cpp
   src/single_use_timer.cpp
   src/tasks/task_gate_vision.cpp
