@@ -75,27 +75,8 @@ Pid_Manager::~Pid_Manager(){
 void Pid_Manager::setpoint_set(int axis, int input_type, double value){
   if (axis == AXIS_SURGE){
     std_msgs::Float64 setpoint_surge;
-    if (input_type == INPUT_IMU_POS){
-      parameters_surge.kp = 100;
-      parameters_surge.kd = 0;
-      parameters_surge.ki = 0;
-      //set tuning for surge axis on imu position
-      //publish setpoint
-    }
-    else if (input_type == INPUT_IMU_VEL){
-      parameters_surge.kp = 5;
-      parameters_surge.kd = 0;
-      parameters_surge.ki = 0;
-      //set tuning for surge axis to imu linear velocity
-      //subscribe to this as plant state
-    }
-    else if (input_type == INPUT_CAM_FRONT){
-      parameters_surge.kp = 1;
-      parameters_surge.kd = 1;
-      parameters_surge.ki = 1;
-      //set tuning for front CAM_FRONT, set as plant state
-    }
-    else if (input_type == INPUT_CAM_BTM){
+
+     if (input_type == INPUT_CAM_BTM){
       parameters_surge.kp = 1;
       parameters_surge.kd = 1;
       parameters_surge.ki = 1;
@@ -114,25 +95,11 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
 
       std_msgs::Float64 setpoint_sway;
 
-      if (input_type == INPUT_IMU_POS){
-        parameters_sway.kp = 1;
-        parameters_sway.kd = 1;
-        parameters_sway.ki = 1;
-        //set tuning for surge axis on imu position
-        //subscribe to this as plant state
-        //publish setpoint
-      }
-      else if (input_type == INPUT_IMU_VEL){
-        parameters_sway.kp = 1;
-        parameters_sway.kd = 1;
-        parameters_sway.ki = 1;
-        //set tuning for surge axis to imu linear velocity
-        //subscribe to this as plant state
-      }
-      else if (input_type == INPUT_CAM_FRONT){
-        parameters_sway.kp = 1;
-        parameters_sway.kd = 1;
-        parameters_sway.ki = 1;
+
+      if (input_type == INPUT_CAM_FRONT){
+        parameters_sway.kp = 0.028;
+        parameters_sway.kd = 0.036;
+        parameters_sway.ki = 0.032;
         //set tuning for front CAM_FRONT, set as plant state
       }
       else if (input_type == INPUT_CAM_BTM){
@@ -155,18 +122,18 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
       std_msgs::Float64 setpoint_heave;
 
       if (input_type == INPUT_DEPTH){
-        parameters_heave.kp = 1;
-        parameters_heave.kd = 1;
-        parameters_heave.ki = 1;
+        parameters_heave.kp = 0.4;
+        parameters_heave.kd = 0.3;
+        parameters_heave.ki = 0.3;
         //set tuning for surge axis on depth sensor
         //subscribe to this as plant state
         //publish setpoint
       }
 
       else if (input_type == INPUT_CAM_FRONT){
-        parameters_heave.kp = 1;
-        parameters_heave.kd = 1;
-        parameters_heave.ki = 1;
+        parameters_heave.kp = 0.035;
+        parameters_heave.kd = 0.03;
+        parameters_heave.ki = 0.04;
         //set tuning for front CAM_FRONT, set as plant state
       }
 
@@ -223,22 +190,22 @@ void Pid_Manager::setpoint_set(int axis, int input_type, double value){
     std_msgs::Float64 setpoint_yaw;
 
     if (input_type == INPUT_IMU_POS){
-      parameters_yaw.kp = 1;
-      parameters_yaw.kd = 1;
-      parameters_yaw.ki = 1;
+      parameters_yaw.kp = 0.2;
+      parameters_yaw.kd = 0.1;
+      parameters_yaw.ki = 0.1;
       //set tuning for surge axis on imu position
       //subscribe to this as plant state
       //publish setpoint
     }
 
     else if (input_type == INPUT_CAM_FRONT){
-      parameters_yaw.kp = 1;
-      parameters_yaw.kd = 1;
-      parameters_yaw.ki = 1;
+      parameters_yaw.kp = 0.038;
+      parameters_yaw.kd = 0.01;
+      parameters_yaw.ki = 0.028;
       //set tuning for front CAM_FRONT, set as plant state
     }
     else if (input_type == INPUT_CAM_BTM){
-      parameters_yaw.kp = 1;
+      parameters_yaw.kp = 0.5;
       parameters_yaw.kd = 1;
       parameters_yaw.ki = 1;
       //same deal
@@ -328,7 +295,7 @@ void Pid_Manager::pidEnable(int axis, bool enabled){
 
 }
 
-void Pid_Manager::controlEffort_set(int speed){
+void Pid_Manager::controlEffort_set(int axis, int speed){
   std_msgs::Float64 effortMsg;
   effortMsg.data = speed;
 

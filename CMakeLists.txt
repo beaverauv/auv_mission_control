@@ -202,7 +202,10 @@ add_library(state_machine
 	src/pid_manager.cpp
 	src/CameraManager.cpp
 	src/tasks/task_gate.cpp
+  src/single_use_timer.cpp
+  src/tasks/task_gate_vision.cpp
 )
+
 target_link_libraries(state_machine ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})
 add_dependencies(state_machine
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
@@ -216,3 +219,7 @@ add_dependencies(state_machine_cont
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
+
+add_executable(down_forwards src/down_forwards.cpp)
+target_link_libraries(down_forwards ${catkin_LIBRARIES})
+add_dependencies(down_forwards auv_mission_control_generate_messages_cpp)

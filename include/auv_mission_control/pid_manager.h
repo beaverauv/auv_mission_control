@@ -11,7 +11,7 @@
 #include <dynamic_reconfigure/DoubleParameter.h>
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
-
+#include <auv_mission_control/single_use_timer.h>
 
 //Axis definitions
 #define AXIS_SURGE 0
@@ -28,6 +28,7 @@
 #define INPUT_IMU_POS 2
 #define INPUT_IMU_VEL 3
 #define INPUT_DEPTH 4
+#define IMU_YAW 5
 
 struct pid_parameters {
   double kp;
@@ -67,6 +68,10 @@ private:
   ros::Publisher heave_enable_pub;
   ros::Publisher yaw_enable_pub;
 
+  ros::Publisher surgeEffort_pub;
+  ros::Publisher swayEffort_pub;
+  ros::Publisher heaveEffort_pub;
+  ros::Publisher yawEffort_pub;
 
   ros::Publisher control_effort_pub;
 
@@ -104,6 +109,7 @@ public:
   void pidEnable(int axis, bool enabled);
   bool getStart();
   bool getKill();
+
 
   void controlEffort_set(int axis, int speed); //manually set controlEffort, must disable PID first
   void taskDelay(int seconds);

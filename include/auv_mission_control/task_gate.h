@@ -9,6 +9,9 @@
 
 
 class Task_Gate{
+
+
+
 public:
   Task_Gate();
   Task_Gate(Pid_Manager* pm, CameraManager* cam);
@@ -20,6 +23,7 @@ private:
   //variables go here;
   Pid_Manager pm_;
   CameraManager cam_;
+<<<<<<< Updated upstream
 
 
   cv::Scalar bottomLowRed(109, 0, 97);
@@ -38,6 +42,28 @@ private:
 
   cv::Scalar lowYellow(0,0,0);
   cv::Scalar highYellow(79, 193, 255);
+=======
+  int action = 0;
+  Timer goToDepth_time;
+  Timer driveForwards_time;
+  double surgeSpeed = 25;
+  double previousDepth;
+  double distanceFromEdge_left;
+  double distanceFromEdge_right;
+  bool outOfSight;
+  double plantState_sway;
+  double plantState_heave;
+  double setpoint_sway;
+  double setpoint_heave;
+  double setpoint_surge;
+  double plantState_surge;
+
+
+
+
+
+
+>>>>>>> Stashed changes
 };
 
 #endif
