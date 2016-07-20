@@ -1,10 +1,10 @@
 #ifndef PID_MANAGER_H
 #define PID_MANAGER_H
 #include <string>
-#include "ros/ros.h"
-#include "std_msgs/String.h"
-#include "std_msgs/Float64.h"
-#include "std_msgs/Bool.h"
+#include <ros/ros.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Float64.h>
+#include <std_msgs/Bool.h>
 #include <sstream>
 #include <auv_motor_control/pid_enable.h>
 #include <auv_mission_control/axes.h>
@@ -15,6 +15,8 @@
 #include <dynamic_reconfigure/DoubleParameter.h>
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
+#include <sensor_msgs/Imu.h>
+
 
 
 //Axis definitions
@@ -51,6 +53,9 @@ private:
   double depth;
 
   ros::NodeHandle nh_;
+
+
+
   ros::Publisher setpoint_surge_pub;
   ros::Publisher setpoint_sway_pub;
   ros::Publisher setpoint_heave_pub;
@@ -83,6 +88,9 @@ private:
   bool killSwitch;
   bool timeout;
 
+  sensor_msgs::Imu imu_;
+
+
 
   pid_parameters parameters_surge;
   pid_parameters parameters_sway;
@@ -98,26 +106,29 @@ public:
 
   ~Pid_Manager();
 
-  void setpoint_set(int axis, int input_type, double value);
-  void plantState_get(int axis);
+
+  void pidInit_all();
+  void pidEnable(int axis, bool enabled);
+  void taskDelay(int seconds);
+  void zero(int sensor);
+  void updateParameters(int axis);
+
+  void setControlEffort(int axis, int speed); //manually set controlEffort, must disable PID first
+  void setSetPoint(int axis, int input_type, double value);
+  void setPlantState(int axis, double plantValue);
+
+
+  void getPlantState(int axis);
+  double getDepth();
+  bool getStart();
+  bool getKill();
+  bool getTimeout();
+
   void depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg);
   void start_callBack(const std_msgs::Bool::ConstPtr& start_msg);
   void kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg);
-  void setPlantState(int axis, double plantValue);
-  void setCamera(int camera); //choose which camera is in use
-  double getDepth();
-  void zero(int sensor);
-  void pidInit_all();
-  void pidEnable(int axis, bool enabled);
-  bool getStart();
-  bool getKill();
+  void imu_callBack(const sensor_msgs::Imu::ConstPtr& imu_msg);
 
-
-  void controlEffort_set(int axis, int speed); //manually set controlEffort, must disable PID first
-  void taskDelay(int seconds);
-
-  bool getTimeout();
-  void updateParameters(int axis);
 
 };
 

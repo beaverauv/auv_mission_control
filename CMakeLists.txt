@@ -204,6 +204,7 @@ add_library(state_machine
 	src/tasks/task_gate.cpp
   src/single_use_timer.cpp
   src/tasks/task_gate_vision.cpp
+  src/pidtest.cpp
 )
 
 target_link_libraries(state_machine ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})

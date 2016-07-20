@@ -36,8 +36,8 @@ int Task_Gate::execute(){
       case 0: {
         ROS_INFO("Vroom Vroom going do depth");
         pm_.zero(AXIS_YAW);
-        pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         goToDepth_time.start();
         if(goToDepth_time.getTime() >= 20)
           action = 1;
@@ -49,9 +49,9 @@ int Task_Gate::execute(){
         ROS_INFO("Vroom Vroom going forwards");
         driveForwards_time.start();
         if(driveForwards_time.getTime() < 20)
-          pm_.controlEffort_set(AXIS_SURGE, 30);
+          pm_.setControlEffort(AXIS_SURGE, 30);
         else{
-          pm_.controlEffort_set(AXIS_SURGE, 90);
+          pm_.setControlEffort(AXIS_SURGE, 90);
           action = 2;
           break;
         }

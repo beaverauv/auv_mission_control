@@ -7,7 +7,6 @@ class Timer{
 
 private:
   double startTime;
-  ros::NodeHandle nh_;
 
 public:
   Timer();

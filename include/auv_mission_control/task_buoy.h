@@ -18,7 +18,7 @@ public:
 private:
   //variables go here;
   Pid_Manager pm_;
-  CameraManager cam_;
+  Camera cam_;
 
   cv::Scalar bottomLowRed = cv::Scalar(109, 0, 97);
   cv::Scalar bottomHighRed = cv::Scalar(123, 95, 204);

@@ -1,4 +1,4 @@
-#include "auv_mission_control/pid_manager.h"
+#include <auv_mission_control/pid_manager.h>
 
 /*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
@@ -21,6 +21,11 @@ void Pid_Manager::kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg){
   killSwitch = kill_msg->data;
 }
 
+void Pid_Manager::imu_callBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
+  imu_ = *imu_msg;
+}
+
+
 
 Pid_Manager::Pid_Manager(){
 }
@@ -30,49 +35,52 @@ Pid_Manager::Pid_Manager(ros::NodeHandle* nh) : nh_(*nh){
 
   //zero all sensors
 
-//   ros::Subscriber vision_plant_sub = nh->subscribe("/pid_plantState_vision", 100, visionPlant_callback);
-// //  ros::Subscriber imu_plant_sub = nh->subscribe("pid_plantState_IMU", 100, IMU_callback);
+//   ros::Subscriber vision_plant_sub = nh_.subscribe("/pid_plantState_vision", 100, visionPlant_callback);
+// //  ros::Subscriber imu_plant_sub = nh_.subscribe("pid_plantState_IMU", 100, IMU_callback);
 
 //
 //
-  // ros::Subscriber depth_plant_sub = nh->subscribe("/pid_plantState_depth", 100, depth_plant_callBack);
+  // ros::Subscriber depth_plant_sub = nh_.subscribe("/pid_plantState_depth", 100, depth_plant_callBack);
 
-  ros::Subscriber depth_sub = nh->subscribe("/depth", 100, &Pid_Manager::depth_callBack, this);
+  ros::Subscriber depth_sub = nh_.subscribe("/depth", 100, &Pid_Manager::depth_callBack, this);
+
+  ros::Subscriber imu_sub = nh_.subscribe("/imu/imu", 100, &Pid_Manager::imu_callBack, this);
+
   //setpoint publishers
-   setpoint_surge_pub = nh->advertise<std_msgs::Float64>("setpoint_surge", 10);
-   setpoint_sway_pub = nh->advertise<std_msgs::Float64>("setpoint_sway", 10);
-   setpoint_heave_pub = nh->advertise<std_msgs::Float64>("setpoint_heave", 10);
-   setpoint_roll_pub = nh->advertise<std_msgs::Float64>("setpoint_roll", 10);
-   setpoint_pitch_pub = nh->advertise<std_msgs::Float64>("setpoint_pitch", 10);
-   setpoint_yaw_pub = nh->advertise<std_msgs::Float64>("setpoint_yaw", 10);
+   setpoint_surge_pub = nh_.advertise<std_msgs::Float64>("setpoint_surge", 10);
+   setpoint_sway_pub = nh_.advertise<std_msgs::Float64>("setpoint_sway", 10);
+   setpoint_heave_pub = nh_.advertise<std_msgs::Float64>("setpoint_heave", 10);
+   setpoint_roll_pub = nh_.advertise<std_msgs::Float64>("setpoint_roll", 10);
+   setpoint_pitch_pub = nh_.advertise<std_msgs::Float64>("setpoint_pitch", 10);
+   setpoint_yaw_pub = nh_.advertise<std_msgs::Float64>("setpoint_yaw", 10);
 
   //plant state publishers
-   state_surge_pub = nh->advertise<std_msgs::Float64>("state_surge", 10);
-   state_sway_pub = nh->advertise<std_msgs::Float64>("state_sway", 10);
-   state_heave_pub = nh->advertise<std_msgs::Float64>("state_heave", 10);
-   state_roll_pub = nh->advertise<std_msgs::Float64>("state_roll", 10);
-   state_pitch_pub = nh->advertise<std_msgs::Float64>("state_pitch", 10);
-   state_yaw_pub = nh->advertise<std_msgs::Float64>("state_yaw", 10);
+   state_surge_pub = nh_.advertise<std_msgs::Float64>("state_surge", 10);
+   state_sway_pub = nh_.advertise<std_msgs::Float64>("state_sway", 10);
+   state_heave_pub = nh_.advertise<std_msgs::Float64>("state_heave", 10);
+   state_roll_pub = nh_.advertise<std_msgs::Float64>("state_roll", 10);
+   state_pitch_pub = nh_.advertise<std_msgs::Float64>("state_pitch", 10);
+   state_yaw_pub = nh_.advertise<std_msgs::Float64>("state_yaw", 10);
 
-   control_effort_pub = nh->advertise<std_msgs::Float64>("controlEffort_surge", 10);
+   control_effort_pub = nh_.advertise<std_msgs::Float64>("controlEffort_surge", 10);
 
-   surge_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_surge", 10);
-   sway_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_sway", 10);
-   heave_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_heave", 10);
-   yaw_enable_pub = nh->advertise<std_msgs::Bool>("pidEnable_yaw", 10);
+   surge_enable_pub = nh_.advertise<std_msgs::Bool>("pidEnable_surge", 10);
+   sway_enable_pub = nh_.advertise<std_msgs::Bool>("pidEnable_sway", 10);
+   heave_enable_pub = nh_.advertise<std_msgs::Bool>("pidEnable_heave", 10);
+   yaw_enable_pub = nh_.advertise<std_msgs::Bool>("pidEnable_yaw", 10);
 
-  this->setpoint_set(AXIS_SURGE, INPUT_IMU_POS, 0.0);
-  this->setpoint_set(AXIS_SWAY, INPUT_IMU_POS, 0.0);
-  this->setpoint_set(AXIS_HEAVE, INPUT_DEPTH, 0.0);
+  this->setSetPoint(AXIS_SURGE, INPUT_IMU_POS, 0.0);
+  this->setSetPoint(AXIS_SWAY, INPUT_IMU_POS, 0.0);
+  this->setSetPoint(AXIS_HEAVE, INPUT_DEPTH, 0.0);
 
-  this->setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0.0);
+  this->setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0.0);
 }
 
 Pid_Manager::~Pid_Manager(){
 
 }
 
-void Pid_Manager::setpoint_set(int axis, int input_type, double value){
+void Pid_Manager::setSetPoint(int axis, int input_type, double value){
   if (axis == AXIS_SURGE){
     std_msgs::Float64 setpoint_surge;
 
@@ -234,14 +242,6 @@ double Pid_Manager::getDepth(){
 
 
 
-void Pid_Manager::setCamera(int camera){ //OLIVER FIX THIS
-  if (camera == INPUT_CAM_FRONT)
-    bool x = true;//do something;
-  else
-    bool x = false;
-    //do something else;
-}
-
 void Pid_Manager::pidEnable(int axis, bool enabled){
   std_msgs::Bool enablePid;
   enablePid.data = enabled;
@@ -264,7 +264,7 @@ void Pid_Manager::pidEnable(int axis, bool enabled){
 
 }
 
-void Pid_Manager::controlEffort_set(int axis, int speed){
+void Pid_Manager::setControlEffort(int axis, int speed){
   std_msgs::Float64 effortMsg;
   effortMsg.data = speed;
 

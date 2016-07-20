@@ -15,10 +15,10 @@ Task_Gate_Vision::~Task_Gate_Vision(){
 
 int Task_Gate_Vision::execute(){
 
-  pm_.setCamera(INPUT_CAM_FRONT);
+  // pm_.setCamera(INPUT_CAM_FRONT);
   pm_.zero(AXIS_YAW);
-  pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
-  pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+  pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
+  pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
 
   cv::namedWindow("Original", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("controlGate", CV_WINDOW_AUTOSIZE);
@@ -35,7 +35,7 @@ int Task_Gate_Vision::execute(){
 
   ros::spinOnce();
 
-  pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
+  pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
   cam_.update();
 
@@ -91,9 +91,9 @@ int Task_Gate_Vision::execute(){
       depthTimer.start();
 
       if(depthTimer.getTime() <= 8){
-        pm_.setpoint_set(AXIS_YAW, INPUT_CAM_FRONT, 320);
-        pm_.setpoint_set(AXIS_SWAY, INPUT_CAM_FRONT, 320);
-        pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setSetPoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
+        pm_.setSetPoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
+        pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         ROS_INFO("Going to depth for %f more seconds. At depth of %f", (8.0 - depthTimer.getTime()), pm_.getDepth());
       }
 
@@ -115,10 +115,10 @@ int Task_Gate_Vision::execute(){
       forwardTimer.start();
       if(forwardTimer.getTime() <= 10){
         ROS_INFO("Moving forward with vision for %f more seconds", (10 - forwardTimer.getTime()) );
-        pm_.setpoint_set(AXIS_YAW, INPUT_CAM_FRONT, 320);
-        pm_.setpoint_set(AXIS_SWAY, INPUT_CAM_FRONT, 320);
-        pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
-        pm_.controlEffort_set(AXIS_SURGE, 25);//manually set to drive forward at speed 25
+        pm_.setSetPoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
+        pm_.setSetPoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
+        pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setControlEffort(AXIS_SURGE, 25);//manually set to drive forward at speed 25
       }
       else{
         ROS_INFO("Done using vision, dead reackoning rest of way");
@@ -137,18 +137,18 @@ int Task_Gate_Vision::execute(){
       pm_.pidEnable(AXIS_YAW, true);
       pm_.pidEnable(AXIS_HEAVE, true);
       pm_.pidEnable(AXIS_SURGE, false);
-      pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+      pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
 
       if(!objectFound){//if ya don't see anything on the floor, just go forward
         ROS_INFO("No path marker found");
-        pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.controlEffort_set(AXIS_SURGE, 25);
+        pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setControlEffort(AXIS_SURGE, 25);
       }
       else{
         ROS_INFO("Bottom path marker found. I'm chasing it. Vroom.");
         pm_.pidEnable(AXIS_SURGE, true);
-        pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setpoint_set(AXIS_SURGE, INPUT_CAM_BTM, 240);
+        pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setSetPoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
         if(fabs(posYdouble - setpoint_surge) <= 20){
           finalTimer.start();
           if(finalTimer.getTime() >= 3){

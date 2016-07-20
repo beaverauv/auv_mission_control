@@ -14,7 +14,7 @@ int main(int argc, char **argv){
 
 bool killSwitch = 0;
 bool startSwitch;
-int currentState = 0; //init
+int currentState = 24; //init
 double timeSinceStart;
 ros::init(argc, argv, "state_machine");
 ros::NodeHandle nh;
@@ -66,6 +66,11 @@ ROS_ERROR("here");
 
       case 9:{ //kill
         //stop thrusters (in resource file)
+      }
+
+      case 24: { //test
+        pidtest test(&pm);
+        test.execute();
       }
 
       default:
