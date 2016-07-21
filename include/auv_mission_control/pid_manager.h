@@ -52,6 +52,9 @@ private:
   double plant_yaw;
   double depth;
 
+  double yawZeroValue;
+  double currentYaw;
+
   ros::NodeHandle nh_;
 
 
@@ -84,6 +87,7 @@ private:
 
   ros::Publisher control_effort_pub;
 
+
   bool startSwitch;
   bool killSwitch;
   bool timeout;
@@ -106,7 +110,8 @@ public:
 
   ~Pid_Manager();
 
-
+  void yaw_callBack(const std_msgs::Float64::ConstPtr& yaw_msg);
+  void setCamera(int camera); //choose which camera is in use
   void pidInit_all();
   void pidEnable(int axis, bool enabled);
   void taskDelay(int seconds);
@@ -116,7 +121,6 @@ public:
   void setControlEffort(int axis, int speed); //manually set controlEffort, must disable PID first
   void setSetPoint(int axis, int input_type, double value);
   void setPlantState(int axis, double plantValue);
-
 
   void getPlantState(int axis);
   double getDepth();
@@ -128,6 +132,7 @@ public:
   void start_callBack(const std_msgs::Bool::ConstPtr& start_msg);
   void kill_callBack(const std_msgs::Bool::ConstPtr& kill_msg);
   void imu_callBack(const sensor_msgs::Imu::ConstPtr& imu_msg);
+
 
 
 };

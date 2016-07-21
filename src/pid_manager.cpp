@@ -13,6 +13,10 @@ void Pid_Manager::depth_callBack(const std_msgs::Float64::ConstPtr& depth_msg){
   depth = depth_msg->data;
 }
 
+void Pid_Manager::yaw_callBack(const std_msgs::Float64::ConstPtr& yaw_msg){
+  currentYaw = yaw_msg->data;
+}
+
 void Pid_Manager::start_callBack(const std_msgs::Bool::ConstPtr& start_msg){
   startSwitch = start_msg->data;
 }
@@ -46,6 +50,7 @@ Pid_Manager::Pid_Manager(ros::NodeHandle* nh) : nh_(*nh){
 
   ros::Subscriber imu_sub = nh_.subscribe("/imu/imu", 100, &Pid_Manager::imu_callBack, this);
 
+  ros::Subscriber yaw_sub = nh_.subscribe("plantState-yaw", 10, &Pid_Manager::yaw_callBack, this);
   //setpoint publishers
    setpoint_surge_pub = nh_.advertise<std_msgs::Float64>("setpoint_surge", 10);
    setpoint_sway_pub = nh_.advertise<std_msgs::Float64>("setpoint_sway", 10);
@@ -165,24 +170,41 @@ void Pid_Manager::setSetPoint(int axis, int input_type, double value){
     std_msgs::Float64 setpoint_yaw;
 
     if (input_type == INPUT_IMU_POS){
+      double publishData;
+
       parameters_yaw.kp = 0.2;
       parameters_yaw.kd = 0.1;
       parameters_yaw.ki = 0.1;
-      //set tuning for surge axis on imu position
-      //subscribe to this as plant state
-      //publish setpoint
+      publishData = value + yawZeroValue; //compensates for 0 values
+
+      if(publishData > 180){ //changes so always correctly between 180 and -180
+        double difference = 180 - publishData;
+        publishData = -180 - difference;
+      }
+
+      if(publishData < -180){//same
+        double difference = 180 + publishData;
+        publishData = 180 + difference;
+      }
+      setpoint_yaw.data = publishData;
     }
+
+
 
     else if (input_type == INPUT_CAM_FRONT){
       parameters_yaw.kp = 0.038;
       parameters_yaw.kd = 0.01;
       parameters_yaw.ki = 0.028;
+      setpoint_yaw.data = value;
+
       //set tuning for front CAM_FRONT, set as plant state
     }
     else if (input_type == INPUT_CAM_BTM){
       parameters_yaw.kp = 0.5;
       parameters_yaw.kd = 1;
       parameters_yaw.ki = 1;
+      setpoint_yaw.data = value;
+
       //same deal
     }
     else{
@@ -192,7 +214,6 @@ void Pid_Manager::setSetPoint(int axis, int input_type, double value){
 
     this->updateParameters(AXIS_YAW);
 
-    setpoint_yaw.data = value;
     setpoint_yaw_pub.publish(setpoint_yaw);
   }
 
@@ -220,9 +241,6 @@ void Pid_Manager::setPlantState(int axis, double plantValue){
     state_yaw_pub.publish(msg);
 }
 
-void Pid_Manager::zero(int sensor){
-
-}
 
 bool Pid_Manager::getKill(){
   return killSwitch;
@@ -369,5 +387,16 @@ void Pid_Manager::updateParameters(int axis){
 
     ros::service::call("/yaw_pid/set_parameters", srv_req, srv_resp);
 
+  }
+}//end update parameters
+
+
+void Pid_Manager::zero(int axis){
+  if (axis == AXIS_YAW){
+    yawZeroValue = currentYaw;
+  }
+
+  else{
+    ROS_ERROR("The specified axis does not exist");
   }
 }
