@@ -28,6 +28,10 @@ private:
   Timer depthTimer;
   Timer forwardTimer;
   Timer finalTimer;//names and stuff
+  int depthCounter = 0;
+  int goCounter = 0;
+  int finalCounter = 0;
+
   double surgeSpeed = 25;
   double previousDepth;
   double distanceFromEdge_left;

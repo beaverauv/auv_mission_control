@@ -88,8 +88,10 @@ int Task_Gate_Vision::execute(){
       pm_.pidEnable(AXIS_YAW, true);
       pm_.pidEnable(AXIS_HEAVE, true);
       pm_.pidEnable(AXIS_SURGE, false);
-      depthTimer.start();
-
+      if(depthCounter < 0){
+        depthTimer.start();
+        depthCounter++;
+      }
       if(depthTimer.getTime() <= 8){
         pm_.setSetPoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
         pm_.setSetPoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
@@ -112,7 +114,10 @@ int Task_Gate_Vision::execute(){
       pm_.pidEnable(AXIS_HEAVE, true);
       pm_.pidEnable(AXIS_SURGE, false);
 
-      forwardTimer.start();
+      if(goCounter < 1){
+        forwardTimer.start() ;
+        goCounter++;
+      }
       if(forwardTimer.getTime() <= 10){
         ROS_INFO("Moving forward with vision for %f more seconds", (10 - forwardTimer.getTime()) );
         pm_.setSetPoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
@@ -150,7 +155,10 @@ int Task_Gate_Vision::execute(){
         pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetPoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
         if(fabs(posYdouble - setpoint_surge) <= 20){
+          if(finalCounter < 1){
           finalTimer.start();
+          finalCounter += 102;
+        }
           if(finalTimer.getTime() >= 3){
             ROS_INFO("All done. Hopefully I'm in the right place. Sorry if I'm not, I understand that could be highly frustrating. Congrats on the good work if I am. Really well done, champ.");//What's a robot without an attitude?
             action = 3;
