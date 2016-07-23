@@ -39,7 +39,9 @@ private:
 
   int action = 0;
   Timer goToDepth_time;
+  int depthCounter = 0;
   Timer driveForwards_time;
+  int forwardCounter = 0;
   double surgeSpeed = 25;
   double previousDepth;
   double distanceFromEdge_left;

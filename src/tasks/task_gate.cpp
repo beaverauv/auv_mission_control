@@ -25,20 +25,24 @@ int Task_Gate::execute(){
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
   ros::spinOnce();
 
-    if(pm_.getKill()){
+    if(pm_.getKill()){ //checks for kill switch, enters kill state if activated
       return kill;
     }
-    if(getTimeout()){
+    if(getTimeout()){ //checks 15 min timer, if activated signals to enter resurface state
       return timeout;
     }
 
     switch(action){
-      case 0: {
+      case 0: { //first step, go to depth
         ROS_INFO("Vroom Vroom going do depth");
-        pm_.setZero(AXIS_YAW);
+        if(depthCounter < 1){
+          pm_.setZero(AXIS_YAW);
+          goToDepth_time.start();
+        }
+
+        depthCounter ++;
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
-        goToDepth_time.start();
         if(goToDepth_time.getTime() >= 20)
           action = 1;
           ROS_INFO("Done going to depth. At depth %f", pm_.getDepth());
@@ -47,7 +51,9 @@ int Task_Gate::execute(){
 
       case 1: {
         ROS_INFO("Vroom Vroom going forwards");
-        driveForwards_time.start();
+        if (forwardCounter < 1)
+          driveForwards_time.start();
+        forwardCounter ++;
         if(driveForwards_time.getTime() < 20)
           pm_.setControlEffort(AXIS_SURGE, 30);
         else{
@@ -56,7 +62,7 @@ int Task_Gate::execute(){
           break;
         }
 
-        case 2:
+        case 2: //return succeeded, kill task
           return succeeded;
           break;
 
