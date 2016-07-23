@@ -1,7 +1,7 @@
 #ifndef TASK_BUOY_H
 #define TASK_BUOY_H
 
-#include "auv_mission_control/pid_manager.h"
+#include "auv_mission_control/PidManager.h"
 #include <auv_mission_control/Camera.h>
 #include "auv_mission_control/state_machine.h"
 #include "outcomes.h"
@@ -10,14 +10,14 @@
 class Task_Buoy{
 public:
   Task_Buoy();
-  Task_Buoy(Pid_Manager* pm, Camera* cam);
+  Task_Buoy(PidManager* pm, Camera* cam);
   ~Task_Buoy();
 
   int execute();
 
 private:
   //variables go here;
-  Pid_Manager pm_;
+  PidManager pm_;
   Camera cam_;
 
   cv::Scalar bottomLowRed = cv::Scalar(109, 0, 97);

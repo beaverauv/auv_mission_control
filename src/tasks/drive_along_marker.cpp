@@ -5,7 +5,7 @@ Follow_Marker::Follow_Marker(){
 }
 
 
-Follow_Marker::Follow_Marker(Pid_Manager* pm, CameraManager* cam) : pm_(*pm), cam_(*cam){
+Follow_Marker::Follow_Marker(PidManager* pm, CameraManager* cam) : pm_(*pm), cam_(*cam){
 }
 
 Follow_Marker::~Follow_Marker(){
@@ -15,12 +15,12 @@ Follow_Marker::~Follow_Marker(){
 int Follow_Marker::execute(){
 
   pm_.setCamera(INPUT_CAM_BTM);
-  pm_.pidEnable(AXIS_SURGE, false);
-  pm_.pidEnable(AXIS_SWAY, true);
-  pm_.pidEnable(AXIS_YAW, true);
-  pm_.pidEnable(AXIS_HEAVE, true);
+  pm_.setPidEnabled(AXIS_SURGE, false);
+  pm_.setPidEnabled(AXIS_SWAY, true);
+  pm_.setPidEnabled(AXIS_YAW, true);
+  pm_.setPidEnabled(AXIS_HEAVE, true);
 
-  pm_.zero(AXIS_YAW);
+  pm_.setZero(AXIS_YAW);
   pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
 
   switch(action){

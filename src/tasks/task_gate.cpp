@@ -1,5 +1,5 @@
 #include "auv_mission_control/task_gate.h"
-#include "auv_mission_control/pid_manager.h"
+#include "auv_mission_control/PidManager.h"
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -10,7 +10,7 @@ Task_Gate::Task_Gate(){
 }
 
 
-Task_Gate::Task_Gate(Pid_Manager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+Task_Gate::Task_Gate(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
   ROS_ERROR("TASK GATE INIT");
 }
 
@@ -20,7 +20,7 @@ Task_Gate::~Task_Gate(){
 
 int Task_Gate::execute(){
 
-  //pm_.pidEnable("ALL", true);//turns on all 6 pid controllers
+  //pm_.setPidEnabled("ALL", true);//turns on all 6 pid controllers
 
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
   ros::spinOnce();
@@ -35,9 +35,9 @@ int Task_Gate::execute(){
     switch(action){
       case 0: {
         ROS_INFO("Vroom Vroom going do depth");
-        pm_.zero(AXIS_YAW);
-        pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setZero(AXIS_YAW);
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         goToDepth_time.start();
         if(goToDepth_time.getTime() >= 20)
           action = 1;

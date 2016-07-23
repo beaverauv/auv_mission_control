@@ -2,7 +2,7 @@ Task_Buoy::Task_Buoy(){
 }
 
 
-Task_Buoy::Task_Buoy(Pid_Manager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+Task_Buoy::Task_Buoy(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
         ROS_ERROR("TASK GATE INIT");
 }
 
@@ -12,10 +12,10 @@ Task_Buoy::~Task_Buoy(){
 
 
 int Task_Buoy::execute(){
-        //pm_.pidEnable("ALL", true);//turns on all 6 pid controllers
+        //pm_.setPidEnabled("ALL", true);//turns on all 6 pid controllers
 
         pm_.setCamera(INPUT_CAM_FRONT);
-        pm_.zero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
         pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         // pm_.taskDelay(5);
@@ -157,11 +157,11 @@ int Task_Buoy::execute(){
 
 
                         pm_.setCamera(INPUT_CAM_BTM);
-                        pm_.pidEnable(AXIS_SWAY, false);
-                        pm_.pidEnable(AXIS_SURGE, false);//disable PID
+                        pm_.setPidEnabled(AXIS_SWAY, false);
+                        pm_.setPidEnabled(AXIS_SURGE, false);//disable PID
 
                         if (true) {//check if there is a centroid tracked.... if there is, go to. It will be path marker
-                                pm_.pidEnable(AXIS_SURGE, true);
+                                pm_.setPidEnabled(AXIS_SURGE, true);
                                 pm_.setpoint_set(AXIS_SURGE, INPUT_CAM_BTM, 240); //set to go straight until centroid is in middle of bottom cam
                                 if(fabs(plantState_surge - setpoint_surge) < 10) { //if it's pretty close to centered
                                         sleep(5); //give it some time to finish up

@@ -20,7 +20,7 @@ ros::init(argc, argv, "state_machine");
 ros::NodeHandle nh;
 
 
-Pid_Manager pm(&nh);
+PidManager pm(&nh);
 Camera cam;
 ROS_ERROR("here");
   while(ros::ok){ //careful

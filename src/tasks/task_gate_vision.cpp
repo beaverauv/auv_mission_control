@@ -6,7 +6,7 @@ Task_Gate_Vision::Task_Gate_Vision(){
 }
 
 
-Task_Gate_Vision::Task_Gate_Vision(Pid_Manager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+Task_Gate_Vision::Task_Gate_Vision(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
 }
 
 Task_Gate_Vision::~Task_Gate_Vision(){
@@ -16,9 +16,9 @@ Task_Gate_Vision::~Task_Gate_Vision(){
 int Task_Gate_Vision::execute(){
 
   // pm_.setCamera(INPUT_CAM_FRONT);
-  pm_.zero(AXIS_YAW);
-  pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
-  pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+  pm_.setZero(AXIS_YAW);
+  pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+  pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
 
   cv::namedWindow("Original", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("controlGate", CV_WINDOW_AUTOSIZE);
@@ -35,7 +35,7 @@ int Task_Gate_Vision::execute(){
 
   ros::spinOnce();
 
-  pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
+  pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
   cam_.update();
 
@@ -84,16 +84,16 @@ int Task_Gate_Vision::execute(){
   switch(action){
 
     case 0: { //Go To Depth
-      pm_.pidEnable(AXIS_SWAY, true);
-      pm_.pidEnable(AXIS_YAW, true);
-      pm_.pidEnable(AXIS_HEAVE, true);
-      pm_.pidEnable(AXIS_SURGE, false);
+      pm_.setPidEnabled(AXIS_SWAY, true);
+      pm_.setPidEnabled(AXIS_YAW, true);
+      pm_.setPidEnabled(AXIS_HEAVE, true);
+      pm_.setPidEnabled(AXIS_SURGE, false);
       depthTimer.start();
 
       if(depthTimer.getTime() <= 8){
-        pm_.setSetPoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
-        pm_.setSetPoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
-        pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
+        pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         ROS_INFO("Going to depth for %f more seconds. At depth of %f", (8.0 - depthTimer.getTime()), pm_.getDepth());
       }
 
@@ -107,17 +107,17 @@ int Task_Gate_Vision::execute(){
 
     case 1:{//start going forward, use vision for 10 sec
       camInUse = INPUT_CAM_FRONT;
-      pm_.pidEnable(AXIS_SWAY, true);
-      pm_.pidEnable(AXIS_YAW, true);
-      pm_.pidEnable(AXIS_HEAVE, true);
-      pm_.pidEnable(AXIS_SURGE, false);
+      pm_.setPidEnabled(AXIS_SWAY, true);
+      pm_.setPidEnabled(AXIS_YAW, true);
+      pm_.setPidEnabled(AXIS_HEAVE, true);
+      pm_.setPidEnabled(AXIS_SURGE, false);
 
       forwardTimer.start();
       if(forwardTimer.getTime() <= 10){
         ROS_INFO("Moving forward with vision for %f more seconds", (10 - forwardTimer.getTime()) );
-        pm_.setSetPoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
-        pm_.setSetPoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
-        pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
+        pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         pm_.setControlEffort(AXIS_SURGE, 25);//manually set to drive forward at speed 25
       }
       else{
@@ -128,27 +128,27 @@ int Task_Gate_Vision::execute(){
     }
 
     case 2:{ //dead reckon rest of way, looking for bottom
-      if(counter < 1){ //zero the yaw, but only once.
-        pm_.zero(IMU_YAW);
+      if(counter < 1){ //setZero the yaw, but only once.
+        pm_.setZero(IMU_YAW);
       }
 
       camInUse = INPUT_CAM_BTM;
-      pm_.pidEnable(AXIS_SWAY, false);
-      pm_.pidEnable(AXIS_YAW, true);
-      pm_.pidEnable(AXIS_HEAVE, true);
-      pm_.pidEnable(AXIS_SURGE, false);
-      pm_.setSetPoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+      pm_.setPidEnabled(AXIS_SWAY, false);
+      pm_.setPidEnabled(AXIS_YAW, true);
+      pm_.setPidEnabled(AXIS_HEAVE, true);
+      pm_.setPidEnabled(AXIS_SURGE, false);
+      pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
 
       if(!objectFound){//if ya don't see anything on the floor, just go forward
         ROS_INFO("No path marker found");
-        pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setControlEffort(AXIS_SURGE, 25);
       }
       else{
         ROS_INFO("Bottom path marker found. I'm chasing it. Vroom.");
-        pm_.pidEnable(AXIS_SURGE, true);
-        pm_.setSetPoint(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setSetPoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
+        pm_.setPidEnabled(AXIS_SURGE, true);
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
         if(fabs(posYdouble - setpoint_surge) <= 20){
           finalTimer.start();
           if(finalTimer.getTime() >= 3){
@@ -160,7 +160,7 @@ int Task_Gate_Vision::execute(){
         }
       }
 
-      counter++; //please don't zero the yaw again, thanks.
+      counter++; //please don't setZero the yaw again, thanks.
     }
 
     case 3:

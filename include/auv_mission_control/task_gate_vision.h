@@ -1,7 +1,7 @@
 #ifndef TASK_GATE_VISION_H
 #define TASK_GATE_VISION_H
 
-#include "auv_mission_control/pid_manager.h"
+#include "auv_mission_control/PidManager.h"
 #include <auv_mission_control/Camera.h>
 #include "auv_mission_control/state_machine.h"
 #include "outcomes.h"
@@ -16,14 +16,14 @@ int counter = 0;
 class Task_Gate_Vision{
 public:
   Task_Gate_Vision();
-  Task_Gate_Vision(Pid_Manager* pm, Camera* cam);
+  Task_Gate_Vision(PidManager* pm, Camera* cam);
   ~Task_Gate_Vision();
 
   int execute();
 
 private:
   //variables go here;
-  Pid_Manager pm_;
+  PidManager pm_;
   Camera cam_;
   Timer depthTimer;
   Timer forwardTimer;
