@@ -201,10 +201,12 @@ ${OpenCV_INCLUDE_DIRS}
 add_library(state_machine
 	src/PidManager.cpp
 	src/Camera.cpp
-	src/tasks/task_gate.cpp
-  src/single_use_timer.cpp
-  src/tasks/task_gate_vision.cpp
-  src/pidtest.cpp
+	src/tasks/TaskGate.cpp
+  src/tasks/TaskGateVision.cpp
+  src/tasks/TaskBuoy.cpp
+  src/tasks/TaskMarker.cpp
+  src/tasks/TaskKill.cpp
+  src/Timer.cpp
 )
 
 target_link_libraries(state_machine ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})
@@ -213,7 +215,7 @@ add_dependencies(state_machine
   ${catkin_EXPORTED_TARGETS}
 )
 
-add_executable(state_machine_cont src/state_machine.cpp)
+add_executable(state_machine_cont src/StateMachine.cpp)
 
 target_link_libraries(state_machine_cont ${catkin_LIBRARIES} state_machine  ${OpenCV_LIBRARIES})
 add_dependencies(state_machine_cont

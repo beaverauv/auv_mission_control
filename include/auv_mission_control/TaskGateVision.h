@@ -1,23 +1,22 @@
-#ifndef TASK_GATE_VISION_H
-#define TASK_GATE_VISION_H
+#ifndef TaskGateVision_H
+#define TaskGateVision_H
 
-#include "auv_mission_control/PidManager.h"
-#include <auv_mission_control/Camera.h>
-#include "auv_mission_control/state_machine.h"
-#include "outcomes.h"
+#include <cmath>
 #include <unistd.h>
 
+#include <opencv2/imgproc/imgproc.hpp>
 
-int action = 0;
-bool objectFound;
+#include <auv_mission_control/PidManager.h>
+#include <auv_mission_control/Camera.h>
+#include <auv_mission_control/StateMachine.h>
 
-int counter = 0;
 
-class Task_Gate_Vision{
+
+class TaskGateVision{
 public:
-  Task_Gate_Vision();
-  Task_Gate_Vision(PidManager* pm, Camera* cam);
-  ~Task_Gate_Vision();
+  TaskGateVision();
+  TaskGateVision(PidManager* pm, Camera* cam);
+  ~TaskGateVision();
 
   int execute();
 
@@ -31,6 +30,11 @@ private:
   int depthCounter = 0;
   int goCounter = 0;
   int finalCounter = 0;
+
+  int action = 0;
+  bool objectFound;
+
+  int counter = 0;
 
   double surgeSpeed = 25;
   double previousDepth;

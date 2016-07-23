@@ -1,21 +1,21 @@
 #ifndef PidManager_H
 #define PidManager_H
+
 #include <string>
+#include <sstream>
+
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Bool.h>
-#include <sstream>
+#include <sensor_msgs/Imu.h>
+#include <dynamic_reconfigure/DoubleParameter.h>
+#include <dynamic_reconfigure/Reconfigure.h>
+#include <dynamic_reconfigure/Config.h>
+
 #include <auv_motor_control/pid_enable.h>
 #include <auv_mission_control/axes.h>
-#include <dynamic_reconfigure/DoubleParameter.h>
-#include <dynamic_reconfigure/Reconfigure.h>
-#include <dynamic_reconfigure/Config.h>
-#include <auv_mission_control/single_use_timer.h>
-#include <dynamic_reconfigure/DoubleParameter.h>
-#include <dynamic_reconfigure/Reconfigure.h>
-#include <dynamic_reconfigure/Config.h>
-#include <sensor_msgs/Imu.h>
+#include <auv_mission_control/Timer.h>
 
 
 
