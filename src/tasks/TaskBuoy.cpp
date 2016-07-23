@@ -1,23 +1,24 @@
-Task_Buoy::Task_Buoy(){
+#include <auv_mission_control/TaskBuoy.h>
+
+TaskBuoy::TaskBuoy(){
 }
 
 
-Task_Buoy::Task_Buoy(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+TaskBuoy::TaskBuoy(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
         ROS_ERROR("TASK GATE INIT");
 }
 
-Task_Buoy::~Task_Buoy(){
+TaskBuoy::~TaskBuoy(){
 
 }
 
 
-int Task_Buoy::execute(){
+int TaskBuoy::execute(){
         //pm_.setPidEnabled("ALL", true);//turns on all 6 pid controllers
 
-        pm_.setCamera(INPUT_CAM_FRONT);
         pm_.setZero(AXIS_YAW);
-        pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setpoint_set(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         // pm_.taskDelay(5);
         cv::namedWindow("original", CV_WINDOW_AUTOSIZE); //create a window with the name "OpenCV_Window"
         cv::namedWindow("Control", CV_WINDOW_AUTOSIZE);
@@ -34,10 +35,10 @@ int Task_Buoy::execute(){
 
                 ros::spinOnce();
 
-                pm_.setpoint_set(AXIS_YAW, INPUT_IMU_POS, 0);
+                pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
-                cam_.updateCameras();
-                cv::Mat original = cam_.getFrontCamera();
+                cam_.update();
+                cv::Mat original = cam_.getFront();
 
                 cv::Mat imgHSV = original;
                 cv::Mat imgThresh;
@@ -141,12 +142,12 @@ int Task_Buoy::execute(){
 
 
                         if (fabs(plantState_sway - setpoint_sway) > 40) {//SOME REASONABLE DEADBAND
-                                pm_.controlEffort_set(AXIS_SURGE, 0); //makes it so the robot doesn't try to move forward if the sway and heave are outside of a DEADBAND
+                                pm_.setControlEffort(AXIS_SURGE, 0); //makes it so the robot doesn't try to move forward if the sway and heave are outside of a DEADBAND
 
                         }
 
                         else{
-                                pm_.controlEffort_set(AXIS_SURGE,3ws surgeSpeed); //random number for now, will need to be replaced by testing. Will probably be a percent, but idk
+                                pm_.setControlEffort(AXIS_SURGE, surgeSpeed); //random number for now, will need to be replaced by testing. Will probably be a percent, but idk
                         }
 
 
@@ -156,20 +157,19 @@ int Task_Buoy::execute(){
                 else{ // if out of sight...
 
 
-                        pm_.setCamera(INPUT_CAM_BTM);
                         pm_.setPidEnabled(AXIS_SWAY, false);
                         pm_.setPidEnabled(AXIS_SURGE, false);//disable PID
 
                         if (true) {//check if there is a centroid tracked.... if there is, go to. It will be path marker
                                 pm_.setPidEnabled(AXIS_SURGE, true);
-                                pm_.setpoint_set(AXIS_SURGE, INPUT_CAM_BTM, 240); //set to go straight until centroid is in middle of bottom cam
+                                pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240); //set to go straight until centroid is in middle of bottom cam
                                 if(fabs(plantState_surge - setpoint_surge) < 10) { //if it's pretty close to centered
                                         sleep(5); //give it some time to finish up
                                         return succeeded; //yay
                                 }
                         }
                         else{
-                                pm_.controlEffort_set(30);
+                                pm_.setControlEffort(AXIS_SURGE, 30);
                         }
 
                 }//else

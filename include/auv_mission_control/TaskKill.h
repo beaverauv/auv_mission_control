@@ -1,21 +1,20 @@
-#ifndef PIDTEST
-#define PIDTEST
+#ifndef TASKKILL_H
+#define TASKKILL_H
 
 #include <auv_mission_control/PidManager.h>
 
-class pidtest{
+
+class TaskKill{
 public:
-  pidtest();
-  pidtest(PidManager* pm);
-  ~pidtest();
+  TaskKill();
+  TaskKill(PidManager* pm);
+  ~TaskKill();
 
   int execute();
 
 private:
   //variables go here;
   PidManager pm_;
-
-
 };
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef SINGLE_USE_TIMER_H
-#define SINGLE_USE_TIMER_H
+#ifndef Timer_H
+#define Timer_H
 
 #include "ros/ros.h"
 

@@ -1,24 +1,19 @@
-#include "auv_mission_control/task_gate.h"
-#include "auv_mission_control/PidManager.h"
-#include <iostream>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <cmath>
+#include <auv_mission_control/TaskGate.h>
 
 
-Task_Gate::Task_Gate(){
+TaskGate::TaskGate(){
 }
 
 
-Task_Gate::Task_Gate(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+TaskGate::TaskGate(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
   ROS_ERROR("TASK GATE INIT");
 }
 
-Task_Gate::~Task_Gate(){
+TaskGate::~TaskGate(){
 
 }
 
-int Task_Gate::execute(){
+int TaskGate::execute(){
 
   //pm_.setPidEnabled("ALL", true);//turns on all 6 pid controllers
 
@@ -61,13 +56,12 @@ int Task_Gate::execute(){
           action = 2;
           break;
         }
-
-        case 2: //return succeeded, kill task
-          return succeeded;
-          break;
-
       }
 
+      case 2: {//return succeeded, kill task
+        return succeeded;
+        break;
+      }
 
     }//else
   }//while ros::ok

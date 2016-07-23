@@ -1,0 +1,72 @@
+#ifndef TaskBuoy_H
+#define TaskBuoy_H
+
+#include <unistd.h>
+
+#include <auv_mission_control/PidManager.h>
+#include <auv_mission_control/Camera.h>
+#include <auv_mission_control/StateMachine.h>
+
+class TaskBuoy{
+public:
+  TaskBuoy();
+  TaskBuoy(PidManager* pm, Camera* cam);
+  ~TaskBuoy();
+
+  int execute();
+
+private:
+  //variables go here;
+  PidManager pm_;
+  Camera cam_;
+
+  int ColorSpace = 0;
+
+
+  cv::Scalar bottomLowRed = cv::Scalar(109, 0, 97);
+  cv::Scalar bottomHighRed = cv::Scalar(123, 95, 204);
+
+  cv::Scalar upperLowRed = cv::Scalar(100, 98, 0);
+  cv::Scalar upperHighRed = cv::Scalar(180, 95, 204);
+
+  cv::Scalar bottomLowGreen = cv::Scalar(79, 218, 136);
+  cv::Scalar bottomHighGreen = cv::Scalar(80, 255, 255);
+
+  cv::Scalar upperLowGreen = cv::Scalar(79, 228, 0);
+  cv::Scalar upperHighGreen = cv::Scalar(85, 255, 157);
+
+  cv::Scalar lowYellow = cv::Scalar(0,0,0);
+  cv::Scalar highYellow = cv::Scalar(79, 193, 255);
+
+  int minR = 0; // R_MIN
+  int maxR = 255; // R_MAX
+  int minG = 0; // G_MIN
+  int maxG = 255; // G_MAX
+  int minB = 0; // B_MIN
+  int maxB = 255; // B_MAX
+
+  const int minObjectArea = 20*20; //20x20 blob
+  bool objectFound;
+
+  int action = 0;
+  Timer goToDepth_time;
+  int depthCounter = 0;
+  Timer driveForwards_time;
+  int forwardCounter = 0;
+  double surgeSpeed = 25;
+  double previousDepth;
+  double distanceFromEdge_left;
+  double distanceFromEdge_right;
+  bool outOfSight;
+  double plantState_sway;
+  double plantState_heave;
+  double setpoint_sway;
+  double setpoint_heave;
+  double setpoint_surge;
+  double plantState_surge;
+
+
+
+};
+
+#endif

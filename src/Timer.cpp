@@ -1,4 +1,4 @@
-#include "auv_mission_control/single_use_timer.h"
+#include "auv_mission_control/Timer.h"
 
 Timer::Timer(){
 

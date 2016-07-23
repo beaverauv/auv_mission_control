@@ -1,10 +1,4 @@
-#include "ros/ros.h"
-#include "std_msgs/String.h"
-#include "std_msgs/Float64.h"
-#include <sstream>
-#include "math.h"
-
-#include <auv_mission_control/state_machine.h>
+#include <auv_mission_control/StateMachine.h>
 
 Timer mainTimer;
 bool timerStarted = false;
@@ -49,7 +43,7 @@ ROS_ERROR("here");
       }
       case 2: { //gate
 
-        Task_Gate gate(&pm, &cam);
+        TaskGate gate(&pm, &cam);
         int outcome = gate.execute();
         ROS_INFO("EXECUTING GATE TASK");
         if (outcome == succeeded)

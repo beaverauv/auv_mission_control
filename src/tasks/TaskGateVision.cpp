@@ -1,19 +1,17 @@
-#include "auv_mission_control/task_gate_vision.h"
-#include <opencv2/imgproc/imgproc.hpp>
-#include <cmath>
+#include <auv_mission_control/TaskGateVision.h>
 
-Task_Gate_Vision::Task_Gate_Vision(){
+TaskGateVision::TaskGateVision(){
 }
 
 
-Task_Gate_Vision::Task_Gate_Vision(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+TaskGateVision::TaskGateVision(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
 }
 
-Task_Gate_Vision::~Task_Gate_Vision(){
+TaskGateVision::~TaskGateVision(){
 
 }
 
-int Task_Gate_Vision::execute(){
+int TaskGateVision::execute(){
 
   // pm_.setCamera(INPUT_CAM_FRONT);
   pm_.setZero(AXIS_YAW);
