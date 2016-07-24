@@ -28,43 +28,55 @@ int TaskGateVision::execute(){
         cv::createTrackbar("minB", "controlGate", &minB, 255);
         cv::createTrackbar("maxB", "controlGate", &maxB, 255);
 
-
         while(ros::ok) { // change so it's while keep running, some value that determines whether to keep running
-
-                ros::spinOnce();
 
                 pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
                 cam_.update();
 
-                cv::Mat original;
-
-                if (camInUse == INPUT_CAM_FRONT) {
-                        original = cam_.getFront();
-                }
-                else{
-                        original = cam_.getBottom();
-                }
-//  cv::Mat imgHSV = original;
+                cv::Mat original = cam_.getFront();
+                cv::Mat imgHSV;
                 cv::Mat imgThresh;
 
+                // cv::cvtColor(original,imgHSV,CV_BGR2HSV);
+
                 cv::inRange(original, cv::Scalar(minR, minG, minB), cv::Scalar(maxR, maxG, maxB), imgThresh);
-                cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
-                cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10,10)));
+                cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+                cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
+
+                // ROS_ERROR("4");
 
                 cv::Moments oMoments = cv::moments(imgThresh);
 
                 double posX = oMoments.m10 / oMoments.m00;
                 double posY = oMoments.m01 / oMoments.m00;
+                double dArea = oMoments.m00;
                 double posXcorrected = 640 - (oMoments.m10 / oMoments.m00);
                 double posYcorrected = 480 - (oMoments.m01 / oMoments.m00);
 
-                // minR = 0;
-                // maxR = 0;
-                // minG = 0;
-                // maxG = 0;
-                // minB = 0;
-                // maxB = 0;
+                //ROS_ERROR("%d", ColorSpace);
+
+                cv::circle(original, cv::Point(posX, posY), 6, cv::Scalar(255, 255, 255), -1);
+                cv::circle(original, cv::Point(posX, posY), 7, cv::Scalar(0, 0, 0), 2);
+
+                if (dArea > minObjectArea) {
+                        objectFound = 1;
+                }
+                else {
+                        objectFound = 0;
+                }
+
+                // ROS_ERROR(" Object found? %d Coords(corrected): %f %f ", objectFound, posXcorrected, posYcorrected);
+                ROS_INFO("\033[2J\033[1;1H");
+                ROS_INFO("Located at: %f %f", posX, posY);
+
+                cv::imshow("original", original);
+                cv::imshow("Control", imgThresh);
+
+                if (cv::waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+                {
+                        break;
+                }
 
                 if(pm_.getKill()) {
                         return kill;

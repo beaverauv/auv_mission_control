@@ -46,11 +46,14 @@ ROS_ERROR("here");
         break;
       }
 
+
       case 1: { //gate
+      }
+      case 2: { //gate
 
         ROS_INFO("EXECUTING GATE TASK");
-        TaskBuoy buoy(&pm, &cam);
-        int outcome = buoy.execute();
+        TaskGate gate(&pm, &cam);
+        int outcome = gate.execute();
         ROS_INFO("outcome %d", outcome);
 
         if (outcome == succeeded)
