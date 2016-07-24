@@ -62,10 +62,6 @@ ROS_ERROR("here");
         //stop thrusters (in resource file)
       }
 
-      case 24: { //test
-        pidtest test(&pm);
-        test.execute();
-      }
 
       default:
         break;//NO
