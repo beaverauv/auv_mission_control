@@ -47,7 +47,15 @@ ROS_ERROR("here");
       }
 
 
+<<<<<<< HEAD:src/StateMachine.cpp
       case 1: { //gate
+=======
+      }
+      case 2: { //gate
+
+        TaskGate gate(&pm, &cam);
+        int outcome = gate.execute();
+>>>>>>> aecae700d55f4c671ffd932ac9a8c9c3b7a29d3d:src/StateMachine.cpp
         ROS_INFO("EXECUTING GATE TASK");
         TaskGate gate(&pm, &cam);
         int outcome = gate.execute();

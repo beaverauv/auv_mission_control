@@ -69,7 +69,10 @@ int TaskMarker::execute(){
     }
 
     case 3:{
+<<<<<<< HEAD:src/tasks/TaskMarker.cpp
       break;
+=======
+>>>>>>> aecae700d55f4c671ffd932ac9a8c9c3b7a29d3d:src/tasks/TaskMarker.cpp
     }
   }
 }

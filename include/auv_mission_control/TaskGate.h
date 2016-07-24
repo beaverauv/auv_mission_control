@@ -1,9 +1,16 @@
 #ifndef TaskGate_H
 #define TaskGate_H
 
+<<<<<<< HEAD:include/auv_mission_control/task_gate.h
+#include "auv_mission_control/pid_manager.h"
+#include <auv_mission_control/Camera.h>
+#include "auv_mission_control/state_machine.h"
+#include "outcomes.h"
+=======
 
 #include <iostream>
 #include <cmath>
+>>>>>>> aecae700d55f4c671ffd932ac9a8c9c3b7a29d3d:include/auv_mission_control/TaskGate.h
 #include <unistd.h>
 
 
@@ -17,15 +24,21 @@
 
 class TaskGate{
 public:
+<<<<<<< HEAD:include/auv_mission_control/task_gate.h
+  Task_Gate();
+  Task_Gate(Pid_Manager* pm, Camera* cam);
+  ~Task_Gate();
+=======
   TaskGate();
   TaskGate(PidManager* pm, Camera* cam);
   ~TaskGate();
+>>>>>>> aecae700d55f4c671ffd932ac9a8c9c3b7a29d3d:include/auv_mission_control/TaskGate.h
 
   int execute();
 
 private:
   //variables go here;
-  PidManager pm_;
+  Pid_Manager pm_;
   Camera cam_;
 
   bool startTimer = 0;
@@ -34,7 +47,7 @@ private:
   const int minObjectArea = 20*20; //20x20 blob
   bool objectFound;
 
-  bool killSwitch = 0;
+
 
   int action = 0;
   Timer goToDepth_time;
