@@ -116,7 +116,6 @@ public:
 
   ~PidManager();
 
-
   void taskDelay(int seconds);
   void updateParams(int axis);
 
@@ -137,7 +136,6 @@ public:
   void startCallBack(const std_msgs::Bool::ConstPtr& start_msg);
   void killCallBack(const std_msgs::Bool::ConstPtr& kill_msg);
   void imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg);
-
 
 };
 
