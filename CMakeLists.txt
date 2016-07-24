@@ -223,6 +223,3 @@ add_dependencies(state_machine_cont
   ${catkin_EXPORTED_TARGETS}
 )
 
-add_executable(down_forwards src/down_forwards.cpp)
-target_link_libraries(down_forwards ${catkin_LIBRARIES})
-add_dependencies(down_forwards auv_mission_control_generate_messages_cpp)

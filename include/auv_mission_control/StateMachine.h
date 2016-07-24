@@ -10,7 +10,6 @@
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/TaskGate.h>
 #include <auv_mission_control/Camera.h>
-#include <auv_mission_control/pidtest.h>
 
 #define succeeded 0
 #define timeout 1
