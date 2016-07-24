@@ -21,7 +21,7 @@ private:
   Camera cam_;
 
   int ColorSpace = 0;
-
+  int currentCamera = INPUT_CAM_FRONT;
 
   cv::Scalar bottomLowRed = cv::Scalar(109, 0, 97);
   cv::Scalar bottomHighRed = cv::Scalar(123, 95, 204);
@@ -65,7 +65,10 @@ private:
   double setpoint_surge;
   double plantState_surge;
 
+  double redDepth; //depth of red buoy
 
+  Timer ramRed;
+  int ramRedCounter = 0;
 
 };
 

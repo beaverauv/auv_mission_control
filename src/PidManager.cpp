@@ -15,10 +15,16 @@ void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
 
 void PidManager::startCallBack(const std_msgs::Bool::ConstPtr& start_msg){
   bStartSwitchState_ = start_msg->data;
+  //bStartSwitchState_ = false;
+  subStartHasBeenCalled = true;
+
 }
 
 void PidManager::killCallBack(const std_msgs::Bool::ConstPtr& kill_msg){
+//  ROS_INFO("boop");
   bKillSwitchState_ = kill_msg->data;
+  ROS_INFO("kill_msg->data = %d", kill_msg->data);
+  subKillHasBeenCalled = true;
 }
 
 void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
@@ -42,9 +48,15 @@ PidManager::PidManager(ros::NodeHandle* nh) : nh_(*nh){
 //
   // ros::Subscriber depth_plant_sub = nh_.subscribe("/pid_plantState_depth", 100, depth_plant_callBack);
 
-  ros::Subscriber depth_sub = nh_.subscribe("/depth", 100, &PidManager::depthCallBack, this);
+  bool bStartSwitchState_ = false;
+  bool bKillSwitchState_ = false;
+  bool bTimoutSwitchState_ = false;
 
-  ros::Subscriber imu_sub = nh_.subscribe("/imu/imu", 100, &PidManager::imuCallBack, this);
+
+  subDepth = nh_.subscribe("/depth", 100, &PidManager::depthCallBack, this);
+  subStart = nh_.subscribe("/start", 100, &PidManager::startCallBack, this);
+  subImu = nh_.subscribe("/imu/imu", 100, &PidManager::imuCallBack, this);
+  subKill = nh_.subscribe("/kill", 100, &PidManager::killCallBack, this);
 
   //setpoint publishers
    pubSetpointSurge = nh_.advertise<std_msgs::Float64>("setpoint_surge", 10);
@@ -64,12 +76,15 @@ PidManager::PidManager(ros::NodeHandle* nh) : nh_(*nh){
    pubStatePitch = nh_.advertise<std_msgs::Float64>("state_pitch", 10);
    pubStateYaw = nh_.advertise<std_msgs::Float64>("state_yaw", 10);
 
-   pubControlEffort = nh_.advertise<std_msgs::Float64>("controlEffort_surge", 10);
+   pubEffortSurge = nh_.advertise<std_msgs::Float64>("controlEffort_surge", 10);
+   pubEffortSway = nh_.advertise<std_msgs::Float64>("controlEffort_sway", 10);
+   pubEffortHeave = nh_.advertise<std_msgs::Float64>("controlEffort_heave", 10);
+   pubEffortYaw = nh_.advertise<std_msgs::Float64>("controlEffort_yaw", 10);
 
-   pubEnableSurge = nh_.advertise<std_msgs::Bool>("setPidEnabled_surge", 10);
-   pubEnableSway = nh_.advertise<std_msgs::Bool>("setPidEnabled_sway", 10);
-   pubEnableHeave = nh_.advertise<std_msgs::Bool>("setPidEnabled_heave", 10);
-   pubEnableYaw = nh_.advertise<std_msgs::Bool>("setPidEnabled_yaw", 10);
+   pubEnableSurge = nh_.advertise<std_msgs::Float64>("setPidEnabled_surge", 10);
+   pubEnableSway = nh_.advertise<std_msgs::Float64>("setPidEnabled_sway", 10);
+   pubEnableHeave = nh_.advertise<std_msgs::Float64>("setPidEnabled_heave", 10);
+   pubEnableYaw = nh_.advertise<std_msgs::Float64>("setPidEnabled_yaw", 10);
 
   this->setSetpoint(AXIS_SURGE, INPUT_IMU_POS, 0.0);
   this->setSetpoint(AXIS_SWAY, INPUT_IMU_POS, 0.0);
@@ -227,11 +242,25 @@ void PidManager::setZero(int sensor){
 }
 
 bool PidManager::getKill(){
-  return bKillSwitchState_;
+  ROS_INFO("called");
+  if(!subKillHasBeenCalled){
+    return false;
+    ROS_INFO("boop");
+  }
+  else{
+    ROS_INFO("KILL IT! %d", bKillSwitchState_);
+    return bKillSwitchState_;
+  }
+
 }
 
 bool PidManager::getStart(){
-  return bStartSwitchState_;
+  if (!subStartHasBeenCalled){
+    //ROS_INFO("fsdfsd");
+    return 0;
+  }
+  else
+    return bStartSwitchState_;
 }
 
 bool PidManager::getTimeout(){
@@ -261,7 +290,7 @@ void PidManager::setPidEnabled(int axis, bool enabled){
   }
 
   else if (axis == AXIS_YAW){
-    pubEffortYaw.publish(enablePid);
+    pubEnableYaw.publish(enablePid);
   }
 
 }
@@ -271,11 +300,11 @@ void PidManager::setControlEffort(int axis, int speed){
   effortMsg.data = speed;
 
   if (axis == AXIS_SURGE){
-    pubEnableSurge.publish(effortMsg);
+    pubEffortSurge.publish(effortMsg);
   }
 
   else if (axis == AXIS_SWAY){
-    pubEnableSway.publish(effortMsg);
+    pubEffortSway.publish(effortMsg);
   }
 
   else if (axis == AXIS_HEAVE){

@@ -7,6 +7,7 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 #include <sensor_msgs/Imu.h>
 #include <dynamic_reconfigure/DoubleParameter.h>
@@ -44,6 +45,7 @@ public:
 };
 
 class PidManager{
+
 private:
   double plantSurge_;
   double plantSway_;
@@ -55,7 +57,14 @@ private:
 
   ros::NodeHandle nh_;
 
-
+  ros::Subscriber subDepth;
+  bool subDepthHasBeenCalled;
+  ros::Subscriber subStart;
+  bool subStartHasBeenCalled = false;
+  ros::Subscriber subImu;
+  bool subImuHasBeenCalled;
+  ros::Subscriber subKill;
+  bool subKillHasBeenCalled;
 
   ros::Publisher pubSetpointSurge;
   ros::Publisher pubSetpointSway;
@@ -85,8 +94,8 @@ private:
 
   ros::Publisher pubControlEffort;
 
-  bool bStartSwitchState_;
-  bool bKillSwitchState_;
+  bool bStartSwitchState_ = 0;
+  bool bKillSwitchState_ = 0;
   bool bTimoutSwitchState_;
 
   sensor_msgs::Imu imu_;

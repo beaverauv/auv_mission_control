@@ -1,40 +1,42 @@
-#ifndef TaskGate_H
-#define TaskGate_H
+#ifndef TASK_GATE_H
+#define TASK_GATE_H
 
-
-#include <iostream>
-#include <cmath>
+#include "auv_mission_control/pid_manager.h"
+#include <auv_mission_control/Camera.h>
+#include "auv_mission_control/state_machine.h"
+#include "outcomes.h"
 #include <unistd.h>
 
 
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-
-#include <auv_mission_control/PidManager.h>
-#include <auv_mission_control/Camera.h>
-#include <auv_mission_control/StateMachine.h>
+class Task_Gate{
 
 
-class TaskGate{
+
 public:
-  TaskGate();
-  TaskGate(PidManager* pm, Camera* cam);
-  ~TaskGate();
+  Task_Gate();
+  Task_Gate(Pid_Manager* pm, Camera* cam);
+  ~Task_Gate();
 
   int execute();
 
 private:
   //variables go here;
-  PidManager pm_;
+  Pid_Manager pm_;
   Camera cam_;
 
   bool startTimer = 0;
 
+  int minR = 0; // R_MIN
+  int maxR = 255; // R_MAX
+  int minG = 0; // G_MIN
+  int maxG = 255; // G_MAX
+  int minB = 0; // B_MIN
+  int maxB = 255; // B_MAX
   int ColorSpace = 0;
   const int minObjectArea = 20*20; //20x20 blob
   bool objectFound;
 
-  bool killSwitch = 0;
+
 
   int action = 0;
   Timer goToDepth_time;

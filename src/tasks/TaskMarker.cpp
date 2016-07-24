@@ -69,6 +69,7 @@ int TaskMarker::execute(){
     }
 
     case 3:{
+      break;
     }
   }
 }

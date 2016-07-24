@@ -7,8 +7,10 @@ double timeSinceStart;
 int main(int argc, char **argv){
 
 bool killSwitch = 0;
-bool startSwitch;
-int currentState = 24; //init
+bool startSwitch = 0;
+int currentState = 0; //init
+int initCount = 0;
+int gateCount = 0;
 double timeSinceStart;
 ros::init(argc, argv, "state_machine");
 ros::NodeHandle nh;
@@ -25,33 +27,40 @@ ROS_ERROR("here");
     ros::spinOnce();
     switch(currentState){
       case 0: {//init
-        ROS_INFO("EXECUTING INIT STATE");
+        if(initCount < 1){
+          ROS_INFO("EXECUTING INIT STATE");
+          initCount++;
+        }
         //calibrate sensors
         if(killSwitch){
           currentState = 9;
         }
-        if(startSwitch){
+        else if(pm.getStart() == true){
           currentState = 1;
+          ROS_INFO("start");
           mainTimer.start();
           timerStarted = true;
         }
+        else
+          currentState = 0;
         break;
       }
 
-      case 1:{ //go to depth
 
-      }
-      case 2: { //gate
-
+      case 1: { //gate
+        ROS_INFO("EXECUTING GATE TASK");
         TaskGate gate(&pm, &cam);
         int outcome = gate.execute();
-        ROS_INFO("EXECUTING GATE TASK");
+        ROS_INFO("outcome %d", outcome);
+
         if (outcome == succeeded)
           currentState = 3;
         else if (outcome == timeout || getTimeout())
           currentState = 8;
-        else if (outcome == kill)
+        else if (outcome == kill || pm.getKill()){
           currentState = 9;
+          ROS_INFO("kill");
+        }
         else
           currentState = 9;
         break;
@@ -60,6 +69,7 @@ ROS_ERROR("here");
 
       case 9:{ //kill
         //stop thrusters (in resource file)
+        break;
       }
 
 
