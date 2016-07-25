@@ -36,6 +36,8 @@ private:
 
   int counter = 0;
 
+  const int minObjectArea = 20*20; //20x20 blob
+
   double surgeSpeed = 25;
   double previousDepth;
   double distanceFromEdge_left;
