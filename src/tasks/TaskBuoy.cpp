@@ -35,7 +35,7 @@ int TaskBuoy::execute(){
         cv::namedWindow("ControlLAB", CV_WINDOW_AUTOSIZE);
         cv::namedWindow("HSV", CV_WINDOW_AUTOSIZE);
         cv::namedWindow("bitwiseFinal", CV_WINDOW_AUTOSIZE);
-        cv::namedWindow("hsv+lab", CV_WINDOW_AUTOSIZE);
+        cv::namedWindow("hsvlab", CV_WINDOW_AUTOSIZE);
         cv::namedWindow("lab", CV_WINDOW_AUTOSIZE);
 
         cv::createTrackbar("minH", "ControlHSV", &minH, 255);
@@ -74,10 +74,13 @@ int TaskBuoy::execute(){
                 cv::Mat imgHSV;
                 cv::Mat hsvThresh;
                 // cv::Mat rgbThresh;
-                cv::Mat hsv+lab;
+                cv::Mat hsvlab;
+                cv::Mat fitEllipse;
                 cv::Mat bitwiseFinal;
                 cv::Mat Lab;
                 cv::Mat labThresh;
+
+
 
                 cv::cvtColor(original,imgHSV,CV_BGR2HSV);
                 cv::cvtColor(original,Lab, CV_BGR2Lab);
@@ -95,13 +98,37 @@ int TaskBuoy::execute(){
                 cv::dilate(labThresh, labThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
 
 
-                cv::bitwise_and(hsvThresh, labThresh, hsv+lab);
-                // cv::bitwise_and(hsv+lab, rgbThresh, bitwiseFinal);
+                cv::bitwise_and(hsvThresh, labThresh, hsvlab);
+                // cv::bitwise_and(hsvlab, rgbThresh, bitwiseFinal);
                 // cv::addWeighted(hsvThresh, 1.0, rgbThresh, 1.0, 0.0, bitwise);
+
+                fitEllipse = hsvlab;
+
+                std::vector < std::vector <cv::Point> > contours;
+                std::vector <cv::Vec4i> hierarchy;
+
+                cv::findContours( hsvlab, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+
+                std::vector<cv::RotatedRect> minEllipse( contours.size() );
+
+                for( int i = 0; i < contours.size(); i++ )
+                {
+                        if( contours[i].size() > 5 )
+                        {
+                                minEllipse[i] = cv::fitEllipse( cv::Mat(contours[i]) );
+                        }
+                }
+
+                for( int i = 0; i < contours.size(); i++ )
+                {
+                        cv::drawContours( original, contours, i, cv::Scalar(0,0,255), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
+                        cv::ellipse( original, minEllipse[i], cv::Scalar(255,0,0), 2, 8 );
+                }
+
 
                 cv::Moments hsv1Moments = cv::moments(hsvThresh);
                 cv::Moments hsv2Moments = cv::moments(labThresh);
-                cv::Moments oMoments = cv::moments(hsv+lab);
+                cv::Moments oMoments = cv::moments(hsvlab);
 
                 double posX = oMoments.m10 / oMoments.m00;
                 double posY = oMoments.m01 / oMoments.m00;
@@ -133,7 +160,7 @@ int TaskBuoy::execute(){
                 cv::imshow("ControlHSV", hsvThresh);
                 // cv::imshow("ControlRGB", rgbThresh);
                 cv::imshow("ControlLAB", labThresh);
-                cv::imshow("hsv+lab", hsv+lab);
+                cv::imshow("hsvlab", hsvlab);
                 // cv::imshow("bitwiseFinal", bitwiseFinal);
                 cv::imshow("HSV", imgHSV);
                 // cv::imshow("Bitwise", bitwise);
