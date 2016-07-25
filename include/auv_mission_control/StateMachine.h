@@ -11,10 +11,10 @@
 #include <auv_mission_control/TaskGate.h>
 #include <auv_mission_control/Camera.h>
 
+
 #define succeeded 0
 #define timeout 1
 #define kill 2
-
 
 
 bool getTimeout();

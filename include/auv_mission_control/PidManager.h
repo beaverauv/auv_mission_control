@@ -18,8 +18,6 @@
 #include <auv_mission_control/axes.h>
 #include <auv_mission_control/Timer.h>
 
-
-
 //Axis definitions
 #define AXIS_SURGE 0
 #define AXIS_SWAY 1
@@ -53,18 +51,17 @@ private:
   double plantRoll_;
   double plantPitch_;
   double plantYaw_;
-  double depth_;
 
   ros::NodeHandle nh_;
 
   ros::Subscriber subDepth;
-  bool subDepthHasBeenCalled;
+  bool subDepthHasBeenCalled = false;
   ros::Subscriber subStart;
   bool subStartHasBeenCalled = false;
   ros::Subscriber subImu;
-  bool subImuHasBeenCalled;
+  bool subImuHasBeenCalled = false;
   ros::Subscriber subKill;
-  bool subKillHasBeenCalled;
+  bool subKillHasBeenCalled = false;
 
   ros::Publisher pubSetpointSurge;
   ros::Publisher pubSetpointSway;
@@ -94,19 +91,18 @@ private:
 
   ros::Publisher pubControlEffort;
 
-  bool bStartSwitchState_ = 0;
-  bool bKillSwitchState_ = 0;
-  bool bTimoutSwitchState_;
-
+  bool bStartSwitchState_ = false;
+  bool bTimoutSwitchState_ = false;;
   sensor_msgs::Imu imu_;
 
-
+  int rosInfoCounter = 0;
 
   PidParam paramSurge;
   PidParam paramSway;
   PidParam paramHeave;
   PidParam paramYaw;
 
+  int testCount = 0;
 
 
 public:
@@ -115,6 +111,7 @@ public:
   PidManager(ros::NodeHandle* nh);
 
   ~PidManager();
+
 
 
   void taskDelay(int seconds);

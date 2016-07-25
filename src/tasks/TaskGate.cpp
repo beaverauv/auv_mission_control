@@ -1,12 +1,11 @@
 #include <auv_mission_control/TaskGate.h>
 
-
 TaskGate::TaskGate(){
 }
 
 
 TaskGate::TaskGate(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
-  ROS_ERROR("TASK GATE INIT");
+  ROS_INFO("TASK GATE INIT");
 }
 
 TaskGate::~TaskGate(){
@@ -19,41 +18,99 @@ int TaskGate::execute(){
 
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
   ros::spinOnce();
-
-    if(pm_.getKill()){ //checks for kill switch, enters kill state if activated
-      return kill;
-    }
-    if(getTimeout()){ //checks 15 min timer, if activated signals to enter resurface state
-      return timeout;
-    }
+  killSwitch = pm_.getKill();
+  if(killSwitch){
+    ROS_ERROR("Kill switch detected");
+    return kill;
+    break;
+  }
+  //  if(getTimeout()){ //checks 15 min timer, if activated signals to enter resurface state
+  //    return timeout;
+  //  }
 
     switch(action){
       case 0: { //first step, go to depth
-        ROS_INFO("Vroom Vroom going do depth");
-        if(depthCounter < 1 && startTimer == true){
-          pm_.setZero(AXIS_YAW);
-          goToDepth_time.start();
-          depthCounter ++;
+        ros::spinOnce();
+
+        pm_.setPidEnabled(AXIS_SWAY, false);
+        pm_.setPidEnabled(AXIS_YAW, true);
+        pm_.setPidEnabled(AXIS_HEAVE, true);
+        pm_.setPidEnabled(AXIS_SURGE, false);
+
+        pm_.setControlEffort(AXIS_SWAY, 0);
+        pm_.setControlEffort(AXIS_SURGE, 0);
+
+
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
+          break;
         }
+
+        ROS_INFO("Vroom Vroom going do depth");
 
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
 
-        if(fabs(pm_.getDepth() - -1.25) <= .05)
-          startTimer = true;
-        else
-          startTimer = false;
+        while(ros::ok){
+          currentDepth = pm_.getDepth();
+          double error = fabs(currentDepth - -1.25);
+        //  if(rosInfoCounter%20000000 == 0)
 
-        if(startTimer){
-          ROS_INFO("Going to depth for T-%f more seconds", 20-goToDepth_time.getTime());
+          killSwitch = pm_.getKill();
+          if(killSwitch){
+            ROS_ERROR("Kill switch detected");
+            return kill;
+            break;
+          }
+
+          startTimer = false;
+          ros::spinOnce();
+          rosInfoCounter++;
+          if(error < .01)
+            break;
         }
 
-        ROS_INFO("At depth of %f", pm_.getDepth());
-        if(goToDepth_time.getTime() >= 3){
-          action = 1;
-          ROS_INFO("Done going to depth. At depth %f", pm_.getDepth());
+        ROS_INFO("Near depth setoint of %f; currently at %f. Starting depth timer.", -1.25, pm_.getDepth());
+
+        startTimer = true;
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
           break;
         }
+
+        if(depthCounter < 1 && startTimer == true){
+          goToDepth_time.start();
+          depthCounter ++;
+          ROS_INFO("Depth timer started");
+          killSwitch = pm_.getKill();
+          if(killSwitch){
+            ROS_ERROR("Kill switch detected");
+            return kill;
+            break;
+          }
+        }
+
+
+        while(ros::ok && goToDepth_time.getTime() < 5){//just chill
+          killSwitch = pm_.getKill();
+          if(killSwitch){
+            ROS_ERROR("Kill switch detected");
+            return kill;
+            break;
+          }          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+          ros::spinOnce();
+        }
+
+        ROS_INFO("Done going to depth. At depth %f", pm_.getDepth());
+        action = 1;
+        break;
+
+
+
       }
 
 
@@ -63,17 +120,41 @@ int TaskGate::execute(){
           driveForwards_time.start();
         forwardCounter++;
 
-        if(driveForwards_time.getTime() < 20){
-          pm_.setControlEffort(AXIS_SURGE, 30);
-          ROS_INFO("Driving forwards for T-%f seconds", 20-driveForwards_time.getTime());
-        }
-        else{
-          pm_.setControlEffort(AXIS_SURGE, 0);
-          action = 2;
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
           break;
-          ROS_INFO("I THINK that I'm through the gate. My scincerest apologies if I dun goofed. But it's your fault anyways, so BUZZ OFF.");
         }
+
+
+        while(driveForwards_time.getTime() < 30){
+          pm_.setControlEffort(AXIS_SURGE, 30);
+          killSwitch = pm_.getKill();
+          if(killSwitch){
+            ROS_ERROR("Kill switch detected");
+            return kill;
+            break;
+          }
+          ros::spinOnce();
+        }
+
+        pm_.setControlEffort(AXIS_SURGE, 0);
+
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
+          break;
+        }
+
+        pm_.setControlEffort(AXIS_SURGE, 0);
+        ROS_INFO("I THINK that I'm through the gate");
+        action = 2;
+        break;
+
       }
+
       case 2:{ //return succeeded, and please proceed to the nearest task as quickly and calmly as possible, keeping in mind that it may be behind you
         return succeeded;
         break;

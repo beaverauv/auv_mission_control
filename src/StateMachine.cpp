@@ -36,7 +36,7 @@ ROS_ERROR("here");
           currentState = 9;
         }
         else if(pm.getStart() == true){
-          currentState = 1;
+          currentState = 2;
           ROS_INFO("start");
           mainTimer.start();
           timerStarted = true;

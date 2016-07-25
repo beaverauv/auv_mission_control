@@ -35,7 +35,7 @@ private:
   const int minObjectArea = 20*20; //20x20 blob
   bool objectFound;
 
-
+  bool killSwitch = 0;
 
   int action = 0;
   Timer goToDepth_time;
@@ -44,6 +44,8 @@ private:
   int forwardCounter = 0;
   double surgeSpeed = 25;
   double previousDepth;
+  double currentDepth;
+  int rosInfoCounter;
   double distanceFromEdge_left;
   double distanceFromEdge_right;
   bool outOfSight;

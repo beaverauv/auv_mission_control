@@ -1,6 +1,74 @@
 <launch>
 
-  <node pkg="auv_mission_control" type="state_machine_cont" name="$(anon mission_control)">
+  <node pkg="auv_mission_control" type="state_machine_cont" name="$(anon mission_control)" />
+  <node pkg="auv_motor_control" type="auv_motor_control" name="$(anon motor_control)" />
+
+  <node name="surge_pid" pkg="pid" type="controller" output="screen" >
+    <param name="Kp" value="1.5" />
+    <param name="Ki" value="0.4" />
+    <param name="Kd" value="0.4" />
+    <param name="rate" value="20" />
+    <param name="upper_limit" value="100" />
+    <param name="lower_limit" value="-100" />
+    <param name="windup_limit" value="10" />
+    <param name="cutoff_frequency" value="20" />
+    <param name="diagnostic_period" value="0.25" />
+    <param name="topic_from_controller" value="controlEffort_surge" />
+    <param name="topic_from_plant" value="state_surge " />
+    <param name="setpoint_topic" value="setpoint_surge" />
+    <param name="topic_pid_enable" value="surge_pid_enable" />
+
+  </node>
+
+  <node name="sway_pid" pkg="pid" type="controller" output="screen" >
+    <param name="Kp" value="1.5" />
+    <param name="Ki" value="0.4" />
+    <param name="Kd" value="0.4" />
+    <param name="rate" value="20" />
+    <param name="upper_limit" value="100" />
+    <param name="lower_limit" value="-100" />
+    <param name="windup_limit" value="10" />
+    <param name="cutoff_frequency" value="20" />
+    <param name="diagnostic_period" value="0.25" />
+    <param name="topic_from_controller" value="controlEffort_sway" />
+    <param name="topic_from_plant" value="state_sway " />
+    <param name="setpoint_topic" value="setpoint_sway" />
+    <param name="topic_pid_enable" value="sway_pid_enable" />
+
+  </node>
+
+  <node name="surge_pid" pkg="pid" type="controller" output="screen" >
+    <param name="Kp" value="1.5" />
+    <param name="Ki" value="0.4" />
+    <param name="Kd" value="0.4" />
+    <param name="rate" value="20" />
+    <param name="upper_limit" value="100" />
+    <param name="lower_limit" value="-100" />
+    <param name="windup_limit" value="10" />
+    <param name="cutoff_frequency" value="20" />
+    <param name="diagnostic_period" value="0.25" />
+    <param name="topic_from_controller" value="controlEffort_heave" />
+    <param name="topic_from_plant" value="state_heave " />
+    <param name="setpoint_topic" value="setpoint_heave" />
+    <param name="topic_pid_enable" value="heave_pid_enable" />
+
+  </node>
+
+  <node name="surge_pid" pkg="pid" type="controller" output="screen" >
+    <param name="Kp" value="1.5" />
+    <param name="Ki" value="0.4" />
+    <param name="Kd" value="0.4" />
+    <param name="rate" value="20" />
+    <param name="upper_limit" value="100" />
+    <param name="lower_limit" value="-100" />
+    <param name="windup_limit" value="10" />
+    <param name="cutoff_frequency" value="20" />
+    <param name="diagnostic_period" value="0.25" />
+    <param name="topic_from_controller" value="controlEffort_surge" />
+    <param name="topic_from_plant" value="state_surge " />
+    <param name="setpoint_topic" value="setpoint_surge" />
+    <param name="topic_pid_enable" value="surge_pid_enable" />
+
   </node>
 
 

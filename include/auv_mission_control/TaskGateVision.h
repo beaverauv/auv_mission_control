@@ -11,7 +11,6 @@
 #include <auv_mission_control/StateMachine.h>
 
 
-
 class TaskGateVision{
 public:
   TaskGateVision();
@@ -24,12 +23,21 @@ private:
   //variables go here;
   PidManager pm_;
   Camera cam_;
-  Timer depthTimer;
+  Timer goToDepth_time;
   Timer forwardTimer;
+  bool startTimer;
+  int rosInfoCounter;
   Timer finalTimer;//names and stuff
+  Timer dedReckonTimer;
+  int dedTimer = 0;
   int depthCounter = 0;
   int goCounter = 0;
   int finalCounter = 0;
+  int maxJump = 45;
+  
+  double killSwitch;
+  double currentDepth;
+  double startSwitch;
 
   int action = 0;
   bool objectFound;
@@ -47,6 +55,14 @@ private:
   double setpoint_heave;
   double setpoint_surge;
   double plantState_surge;
+
+  double prevPosX;
+  double prevPosY;
+  double changePosX;
+  double changePosY;
+
+
+
   int camInUse;
 
   int minR = 0;

@@ -36,9 +36,7 @@ int TaskGateVision::execute(){
   pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
   cam_.update();
-
   cv::Mat original;
-
   if (camInUse == INPUT_CAM_FRONT){
     original = cam_.getFront();
   }
@@ -71,69 +69,159 @@ int TaskGateVision::execute(){
   // maxB = 0;
 
 
-  if(pm_.getKill()){
+  killSwitch = pm_.getKill();
+  if(killSwitch){
+    ROS_ERROR("Kill switch detected");
     return kill;
+    break;
   }
-  if(getTimeout()){
-    return timeout;
-  }
+
+  // if(getTimeout()){
+  //   return timeout;
+  // }
 
 
   switch(action){
 
     case 0: { //Go To Depth
-      pm_.setPidEnabled(AXIS_SWAY, true);
+      ros::spinOnce();
+
+      pm_.setPidEnabled(AXIS_SWAY, false);
       pm_.setPidEnabled(AXIS_YAW, true);
       pm_.setPidEnabled(AXIS_HEAVE, true);
       pm_.setPidEnabled(AXIS_SURGE, false);
-      depthTimer.start();
-      if(depthCounter < 0){
-        depthTimer.start();
-        depthCounter++;
-      }
-      if(depthTimer.getTime() <= 8){
-        pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
-        pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
-        ROS_INFO("Going to depth for %f more seconds. At depth of %f", (8.0 - depthTimer.getTime()), pm_.getDepth());
-      }
 
-      else{
-        ROS_INFO("Moving on, at depth of %f", pm_.getDepth());
-        action = 1;
+      pm_.setControlEffort(AXIS_SWAY, 0);
+      pm_.setControlEffort(AXIS_SURGE, 0);
+
+      killSwitch = pm_.getKill();
+      if(killSwitch){
+        ROS_ERROR("Kill switch detected");
+        return kill;
         break;
       }
 
+      ROS_INFO("Vroom Vroom going do depth");
+
+      pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+      pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+
+      while(ros::ok){
+        currentDepth = pm_.getDepth();
+        double error = fabs(currentDepth - -1.25);
+      //  if(rosInfoCounter%20000000 == 0)
+
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
+          break;
+        }
+
+        startTimer = false;
+        ros::spinOnce();
+        rosInfoCounter++;
+        if(error < .01)
+          break;
+      }
+
+      ROS_INFO("Near depth setoint of %f; currently at %f. Starting depth timer.", -1.25, pm_.getDepth());
+
+      startTimer = true;
+      killSwitch = pm_.getKill();
+      if(killSwitch){
+        ROS_ERROR("Kill switch detected");
+        return kill;
+        break;
+      }
+
+      if(depthCounter < 1 && startTimer == true){
+        goToDepth_time.start();
+        depthCounter ++;
+        ROS_INFO("Depth timer started");
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
+          break;
+        }
+      }
+
+      while(ros::ok && goToDepth_time.getTime() < 5){//just chill
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
+          break;
+        }
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        ros::spinOnce();
+      }
+
+      ROS_INFO("Done going to depth. At depth %f", pm_.getDepth());
+      action = 1;
+      break;
+
     }
 
-    case 1:{//start going forward, use vision for 10 sec
+    case 1:{//start going forward towards gate using vision, check if jumped too forward
+
+      killSwitch = pm_.getKill();
+      if(killSwitch){
+        ROS_ERROR("Kill switch detected");
+        return kill;
+        break;
+      }
+
       camInUse = INPUT_CAM_FRONT;
       pm_.setPidEnabled(AXIS_SWAY, true);
       pm_.setPidEnabled(AXIS_YAW, true);
       pm_.setPidEnabled(AXIS_HEAVE, true);
       pm_.setPidEnabled(AXIS_SURGE, false);
 
+      pm_.setControlEffort(AXIS_SURGE, 0);
       if(goCounter < 1){
         forwardTimer.start() ;
         goCounter++;
+        prevPosX = posXdouble;
+        prevPosY = posYdouble;
+        ROS_INFO("Using vision to navigate to gate");
       }
-      if(forwardTimer.getTime() <= 10){
-        ROS_INFO("Moving forward with vision for %f more seconds", (10 - forwardTimer.getTime()) );
+
+
+      while(ros::ok && forwardTimer.getTime() < 30){
+
+        ros::spinOnce();
+
+        killSwitch = pm_.getKill();
+        if(killSwitch){
+          ROS_ERROR("Kill switch detected");
+          return kill;
+          break;
+        }
+
+        if(fabs(prevPosX - posXdouble) > maxJump || fabs(prevPosY - posYdouble) > maxJump){ //checks if vision jumped too far
+          ROS_WARN("Jump in position of centroid of gate exceeds max jump. Switching to dead reckoning");
+          action = 2;
+          break;
+        }
+
         pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 320);
         pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 320);
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         pm_.setControlEffort(AXIS_SURGE, 25);//manually set to drive forward at speed 25
       }
-      else{
-        ROS_INFO("Done using vision, dead reackoning rest of way");
-        action = 2;
-        break;
-      }
+      ROS_WARN("Max time for vision tracing forwards exceeded. Timeout called. Resurfacing :(");
+      action = 2;
+      return timeout;
+      break;
     }
 
     case 2:{ //dead reckon rest of way, looking for bottom
       if(counter < 1){ //setZero the yaw, but only once.
         pm_.setZero(IMU_YAW);
+        counter++; //please don't setZero the yaw again, thanks.
+        dedReckonTimer.start();
       }
 
       camInUse = INPUT_CAM_BTM;
@@ -143,35 +231,54 @@ int TaskGateVision::execute(){
       pm_.setPidEnabled(AXIS_SURGE, false);
       pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
 
-      if(!objectFound){//if ya don't see anything on the floor, just go forward
-        ROS_INFO("No path marker found");
-        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setControlEffort(AXIS_SURGE, 25);
-      }
-      else{
-        ROS_INFO("Bottom path marker found. I'm chasing it. Vroom.");
-        pm_.setPidEnabled(AXIS_SURGE, true);
-        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
-        if(fabs(posYdouble - setpoint_surge) <= 20){
-          if(finalCounter < 1){
-          finalTimer.start();
-          finalCounter += 102;
+      while(ros::ok && dedReckonTimer.getTime() < 30){
+        ros::spinOnce();
+        if(objectFound){//if found, move on
+          ROS_INFO("Path marker located. Navigating forwards to it.");
+          action = 3;
+          break;
         }
-          if(finalTimer.getTime() >= 3){
-            ROS_INFO("All done. Hopefully I'm in the right place. Sorry if I'm not, I understand that could be highly frustrating. Congrats on the good work if I am. Really well done, champ.");//What's a robot without an attitude?
-            action = 3;
-            break;
-          }
-
-        }
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0); //otherwise ded reckon forwards
+        pm_.setControlEffort(AXIS_SURGE, 35);
       }
-
-      counter++; //please don't setZero the yaw again, thanks.
+      ROS_WARN("Max time for ded reckoning forwards exceeded. Timeout called. Resurfacing" );
+      action = 3;
+      return timeout;
+      break;
     }
 
-    case 3:
+    case 3:{
+        ros::spinOnce();
+        ROS_INFO("Going towards path marker.");
+        pm_.setPidEnabled(AXIS_SURGE, true);
+
+        while(true){
+          ros::spinOnce();
+
+          if(finalTimer.getTime() >= 10){
+            return timeout;
+          }
+
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+        pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
+
+        if(fabs(240 - posYdouble) <= 10){
+          if(finalCounter < 1){
+            finalTimer.start();
+            finalCounter ++;
+          }
+
+        if(finalTimer.getTime() >= 3){
+          ROS_INFO("All done. Hopefully I'm in the right place. Sorry if I'm not, I understand that could be highly frustrating. Congrats on the good work if I am. Really well done, champ.");//What's a robot without an attitude?
+          action = 3;
+          break;
+        }
+      };
+    }
+
       return succeeded;
+
+    }
 
     default:
       break;
