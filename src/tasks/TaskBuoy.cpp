@@ -30,20 +30,19 @@ int TaskBuoy::execute(){
         // pm_.taskDelay(5);
 
         cv::namedWindow("original", CV_WINDOW_AUTOSIZE); //create windows
-        cv::namedWindow("ControlHSV", CV_WINDOW_AUTOSIZE);
+        cv::namedWindow("ControlHLS", CV_WINDOW_AUTOSIZE);
         // cv::namedWindow("ControlRGB", CV_WINDOW_AUTOSIZE);
         cv::namedWindow("ControlLAB", CV_WINDOW_AUTOSIZE);
-        cv::namedWindow("HSV", CV_WINDOW_AUTOSIZE);
-        cv::namedWindow("bitwiseFinal", CV_WINDOW_AUTOSIZE);
-        cv::namedWindow("hsvlab", CV_WINDOW_AUTOSIZE);
+        cv::namedWindow("HLS", CV_WINDOW_AUTOSIZE);
+        cv::namedWindow("hlslab", CV_WINDOW_AUTOSIZE);
         cv::namedWindow("lab", CV_WINDOW_AUTOSIZE);
 
-        cv::createTrackbar("minH", "ControlHSV", &minH, 255);
-        cv::createTrackbar("maxH", "ControlHSV", &maxH, 255);
-        cv::createTrackbar("minS", "ControlHSV", &minS, 255);
-        cv::createTrackbar("maxS", "ControlHSV", &maxS, 255);
-        cv::createTrackbar("minV", "ControlHSV", &minV, 255);
-        cv::createTrackbar("maxV", "ControlHSV", &maxV, 255);
+        cv::createTrackbar("minH", "ControlHLS", &minH, 255);
+        cv::createTrackbar("maxH", "ControlHLS", &maxH, 255);
+        cv::createTrackbar("minS", "ControlHLS", &minS, 255);
+        cv::createTrackbar("maxS", "ControlHLS", &maxS, 255);
+        cv::createTrackbar("minV", "ControlHLS", &minV, 255);
+        cv::createTrackbar("maxV", "ControlHLS", &maxV, 255);
 
         // cv::createTrackbar("minR", "ControlRGB", &minR, 255);
         // cv::createTrackbar("maxR", "ControlRGB", &maxR, 255);
@@ -58,7 +57,7 @@ int TaskBuoy::execute(){
         cv::createTrackbar("maxA", "ControlLAB", &maxA, 255);
         cv::createTrackbar("minlaB", "ControlLAB", &minlaB, 255);
         cv::createTrackbar("maxlaB", "ControlLAB", &maxlaB, 255);
-        //      cv::createTrackbar("ColorSControlHSV2pace", "Control", &ColorSpace, 2);
+        //      cv::createTrackbar("ColorSControlHLS2pace", "Control", &ColorSpace, 2);
 
         // ROS_ERROR("2");
 
@@ -71,23 +70,22 @@ int TaskBuoy::execute(){
                 cam_.update();
 
                 cv::Mat original = cam_.getFront();
-                cv::Mat imgHSV;
-                cv::Mat hsvThresh;
+                cv::Mat imgHLS;
+                cv::Mat hlsThresh;
                 // cv::Mat rgbThresh;
-                cv::Mat hsvlab;
-                cv::Mat fitEllipse;
-                cv::Mat bitwiseFinal;
+                cv::Mat hlslab;
+                cv::Mat fitEllipseMat;
                 cv::Mat Lab;
                 cv::Mat labThresh;
 
 
 
-                cv::cvtColor(original,imgHSV,CV_BGR2HSV);
+                cv::cvtColor(original,imgHLS,CV_BGR2HLS);
                 cv::cvtColor(original,Lab, CV_BGR2Lab);
 
-                cv::inRange(imgHSV, cv::Scalar(minH, minS, minV), cv::Scalar(maxH, maxS, maxV), hsvThresh);
-                cv::erode(hsvThresh, hsvThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-                cv::dilate(hsvThresh, hsvThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
+                cv::inRange(imgHLS, cv::Scalar(minH, minS, minV), cv::Scalar(maxH, maxS, maxV), hlsThresh);
+                cv::erode(hlsThresh, hlsThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+                cv::dilate(hlsThresh, hlsThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
 
                 // cv::inRange(original, cv::Scalar(minR, minG, minB), cv::Scalar(maxR, maxG, maxB), rgbThresh);
                 // cv::erode(rgbThresh, rgbThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
@@ -98,47 +96,56 @@ int TaskBuoy::execute(){
                 cv::dilate(labThresh, labThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
 
 
-                cv::bitwise_and(hsvThresh, labThresh, hsvlab);
-                // cv::bitwise_and(hsvlab, rgbThresh, bitwiseFinal);
-                // cv::addWeighted(hsvThresh, 1.0, rgbThresh, 1.0, 0.0, bitwise);
+                cv::bitwise_and(hlsThresh, labThresh, hlslab);
+                // cv::addWeighted(hlsThresh, 1.0, rgbThresh, 1.0, 0.0, bitwise);
 
-                fitEllipse = hsvlab;
-
-                std::vector < std::vector <cv::Point> > contours;
-                std::vector <cv::Vec4i> hierarchy;
-
-                cv::findContours( hsvlab, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
-
-                std::vector<cv::RotatedRect> minEllipse( contours.size() );
-
-                for( int i = 0; i < contours.size(); i++ )
-                {
-                        if( contours[i].size() > 5 )
-                        {
-                                minEllipse[i] = cv::fitEllipse( cv::Mat(contours[i]) );
-                        }
-                }
-
-                for( int i = 0; i < contours.size(); i++ )
-                {
-                        cv::drawContours( original, contours, i, cv::Scalar(0,0,255), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
-                        cv::ellipse( original, minEllipse[i], cv::Scalar(255,0,0), 2, 8 );
-                }
-
-
-                cv::Moments hsv1Moments = cv::moments(hsvThresh);
-                cv::Moments hsv2Moments = cv::moments(labThresh);
-                cv::Moments oMoments = cv::moments(hsvlab);
+                cv::Moments hls1Moments = cv::moments(hlsThresh);
+                cv::Moments hls2Moments = cv::moments(labThresh);
+                cv::Moments oMoments = cv::moments(hlslab);
 
                 double posX = oMoments.m10 / oMoments.m00;
                 double posY = oMoments.m01 / oMoments.m00;
                 double dArea = oMoments.m00;
-                double hsv1Area = hsv1Moments.m00;
-                double hsv2Area = hsv2Moments.m00;
+                double hls1Area = hls1Moments.m00;
+                double hls2Area = hls2Moments.m00;
                 double posXcorrected = 640 - (oMoments.m10 / oMoments.m00);
                 double posYcorrected = 480 - (oMoments.m01 / oMoments.m00);
 
+                fitEllipseMat = hlslab;
+
+                std::vector < std::vector <cv::Point> > contours;
+                std::vector <cv::Vec4i> hierarchy;
+
+                cv::findContours( fitEllipseMat, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+
+                cv::Mat cimage = cv::Mat::zeros(bimage.size(), CV_8UC3);
+
+                for(size_t i = 0; i < contours.size(); i++)
+                {
+                        size_t count = contours[i].size();
+                        if( count < 6 )
+                                continue;
+                        cv::Mat pointsf;
+                        cv::Mat(contours[i]).convertTo(pointsf, CV_32F);
+                        cv::RotatedRect box = cv::fitEllipse(pointsf);
+                        if( MAX(box.size.width, box.size.height) > MIN(box.size.width, box.size.height)*30 )
+                                continue;
+
+                        cv::drawContours(cimage, contours, (int)i, cv::Scalar::all(255), 1, 8);
+                        cv::ellipse(cimage, box, cv::Scalar(0,0,255), 1, LINE_AA);
+                        cv::ellipse(cimage, box.center, box.size*0.5f, box.angle, 0, 360, cv::Scalar(0,255,255), 1, LINE_AA);
+                        cv::Point2f vtx[4];
+                        box.points(vtx);
+                        for( int j = 0; j < 4; j++ )
+                                cv::line(cimage, vtx[j], vtx[(j+1)%4], cv::Scalar(0,255,0), 1, LINE_AA);
+                }
+
                 //ROS_ERROR("%d", ColorSpace);
+
+                ROS_INFO("\033[2J\033[1;1H");
+                ROS_INFO("Located at: %f %f ", posX, posY);
+                ROS_INFO("Area Image 1: %f Area Image 2: %f Area Image Bitwise: %f", hls1Area, hls2Area, dArea);
+
 
                 cv::circle(original, cv::Point(posX, posY), 6, cv::Scalar(255, 255, 255), -1);
                 cv::circle(original, cv::Point(posX, posY), 7, cv::Scalar(0, 0, 0), 2);
@@ -151,18 +158,16 @@ int TaskBuoy::execute(){
                 }
 
                 // ROS_ERROR(" Object found? %d Coords(corrected): %f %f ", objectFound, posXcorrected, posYcorrected);
-                ROS_INFO("\033[2J\033[1;1H");
-                ROS_INFO("Located at: %f %f ", posX, posY);
-                ROS_INFO("Area Image 1: %f Area Image 2: %f Area Image Bitwise: %f", hsv1Area, hsv2Area, dArea);
+
 
                 cv::imshow("original", original);
 
-                cv::imshow("ControlHSV", hsvThresh);
+                cv::imshow("ControlHLS", hlsThresh);
                 // cv::imshow("ControlRGB", rgbThresh);
                 cv::imshow("ControlLAB", labThresh);
-                cv::imshow("hsvlab", hsvlab);
-                // cv::imshow("bitwiseFinal", bitwiseFinal);
-                cv::imshow("HSV", imgHSV);
+                cv::imshow("hlslab", hlslab);
+
+                cv::imshow("HLS", imgHLS);
                 // cv::imshow("Bitwise", bitwise);
                 cv::imshow("lab", Lab);
 
