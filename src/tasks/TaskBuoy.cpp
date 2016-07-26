@@ -44,13 +44,6 @@ int TaskBuoy::execute(){
         cv::createTrackbar("minV", "ControlHLS", &minV, 255);
         cv::createTrackbar("maxV", "ControlHLS", &maxV, 255);
 
-        // cv::createTrackbar("minR", "ControlRGB", &minR, 255);
-        // cv::createTrackbar("maxR", "ControlRGB", &maxR, 255);
-        // cv::createTrackbar("minG", "ControlRGB", &minG, 255);
-        // cv::createTrackbar("maxG", "ControlRGB", &maxG, 255);
-        // cv::createTrackbar("minB", "ControlRGB", &minB, 255);
-        // cv::createTrackbar("maxB", "ControlRGB", &maxB, 255);
-
         cv::createTrackbar("minL", "ControlLAB", &minL, 255);
         cv::createTrackbar("maxL", "ControlLAB", &maxL, 255);
         cv::createTrackbar("minA", "ControlLAB", &minA, 255);
@@ -118,7 +111,6 @@ int TaskBuoy::execute(){
 
                 cv::findContours( fitEllipseMat, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
 
-                // std::vector<cv::RotatedRect> minRect( contours.size() );
                 std::vector<cv::RotatedRect> minEllipse( contours.size() );
 
                 cv::RotatedRect marker_angle;
@@ -126,43 +118,56 @@ int TaskBuoy::execute(){
                 for( int i = 0; i < contours.size(); i++ )
                 {
                         double count = contours[i].size();
-                        //ROS_ERROR("%f",count);
+                        // //ROS_ERROR("%f",count);
                         if( count < 6 )
                                 continue;
 
-                        // minRect[i] = cv::minAreaRect( cv::Mat(contours[i]) );
+                        double a = contourArea ( contours[i], false);
+                        if ( a > largest_area )
+                        {
+                                largest_area = a;
+                                largest_contour_index = i;
+                        }
                         minEllipse[i] = cv::fitEllipse( cv::Mat(contours[i]) );
-                        // if( contours[i].size() > 5 )
-                        // {
-                        //
-                        // }
+
                 }
-
-                // cv::Mat drawing = cv::Mat::zeros( fitEllipseMat.size(), CV_8UC3 );
-
 
                 try
                 {
                         for( int i = 0; i < contours.size(); i++ )
                         {
-
                                 double count = contours[i].size();
 
                                 //ROS_INFO("%f",count);
                                 if( count < 6 )
                                         continue;
 
+                                double a = contourArea ( contours[i], false);
+                                if ( a > largest_area )
+                                {
+                                        largest_area = a;
+                                        largest_contour_index = i;
+                                }
+                                minEllipse[i] = cv::fitEllipse( cv::Mat(contours[i]) );
+
+                                ROS_INFO("%d", largest_contour_index);
+
+
                                 //cv::ellipse = cv::fitEllipse( cv::Mat(contours[]) );
                                 cv::Point2f rect_points[4]; minEllipse[i].points( rect_points );
                                 marker_angle = cv::fitEllipse( cv::Mat(contours[i]) );
+
+                                double angle = marker_angle.angle - 90;
+                                if (marker_angle.size.width < marker_angle.size.height)
+                                        angle = 90 + angle;
+
                                 ROS_INFO("\033[2J\033[1;1H");
-                                ROS_INFO("%f", marker_angle.angle);
-                                cv::drawContours( original, contours, i, cv::Scalar(0,255,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
+                                ROS_INFO("%f", angle);
+                                cv::drawContours( original, contours, largest_contour_index, cv::Scalar(0,255,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
                                 // ellipse
                                 cv::ellipse( original, minEllipse[i], cv::Scalar(255,0,0), 2, 8 );
                                 // for( int j = 0; j < 4; j++ )
                                 //         cv::line( original, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 );
-
                         }
                 }
                 catch( cv::Exception& e )
@@ -186,18 +191,11 @@ int TaskBuoy::execute(){
                         objectFound = 0;
                 }
 
-                // ROS_ERROR(" Object found? %d Coords(corrected): %f %f ", objectFound, posXcorrected, posYcorrected);
-
-
                 cv::imshow("original", original);
-
                 cv::imshow("ControlHLS", hlsThresh);
-                // cv::imshow("ControlRGB", rgbThresh);
                 cv::imshow("ControlLAB", labThresh);
                 cv::imshow("hlslab", hlslab);
-
                 cv::imshow("HLS", imgHLS);
-                // cv::imshow("Bitwise", bitwise);
                 cv::imshow("lab", Lab);
 
                 if (cv::waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop

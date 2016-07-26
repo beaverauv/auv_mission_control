@@ -61,6 +61,8 @@ private:
   int minlaB = 0; // B_MIN
   int maxlaB = 255; // B_MAX
 
+  int largest_area = 0;
+  int largest_contour_index = 0;
 
   const int minObjectArea = 20*20; //20x20 blob
   bool objectFound;
