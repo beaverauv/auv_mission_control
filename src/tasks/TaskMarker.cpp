@@ -99,65 +99,65 @@ int TaskMarker::execute(){
                         double posXcorrected = 640 - (oMoments.m10 / oMoments.m00);
                         double posYcorrected = 480 - (oMoments.m01 / oMoments.m00);
 
-                        fitEllipseMat = hlslab;
-
-                        std::vector < std::vector <cv::Point> > contours;
-                        std::vector <cv::Vec4i> hierarchy;
-
-                        cv::findContours( fitEllipseMat, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
-
-                        //std::vector<cv::RotatedRect> minEllipse( contours.size() );
-
-                        cv::RotatedRect marker_angle;
-                        int numBigConours = 0;
-                        int largest_area = 0;
-                        int largest_contour_index = 0;
-
-
-
-                        for( int i = 0; i < contours.size(); i++ )
-                        {
-                                double count = contours[i].size();
-
-                                //ROS_INFO("%f",count);
-                                if( count < 6 )
-                                        continue;
-                                numBigConours++;
-                                double a = contourArea ( contours[i], false);
-                                if ( a > largest_area )
-                                {
-                                        largest_area = a;
-                                        largest_contour_index = i;
-                                }
-                                //cv::ellipse = cv::fitEllipse( cv::Mat(contours[]) );
-
-                                // for( int j = 0; j < 4; j++ )
-                                //         cv::line( original, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 );
-                        }
-                        ROS_INFO("\033[2J\033[1;1H");
-                        if (numBigConours >= 1){
-                          marker_angle = cv::fitEllipse(contours[largest_contour_index]);
-
-                          ROS_INFO("%d", largest_contour_index);
-
-                          cv::Point2f rect_points[4];
-                          //minEllipse[largest_contour_index].points( rect_points );
-                          marker_angle.points( rect_points );
-
-                          //  marker_angle = cv::fitEllipse( cv::Mat(contours[i]) );
-
-                          double angle = marker_angle.angle - 90;
-                          if (marker_angle.size.width < marker_angle.size.height)
-                                  angle = 90 + angle;
-
-                          ROS_INFO("%f", angle);
-                          //cv::drawContours( original, contours, largest_contour_index, cv::Scalar(0,255,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
-                          // ellipse
-                          cv::ellipse( original, marker_angle, cv::Scalar(255,0,0), 2, 8 );
-
-                        } else {
-                          ROS_INFO("No Contours greater than 6");
-                        }
+                        // fitEllipseMat = hlslab;
+                        //
+                        // std::vector < std::vector <cv::Point> > contours;
+                        // std::vector <cv::Vec4i> hierarchy;
+                        //
+                        // cv::findContours( fitEllipseMat, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+                        //
+                        // //std::vector<cv::RotatedRect> minEllipse( contours.size() );
+                        //
+                        // cv::RotatedRect marker_angle;
+                        // int numBigConours = 0;
+                        // int largest_area = 0;
+                        // int largest_contour_index = 0;
+                        //
+                        //
+                        //
+                        // for( int i = 0; i < contours.size(); i++ )
+                        // {
+                        //         double count = contours[i].size();
+                        //
+                        //         //ROS_INFO("%f",count);
+                        //         if( count < 6 )
+                        //                 continue;
+                        //         numBigConours++;
+                        //         double a = contourArea ( contours[i], false);
+                        //         if ( a > largest_area )
+                        //         {
+                        //                 largest_area = a;
+                        //                 largest_contour_index = i;
+                        //         }
+                        //         //cv::ellipse = cv::fitEllipse( cv::Mat(contours[]) );
+                        //
+                        //         // for( int j = 0; j < 4; j++ )
+                        //         //         cv::line( original, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 );
+                        // }
+                        // ROS_INFO("\033[2J\033[1;1H");
+                        // if (numBigConours >= 1){
+                        //   marker_angle = cv::fitEllipse(contours[largest_contour_index]);
+                        //
+                        //   ROS_INFO("%d", largest_contour_index);
+                        //
+                        //   cv::Point2f rect_points[4];
+                        //   //minEllipse[largest_contour_index].points( rect_points );
+                        //   marker_angle.points( rect_points );
+                        //
+                        //   //  marker_angle = cv::fitEllipse( cv::Mat(contours[i]) );
+                        //
+                        //   double angle = marker_angle.angle - 90;
+                        //   if (marker_angle.size.width < marker_angle.size.height)
+                        //           angle = 90 + angle;
+                        //
+                        //   ROS_INFO("%f", angle);
+                        //   //cv::drawContours( original, contours, largest_contour_index, cv::Scalar(0,255,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
+                        //   // ellipse
+                        //   cv::ellipse( original, marker_angle, cv::Scalar(255,0,0), 2, 8 );
+                        //
+                        // } else {
+                        //   ROS_INFO("No Contours greater than 6");
+                        // }
 
                         //minEllipse[largest_contour_index] = cv::fitEllipse( cv::Mat(contours[largest_contour_index]) );
 
