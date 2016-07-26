@@ -15,16 +15,15 @@ double timeSinceStart;
 ros::init(argc, argv, "state_machine");
 ros::NodeHandle nh;
 
+ros::Rate stateRate(20);
 
 PidManager pm(&nh);
 Camera cam;
-ROS_ERROR("here");
-  while(ros::ok){ //careful
 
+  while(ros::ok){ //careful
   if(timerStarted)
     timeSinceStart = mainTimer.getTime();
 
-    ros::spinOnce();
     switch(currentState){
       case 0: {//init
         if(initCount < 1){
@@ -81,6 +80,8 @@ ROS_ERROR("here");
 
     }
 
+    ros::spinOnce();
+    stateRate.sleep();
   }
 
 }

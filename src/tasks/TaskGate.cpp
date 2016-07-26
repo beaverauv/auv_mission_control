@@ -14,10 +14,11 @@ TaskGate::~TaskGate(){
 
 int TaskGate::execute(){
 
+  ros::Rate gateRate(20.);
+
   //pm_.pidEnable("ALL", true);//turns on all 6 pid controllers
 
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
-  ros::spinOnce();
   killSwitch = pm_.getKill();
   if(killSwitch){
     ROS_ERROR("Kill switch detected");
@@ -56,7 +57,10 @@ int TaskGate::execute(){
         while(ros::ok){
           currentDepth = pm_.getDepth();
           double error = fabs(currentDepth - -1.25);
-        //  if(rosInfoCounter%20000000 == 0)
+      //  if(rosInfoCounter%20000000 == 0)
+          pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+          ROS_INFO("pm_.getDepth %f", pm_.getDepth());
+
 
           killSwitch = pm_.getKill();
           if(killSwitch){
@@ -66,13 +70,16 @@ int TaskGate::execute(){
           }
 
           startTimer = false;
-          ros::spinOnce();
           rosInfoCounter++;
           if(error < .01)
             break;
+
+          ros::spinOnce();
+          gateRate.sleep();
         }
 
         ROS_INFO("Near depth setoint of %f; currently at %f. Starting depth timer.", -1.25, pm_.getDepth());
+        pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
 
         startTimer = true;
         killSwitch = pm_.getKill();
@@ -83,6 +90,8 @@ int TaskGate::execute(){
         }
 
         if(depthCounter < 1 && startTimer == true){
+          pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+          ROS_INFO("pm_.getDepth %f", pm_.getDepth());
           goToDepth_time.start();
           depthCounter ++;
           ROS_INFO("Depth timer started");
@@ -96,6 +105,8 @@ int TaskGate::execute(){
 
 
         while(ros::ok && goToDepth_time.getTime() < 5){//just chill
+          pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+
           killSwitch = pm_.getKill();
           if(killSwitch){
             ROS_ERROR("Kill switch detected");
@@ -103,6 +114,7 @@ int TaskGate::execute(){
             break;
           }          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
           ros::spinOnce();
+          gateRate.sleep();
         }
 
         ROS_INFO("Done going to depth. At depth %f", pm_.getDepth());
@@ -129,6 +141,7 @@ int TaskGate::execute(){
 
 
         while(driveForwards_time.getTime() < 30){
+          pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
           pm_.setControlEffort(AXIS_SURGE, 30);
           killSwitch = pm_.getKill();
           if(killSwitch){
@@ -137,6 +150,7 @@ int TaskGate::execute(){
             break;
           }
           ros::spinOnce();
+          gateRate.sleep();
         }
 
         pm_.setControlEffort(AXIS_SURGE, 0);
@@ -148,6 +162,7 @@ int TaskGate::execute(){
           break;
         }
 
+        pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
         pm_.setControlEffort(AXIS_SURGE, 0);
         ROS_INFO("I THINK that I'm through the gate");
         action = 2;
@@ -160,6 +175,9 @@ int TaskGate::execute(){
         break;
       }
     };
+
+    ros::spinOnce();
+    gateRate.sleep();
 
   }//while ros::ok
 }//execute

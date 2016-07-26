@@ -28,7 +28,6 @@ private:
   //variables go here;
   PidManager pm_;
   Camera cam_;
-
   bool startTimer = 0;
 
   int ColorSpace = 0;

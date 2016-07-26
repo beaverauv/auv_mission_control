@@ -35,6 +35,7 @@
 #define INPUT_DEPTH 4
 #define IMU_YAW 5
 
+
 class PidParam {
 public:
   double kP;
@@ -45,12 +46,6 @@ public:
 class PidManager{
 
 private:
-  double plantSurge_;
-  double plantSway_;
-  double plantHeave_;
-  double plantRoll_;
-  double plantPitch_;
-  double plantYaw_;
 
   ros::NodeHandle nh_;
 

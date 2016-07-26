@@ -2,8 +2,12 @@
 
 double depth_;
 bool bKillSwitchState_;
-
-/*
+double plantSurge_;
+double plantSway_;
+double plantHeave_;
+double plantRoll_;
+double plantPitch_;
+double plantYaw_;/*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
   plant_surge_vision = vision->surge;
   plant_sway_vision = vision->sway;
