@@ -118,33 +118,62 @@ int TaskBuoy::execute(){
 
                 cv::findContours( fitEllipseMat, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
 
-                cv::Mat cimage = cv::Mat::zeros(bimage.size(), CV_8UC3);
+                // std::vector<cv::RotatedRect> minRect( contours.size() );
+                std::vector<cv::RotatedRect> minEllipse( contours.size() );
 
-                for(size_t i = 0; i < contours.size(); i++)
+                cv::RotatedRect marker_angle;
+
+                for( int i = 0; i < contours.size(); i++ )
                 {
-                        size_t count = contours[i].size();
+                        double count = contours[i].size();
+                        //ROS_ERROR("%f",count);
                         if( count < 6 )
                                 continue;
-                        cv::Mat pointsf;
-                        cv::Mat(contours[i]).convertTo(pointsf, CV_32F);
-                        cv::RotatedRect box = cv::fitEllipse(pointsf);
-                        if( MAX(box.size.width, box.size.height) > MIN(box.size.width, box.size.height)*30 )
-                                continue;
 
-                        cv::drawContours(cimage, contours, (int)i, cv::Scalar::all(255), 1, 8);
-                        cv::ellipse(cimage, box, cv::Scalar(0,0,255), 1, LINE_AA);
-                        cv::ellipse(cimage, box.center, box.size*0.5f, box.angle, 0, 360, cv::Scalar(0,255,255), 1, LINE_AA);
-                        cv::Point2f vtx[4];
-                        box.points(vtx);
-                        for( int j = 0; j < 4; j++ )
-                                cv::line(cimage, vtx[j], vtx[(j+1)%4], cv::Scalar(0,255,0), 1, LINE_AA);
+                        // minRect[i] = cv::minAreaRect( cv::Mat(contours[i]) );
+                        minEllipse[i] = cv::fitEllipse( cv::Mat(contours[i]) );
+                        // if( contours[i].size() > 5 )
+                        // {
+                        //
+                        // }
                 }
 
-                //ROS_ERROR("%d", ColorSpace);
+                // cv::Mat drawing = cv::Mat::zeros( fitEllipseMat.size(), CV_8UC3 );
 
-                ROS_INFO("\033[2J\033[1;1H");
-                ROS_INFO("Located at: %f %f ", posX, posY);
-                ROS_INFO("Area Image 1: %f Area Image 2: %f Area Image Bitwise: %f", hls1Area, hls2Area, dArea);
+
+                try
+                {
+                        for( int i = 0; i < contours.size(); i++ )
+                        {
+
+                                double count = contours[i].size();
+
+                                //ROS_INFO("%f",count);
+                                if( count < 6 )
+                                        continue;
+
+                                //cv::ellipse = cv::fitEllipse( cv::Mat(contours[]) );
+                                cv::Point2f rect_points[4]; minEllipse[i].points( rect_points );
+                                marker_angle = cv::fitEllipse( cv::Mat(contours[i]) );
+                                ROS_INFO("\033[2J\033[1;1H");
+                                ROS_INFO("%f", marker_angle.angle);
+                                cv::drawContours( original, contours, i, cv::Scalar(0,255,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
+                                // ellipse
+                                cv::ellipse( original, minEllipse[i], cv::Scalar(255,0,0), 2, 8 );
+                                // for( int j = 0; j < 4; j++ )
+                                //         cv::line( original, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 );
+
+                        }
+                }
+                catch( cv::Exception& e )
+                {
+                        const char* err_msg = e.what();
+                        std::cout << "exception caught: " << err_msg << std::endl;
+                }
+
+                // ROS_INFO("\033[2J\033[1;1H");
+                // ROS_INFO("Located at: %f %f ", posX, posY);
+                // ROS_INFO("Area Image 1: %f Area Image 2: %f Area Image Bitwise: %f", hls1Area, hls2Area, dArea);
 
 
                 cv::circle(original, cv::Point(posX, posY), 6, cv::Scalar(255, 255, 255), -1);
