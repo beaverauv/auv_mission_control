@@ -36,7 +36,7 @@ Camera cam;
         }
         else if(pm.getStart() == true){
           currentState = 2;
-          ROS_INFO("start");
+          ROS_INFO("START");
           mainTimer.start();
           timerStarted = true;
         }
@@ -56,7 +56,7 @@ Camera cam;
         ROS_INFO("outcome %d", outcome);
 
         if (outcome == succeeded)
-          currentState = 3;
+          currentState = 10;
         else if (outcome == timeout || getTimeout())
           currentState = 8;
         else if (outcome == kill || pm.getKill()){
@@ -69,11 +69,32 @@ Camera cam;
 
       }
 
+
+
       case 9:{ //kill
         //stop thrusters (in resource file)
         break;
       }
 
+      case 10:{//prep to go back to init
+
+        if(initCount < 1){
+          ROS_INFO("All QUEUED TASKS COMPLETED. RETURN START SWITCH TO RETURN TO INIT STATE.");
+          initCount++;
+        }
+        //calibrate sensors
+        if(killSwitch){
+          currentState = 9;
+        }
+        else if(pm.getStart() == false){
+          currentState = 0;
+          initCount = 0;
+          ROS_INFO("RETURNING TO INIT STATE");
+        }
+        else
+          currentState = 10;
+        break;
+      }
 
       default:
         break;//NO

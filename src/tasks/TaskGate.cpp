@@ -52,16 +52,17 @@ int TaskGate::execute(){
         ROS_INFO("Vroom Vroom going do depth");
 
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
 
         while(ros::ok){
           currentDepth = pm_.getDepth();
-          double error = fabs(currentDepth - -1.25);
-      //  if(rosInfoCounter%20000000 == 0)
+          double error = fabs(currentDepth - -0.5);
+          if(rosInfoCounter%20000000 == 0)
+            ROS_INFO("YAW = %f", pm_.getYaw());
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-          ROS_INFO("pm_.getDepth %f", pm_.getDepth());
-
-
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
+          pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+          pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
           killSwitch = pm_.getKill();
           if(killSwitch){
             ROS_ERROR("Kill switch detected");
@@ -80,7 +81,9 @@ int TaskGate::execute(){
 
         ROS_INFO("Near depth setoint of %f; currently at %f. Starting depth timer.", -1.25, pm_.getDepth());
         pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
+        pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         startTimer = true;
         killSwitch = pm_.getKill();
         if(killSwitch){
@@ -91,6 +94,9 @@ int TaskGate::execute(){
 
         if(depthCounter < 1 && startTimer == true){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
+          pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+          pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
           ROS_INFO("pm_.getDepth %f", pm_.getDepth());
           goToDepth_time.start();
           depthCounter ++;
@@ -106,13 +112,15 @@ int TaskGate::execute(){
 
         while(ros::ok && goToDepth_time.getTime() < 5){//just chill
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
+          pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+          pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
           killSwitch = pm_.getKill();
           if(killSwitch){
             ROS_ERROR("Kill switch detected");
             return kill;
             break;
-          }          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
+          }          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
           ros::spinOnce();
           gateRate.sleep();
         }
@@ -131,7 +139,10 @@ int TaskGate::execute(){
         if (forwardCounter < 1)
           driveForwards_time.start();
         forwardCounter++;
-
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
+        pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+        pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         killSwitch = pm_.getKill();
         if(killSwitch){
           ROS_ERROR("Kill switch detected");
@@ -142,6 +153,9 @@ int TaskGate::execute(){
 
         while(driveForwards_time.getTime() < 30){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
+          pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+          pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
           pm_.setControlEffort(AXIS_SURGE, 30);
           killSwitch = pm_.getKill();
           if(killSwitch){
@@ -161,8 +175,12 @@ int TaskGate::execute(){
           return kill;
           break;
         }
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -0.5);
 
         pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+        pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+
         pm_.setControlEffort(AXIS_SURGE, 0);
         ROS_INFO("I THINK that I'm through the gate");
         action = 2;

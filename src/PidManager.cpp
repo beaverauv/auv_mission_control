@@ -22,6 +22,7 @@ void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
   //ROS_INFO("depth_ %f", depth_);
 }
 
+
 void PidManager::startCallBack(const std_msgs::Bool::ConstPtr& start_msg){
   bStartSwitchState_ = start_msg->data;
   //bStartSwitchState_ = false;
@@ -36,7 +37,9 @@ void PidManager::killCallBack(const std_msgs::Bool::ConstPtr& kill_msg){
 }
 
 void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
-  imu_ = *imu_msg;
+//  imu_ = *imu_msg;
+  plantYaw_ = imu_msg->orientation.z;
+  subImuHasBeenCalled = true;
 }
 
 
@@ -159,9 +162,9 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
       std_msgs::Float64 msgSetpointHeave;
 
       if (input_type == INPUT_DEPTH){
-        paramHeave.kP = 0.4;
-        paramHeave.kD = 0.3;
-        paramHeave.kI = 0.3;
+        paramHeave.kP = 75;//.;
+        paramHeave.kD = 0;//.;
+        paramHeave.kI = 0;//30.;
         //set tuning for surge axis on depth sensor
         //subscribe to this as plant state
         //publish setpoint
@@ -279,6 +282,12 @@ double PidManager::getDepth(){
     return depth_;
 }
 
+double PidManager::getYaw(){
+  if(!subImuHasBeenCalled)
+    return 0;
+  else
+    return plantYaw_;
+}
 
 
 void PidManager::setPidEnabled(int axis, bool enabled){

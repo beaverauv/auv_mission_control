@@ -10,10 +10,7 @@
   <node pkg="auv_motor_control" type="motor_controller" name="$(anon motor_control)" />
 
   <node name="Surge_PId" pkg="pid" type="controller" output="screen" >
-    <param name="Kp" value="1.5" />
-    <param name="Ki" value="0.4" />
-    <param name="Kd" value="0.4" />
-    <param name="rate" value="20" />
+      <param name="rate" value="20" />
     <param name="upper_limit" value="100" />
     <param name="lower_limit" value="-100" />
     <param name="windup_limit" value="10" />
@@ -27,9 +24,6 @@
   </node>
 
   <node name="sway_pid" pkg="pid" type="controller" output="screen" >
-    <param name="Kp" value="1.5" />
-    <param name="Ki" value="0.4" />
-    <param name="Kd" value="0.4" />
     <param name="rate" value="20" />
     <param name="upper_limit" value="100" />
     <param name="lower_limit" value="-100" />
@@ -44,9 +38,6 @@
   </node>
 
   <node name="heave_pid" pkg="pid" type="controller" output="screen" >
-    <param name="Kp" value="1.5" />
-    <param name="Ki" value="0.4" />
-    <param name="Kd" value="0.4" />
     <param name="rate" value="20" />
     <param name="upper_limit" value="100" />
     <param name="lower_limit" value="-100" />
@@ -61,9 +52,6 @@
   </node>
 
   <node name="yaw_pid" pkg="pid" type="controller" output="screen" >
-    <param name="Kp" value="1.5" />
-    <param name="Ki" value="0.4" />
-    <param name="Kd" value="0.4" />
     <param name="rate" value="20" />
     <param name="upper_limit" value="100" />
     <param name="lower_limit" value="-100" />
