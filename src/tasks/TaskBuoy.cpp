@@ -2,7 +2,9 @@
 // #include "auv_mission_control/TaskBuoy.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <cmath>
+#include <string>
 
+//ros::Rate buoyRate(20);
 
 TaskBuoy::TaskBuoy(){
 
@@ -71,6 +73,12 @@ int TaskBuoy::execute(){
                 cv::Mat Lab;
                 cv::Mat labThresh;
 
+                // int frame_width = original(CV_CAP_PROP_FRAME_WIDTH);
+                //  int frame_height = original(CV_CAP_PROP_FRAME_HEIGHT);
+
+                // cv::VideoWriter writer("/home/beaverauv/Desktop/out1.avi", ('P','I','M','1'), 24, cv::Size(640,480), true);
+
+                // cv::imwrite("/home/beaverauv/Desktop/Capture/out.png", original);
 
                 cv::cvtColor(original,imgHLS,CV_BGR2HLS);
                 cv::cvtColor(original,Lab, CV_BGR2Lab);
@@ -116,8 +124,6 @@ int TaskBuoy::execute(){
                 int numBigConours = 0;
                 int largest_area = 0;
                 int largest_contour_index = 0;
-                
-
 
                 for( int i = 0; i < contours.size(); i++ )
                 {
@@ -127,6 +133,7 @@ int TaskBuoy::execute(){
                         if( count < 6 )
                                 continue;
                         numBigConours++;
+
                         double a = contourArea ( contours[i], false);
                         if ( a > largest_area )
                         {
@@ -137,38 +144,33 @@ int TaskBuoy::execute(){
 
                         // for( int j = 0; j < 4; j++ )
                         //         cv::line( original, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 );
+                        //  buoyRate.sleep();
                 }
                 ROS_INFO("\033[2J\033[1;1H");
-                if (numBigConours >= 1){
-                  marker_angle = cv::fitEllipse(contours[largest_contour_index]);
+                if (numBigConours >= 1) {
+                        marker_angle = cv::fitEllipse(contours[largest_contour_index]);
 
-                  ROS_INFO("%d", largest_contour_index);
+                        ROS_INFO("%d", largest_contour_index);
 
-                  cv::Point2f rect_points[4];
-                  //minEllipse[largest_contour_index].points( rect_points );
-                  marker_angle.points( rect_points );
+                        cv::Point2f rect_points[4];
+                        //minEllipse[largest_contour_index].points( rect_points );
+                        marker_angle.points( rect_points );
 
-                  //  marker_angle = cv::fitEllipse( cv::Mat(contours[i]) );
+                        //  marker_angle = cv::fitEllipse( cv::Mat(contours[i]) );
 
-                  double angle = marker_angle.angle - 90;
-                  if (marker_angle.size.width < marker_angle.size.height)
-                          angle = 90 + angle;
-
-                  ROS_INFO("%f", angle);
-                  //cv::drawContours( original, contours, largest_contour_index, cv::Scalar(0,255,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
-                  // ellipse
-                  cv::ellipse( original, marker_angle, cv::Scalar(255,0,0), 2, 8 );
+                        double angle = marker_angle.angle - 90;
+                        if (marker_angle.size.width < marker_angle.size.height)
+                                angle = 90 + angle;
+                        ROS_INFO("%f", angle);
+                        //cv::drawContours( original, contours, largest_contour_index, cv::Scalar(0,255,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point() );
+                        // ellipse
+                        cv::ellipse( original, marker_angle, cv::Scalar(255,0,0), 2, 8 );
 
                 } else {
-                  ROS_INFO("No Contours greater than 6");
+                        ROS_INFO("No Contours greater than 6");
                 }
 
                 //minEllipse[largest_contour_index] = cv::fitEllipse( cv::Mat(contours[largest_contour_index]) );
-
-
-
-
-
 
                 // ROS_INFO("\033[2J\033[1;1H");
                 // ROS_INFO("Located at: %f %f ", posX, posY);
@@ -184,6 +186,8 @@ int TaskBuoy::execute(){
                 else {
                         objectFound = 0;
                 }
+
+                // writer.write(original);
 
                 cv::imshow("original", original);
                 cv::imshow("ControlHLS", hlsThresh);

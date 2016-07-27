@@ -18,6 +18,9 @@ public:
   ~Camera();
   cv::Mat getFront();
   cv::Mat getBottom();
+
+  // cv::Size frameSize( getFront.get(CV_CAP_PROP_FRAME_WIDTH), getFront.get(CV_CAP_PROP_FRAME_HEIGHT) );
+
   void update();
 
 };
