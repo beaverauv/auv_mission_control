@@ -282,12 +282,12 @@ double PidManager::getDepth(){
     return depth_;
 }
 
-double PidManager::getYaw(){
-  if(!subImuHasBeenCalled)
-    return 0;
-  else
-    return plantYaw_;
-}
+//double PidManager::getYaw(){
+//  if(!subImuHasBeenCalled)
+//    return 0;
+//  else
+//    return plantYaw_;
+//}
 
 
 void PidManager::setPidEnabled(int axis, bool enabled){

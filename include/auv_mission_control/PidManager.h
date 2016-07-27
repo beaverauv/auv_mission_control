@@ -130,7 +130,7 @@ public:
   void killCallBack(const std_msgs::Bool::ConstPtr& kill_msg);
   void imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg);
 
-  double getYaw();
+//  double getYaw();
 
 
 };
