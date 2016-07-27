@@ -55,6 +55,12 @@ int TaskBuoy::execute(){
         //      cv::createTrackbar("ColorSControlHLS2pace", "Control", &ColorSpace, 2);
 
         // ROS_ERROR("2");
+        cam_.update();
+        cv::Mat orig = cam_.getFront();
+        cv::Size size = orig.size();
+
+        cv::VideoWriter writer("/home/beaverauv/Desktop/out1.avi", -1, 24, size, true);
+
 
         while (ros::ok) {
 
@@ -76,7 +82,6 @@ int TaskBuoy::execute(){
                 // int frame_width = original(CV_CAP_PROP_FRAME_WIDTH);
                 //  int frame_height = original(CV_CAP_PROP_FRAME_HEIGHT);
 
-                // cv::VideoWriter writer("/home/beaverauv/Desktop/out1.avi", ('P','I','M','1'), 24, cv::Size(640,480), true);
 
                 // cv::imwrite("/home/beaverauv/Desktop/Capture/out.png", original);
 
@@ -187,7 +192,7 @@ int TaskBuoy::execute(){
                         objectFound = 0;
                 }
 
-                // writer.write(original);
+                 writer.write(original);
 
                 cv::imshow("original", original);
                 cv::imshow("ControlHLS", hlsThresh);
