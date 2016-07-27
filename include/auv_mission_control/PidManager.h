@@ -41,6 +41,7 @@ public:
   double kP;
   double kD;
   double kI;
+  double Kp_scale;
 };
 
 class PidManager{
@@ -54,7 +55,7 @@ private:
   ros::Subscriber subStart;
   bool subStartHasBeenCalled = false;
   ros::Subscriber subImu;
-  bool subImuHasBeenCalled = false;
+//  bool subImuHasBeenCalled = false;
   ros::Subscriber subKill;
   bool subKillHasBeenCalled = false;
 
@@ -88,7 +89,6 @@ private:
 
   bool bStartSwitchState_ = false;
   bool bTimoutSwitchState_ = false;;
-  sensor_msgs::Imu imu_;
 
   int rosInfoCounter = 0;
 
@@ -130,7 +130,7 @@ public:
   void killCallBack(const std_msgs::Bool::ConstPtr& kill_msg);
   void imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg);
 
-//  double getYaw();
+  double getYaw();
 
 
 };

@@ -1,5 +1,5 @@
 #include <auv_mission_control/StateMachine.h>
-
+//hi
 Timer mainTimer;
 bool timerStarted = false;
 double timeSinceStart;
@@ -114,4 +114,3 @@ bool getTimeout(){
   else
     return false;
 }
-

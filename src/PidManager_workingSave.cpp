@@ -1,5 +1,5 @@
 #include <auv_mission_control/PidManager.h>
-
+//hi
 double depth_;
 bool bKillSwitchState_;
 double plantSurge_;
@@ -168,7 +168,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
       std_msgs::Float64 msgSetpointHeave;
 
       if (input_type == INPUT_DEPTH){
-        paramHeave.kP = 0.75;//.;
+        paramHeave.kP = 75;//.;
         paramHeave.kD = 0;//.;
         paramHeave.kI = 0;//30.;
 	paramHeave.Kp_scale = 100;
