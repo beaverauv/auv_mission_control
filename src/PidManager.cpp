@@ -7,7 +7,11 @@ double plantSway_;
 double plantHeave_;
 double plantRoll_;
 double plantPitch_;
-double plantYaw_;/*
+double plantYaw_;
+sensor_msgs::Imu imu_;
+bool subImuHasBeenCalled = true;
+
+/*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
   plant_surge_vision = vision->surge;
   plant_sway_vision = vision->sway;
@@ -283,10 +287,14 @@ double PidManager::getDepth(){
 }
 
 double PidManager::getYaw(){
-  if(!subImuHasBeenCalled)
+  if(!subImuHasBeenCalled){
+    ROS_INFO("!subimucalled");
     return 0;
-  else
+  }
+  else{
+    ROS_INFO("Called getYaw");
     return plantYaw_;
+  }
 }
 
 

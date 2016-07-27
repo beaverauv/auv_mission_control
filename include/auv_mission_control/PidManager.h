@@ -54,7 +54,7 @@ private:
   ros::Subscriber subStart;
   bool subStartHasBeenCalled = false;
   ros::Subscriber subImu;
-  bool subImuHasBeenCalled = false;
+//  bool subImuHasBeenCalled = false;
   ros::Subscriber subKill;
   bool subKillHasBeenCalled = false;
 
@@ -88,7 +88,6 @@ private:
 
   bool bStartSwitchState_ = false;
   bool bTimoutSwitchState_ = false;;
-  sensor_msgs::Imu imu_;
 
   int rosInfoCounter = 0;
 
