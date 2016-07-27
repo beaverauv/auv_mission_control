@@ -9,7 +9,7 @@ double plantRoll_;
 double plantPitch_;
 double plantYaw_;
 sensor_msgs::Imu imu_;
-bool subImuHasBeenCalled = true;
+bool subImuHasBeenCalled = false;
 
 /*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
