@@ -10,7 +10,7 @@ double plantPitch_;
 double plantYaw_;
 sensor_msgs::Imu imu_;
 bool subImuHasBeenCalled;
-
+double yawInitValue;
 /*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
   plant_surge_vision = vision->surge;
@@ -253,7 +253,7 @@ void PidManager::setPlantState(int axis, double plantValue){
    ROS_INFO("boop");
    ROS_INFO("publishing heave: %f", plantValue);
    pubStateHeave.publish(msgPlantValue);
-}  
+}
   else if(axis == AXIS_YAW){
     pubStateYaw.publish(msgPlantValue);
 }
@@ -263,7 +263,7 @@ void PidManager::setPlantState(int axis, double plantValue){
 }
 }
 void PidManager::setZero(int sensor){
-
+  yawInitValue = pm_.getYaw();
 }
 
 bool PidManager::getKill(){
@@ -297,12 +297,24 @@ double PidManager::getDepth(){
 }
 
 double PidManager::getYaw(){
-	//OS_INFO("here");
+  double yaw;
+  //OS_INFO("here");
   if(!subImuHasBeenCalled){
 	return 0;
 }
   else{
-    return plantYaw_;
+    yaw = plantYaw_ - yawInitValue;
+
+//-190. +180 = -10.          -170 + - 20 = -190. -190 - 180 = 10. 180 - 10 = 170;
+  if(yaw < -180){
+    double difference = yaw + 180;
+    return 180 - difference;
+  }
+  else if (yaw > 180){ //160 + 30 = 190. 190 - 180 = 10. -180 + 10;
+    double differnce = yaw - 180;
+    return -180 + difference;
+
+  }
 
 }
 }

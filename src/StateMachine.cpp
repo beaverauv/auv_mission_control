@@ -51,8 +51,8 @@ Camera cam;
       case 2: { //gate
 
         ROS_INFO("EXECUTING GATE TASK");
-        TaskGate gate(&pm, &cam);
-        int outcome = gate.execute();
+        TaskGateVision gateVision(&pm, &cam);
+        int outcome = gateVision.execute();
         ROS_INFO("outcome %d", outcome);
 
         if (outcome == succeeded)
@@ -114,4 +114,3 @@ bool getTimeout(){
   else
     return false;
 }
-
