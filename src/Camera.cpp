@@ -22,16 +22,18 @@ Camera::~Camera(){
 
 }
 
-void Camera::update(){
+void Camera::updateFront(){
 
   if (!frontCap.read(lastFrontImage)){
     ROS_ERROR("Failed to read from front camera");
   }
-  if (!bottomCap.read(lastBottomImage)){
-  //  ROS_ERROR("Failed to read from bottom Camera");
-  }
 }
 
+void Camera::updateBottom(){
+  if (!bottomCap.read(lastBottomImage)){
+    ROS_ERROR("Failed to read from bottom Camera");
+  }
+}
 
 cv::Mat Camera::getFront(){
   return lastFrontImage;

@@ -168,7 +168,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
       std_msgs::Float64 msgSetpointHeave;
 
       if (input_type == INPUT_DEPTH){
-        paramHeave.kP = 0.2;//.;
+        paramHeave.kP = 0.6;//.;
         paramHeave.kD = 0;//.;
         paramHeave.kI = 0;//30.;
 	paramHeave.Kp_scale = 100;
@@ -178,9 +178,10 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
       }
 
       else if (input_type == INPUT_CAM_FRONT){
-        paramHeave.kP = 0.035;
-        paramHeave.kD = 0.03;
-        paramHeave.kI = 0.04;
+        ROS_INFO("beep boop");
+	paramHeave.kP = 0.01;
+        paramHeave.kD = 0.005;
+        paramHeave.kI = 0.005;
         //set tuning for front CAM_FRONT, set as plant state
       }
 
@@ -298,7 +299,6 @@ double PidManager::getDepth(){
 }
 
 double PidManager::getYaw(){
-  //OS_INFO("here");
   if(!subImuHasBeenCalled){
 	return 0;
 }
@@ -314,10 +314,6 @@ double PidManager::getYaw(){
     else{
       correctedYaw = delta;
     }
-    
-    ROS_INFO("Corrected yaw value %f", correctedYaw);
-    ROS_INFO("raw yaw value %f", plantYaw_);
-    ROS_INFO("Yaw zero value %f", yawInitValue);
     return correctedYaw;
 }
 }

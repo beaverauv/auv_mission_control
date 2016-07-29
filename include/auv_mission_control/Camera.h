@@ -18,7 +18,8 @@ public:
   ~Camera();
   cv::Mat getFront();
   cv::Mat getBottom();
-  void update();
+  void updateFront();
+  void updateBottom();
 
 };
 

@@ -35,11 +35,11 @@ Camera cam;
           currentState = 9;
         }
         else if(pm.getStart() == true){
-          currentState = 2;
-          ROS_INFO("START");
+          currentState = 1;
+          ROS_INFO("STARTING");
           mainTimer.start();
           timerStarted = true;
-          while(mainTimer.getTime() < 4){
+          while(mainTimer.getTime() < 1){
             ros::spinOnce;
             stateRate.sleep();
           }
@@ -51,18 +51,39 @@ Camera cam;
 
 
       case 1: { //gate
-      }
-      case 2: { //gate
-
         ROS_INFO("EXECUTING GATE TASK");
+        TaskGate gate(&pm, &cam);
+	int outcome = gate.execute();
+       // ROS_INFO("outcome %d", outcome);
+
+        if (outcome == succeeded){
+          currentState = 2;
+	  ROS_INFO("Gate task succeeded. Transitioning to Buoy task");
+        }
+	else if (outcome == timeout || getTimeout())
+          currentState = 8;
+        else if (outcome == kill || pm.getKill()){
+          currentState = 9;
+          ROS_INFO("kill");
+        }
+        else
+          currentState = 9;
+        break;
+
+      }
+      case 2: { //buoy
+
+        ROS_INFO("EXECUTING BUOY TASK");
         TaskBuoy buoy(&pm, &cam);
         //int outcome = 10;
 	int outcome =  buoy.execute();
-        ROS_INFO("outcome %d", outcome);
+        //ROS_INFO("outcome %d", outcome);
 
-        if (outcome == succeeded)
+        if (outcome == succeeded){
           currentState = 10;
-        else if (outcome == timeout || getTimeout())
+          ROS_INFO("Buoy task succeeded. Resetting to init state");
+        }
+	else if (outcome == timeout || getTimeout())
           currentState = 8;
         else if (outcome == kill || pm.getKill()){
           currentState = 9;

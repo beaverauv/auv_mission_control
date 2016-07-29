@@ -24,7 +24,7 @@ int TaskGateVision::execute(){
 
   pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
-  cam_.update();
+  cam_.updateFront();
   cv::Mat original;
   cv::Mat imgThresh;
 

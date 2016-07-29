@@ -24,8 +24,8 @@ private:
   int currentCamera = INPUT_CAM_FRONT;
 
 
-  cv::Scalar redMin = cv::Scalar(0, 0, 0);
-  cv::Scalar redMax = cv::Scalar(255, 255, 255);
+  cv::Scalar redMin = cv::Scalar(73, 153, 143);
+  cv::Scalar redMax = cv::Scalar(107, 187, 255);
 
   cv::Scalar greenMin = cv::Scalar(0, 0, 0);
   cv::Scalar greenMax = cv::Scalar(255, 255, 255);

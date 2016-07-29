@@ -5,7 +5,7 @@ TaskBuoy::TaskBuoy(){
 
 
 TaskBuoy::TaskBuoy(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
-        ROS_ERROR("TASK GATE INIT");
+        ROS_INFO("TASK BUOY INIT");
 }
 
 TaskBuoy::~TaskBuoy(){
@@ -20,22 +20,25 @@ int TaskBuoy::execute(){
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         // pm_.taskDelay(5);
-
+	currentColor = COLOR_RED;
         while (ros::ok) {
 
                 ros::spinOnce();
 
                 pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
-                cam_.update();
-                cv::Mat original;
+                cam_.updateFront();
+                cv::Mat original = cam_.getFront();
+		cv::Mat imgLab;
+		cv::cvtColor(original, imgLab, CV_BGR2Lab);
                 cv::Mat imgThresh;
 
                 original = cam_.getFront();
                 if (currentColor == COLOR_RED){
-                  cv::inRange(original, redMin, redMax, imgThresh);
-                } else if (currentColor = COLOR_GREEN) {
-                  cv::inRange(original, greenMin, greenMax, imgThresh);
+                  cv::inRange(imgLab, redMin, redMax, imgThresh);
+                  ROS_INFO("COLOR IS RED");
+		} else if (currentColor = COLOR_GREEN) {
+                  cv::inRange(imgLab, greenMin, greenMax, imgThresh);
                 }
 
               //  cv::Mat imgHSV = original;
@@ -50,10 +53,16 @@ int TaskBuoy::execute(){
 
                 cv::Moments oMoments = cv::moments(imgThresh);
                 double dArea = oMoments.m00;
+	        ROS_INFO("\033[2J\033[1;1H");
+		ROS_INFO("dArea %f", dArea);
                 double posX = oMoments.m10 / dArea;
+	        ROS_INFO("posX %f", posX);
                 double posY = oMoments.m01 / dArea;
-                double posXcorrected = 640 - posX;
-                double posYcorrected = posY; //here for continuity
+	        ROS_INFO("posY %f", posY);
+                double posXcorrected = posX;// - posX;
+                ROS_INFO("posXcorrected initial %f", posXcorrected);
+ 	       double posYcorrected = posY; //here for continuity
+	        ROS_INFO("posYcorrected initial %f", posYcorrected);
 
                 cv::circle(original, cv::Point(posX, posY), 7, cv::Scalar(255, 255, 255), -1);
                 cv::circle(original, cv::Point(posX, posY), 8, cv::Scalar(0, 0, 0), 2);
@@ -68,7 +77,7 @@ int TaskBuoy::execute(){
 
                   case 0:{ //approach first buoy (red) YO MA OG GIMMME CENTROID OF RED
                     ColorSpace = 0;  //(red)
-                    if(!objectFound || dArea > 74419200){
+                    if(dArea >= 3250000){//!objectFound || dArea > 74419200){
                       pm_.setControlEffort(AXIS_SURGE, 0);
                       redDepth = pm_.getDepth();
                       action = 1;
@@ -79,6 +88,20 @@ int TaskBuoy::execute(){
                       pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_HEAVE, INPUT_CAM_FRONT, 240);
+                      if(posYcorrected == posYcorrected) //checks for NaN, doesn't set if is
+		        pm_.setPlantState(AXIS_HEAVE, posYcorrected);
+		      else
+			pm_.setPlantState(AXIS_HEAVE, 240);
+		      if(posXcorrected == posXcorrected){
+		        pm_.setPlantState(AXIS_YAW, posXcorrected);
+			pm_.setPlantState(AXIS_YAW, posXcorrected);
+                      }
+		      else{
+			pm_.setPlantState(AXIS_YAW, 360);
+			pm_.setPlantState(AXIS_SWAY, 360);
+		     }
+		      ROS_INFO("posXcorrected %f", posXcorrected);
+                      ROS_INFO("posYcorrected %f", posYcorrected);
                       pm_.setControlEffort(AXIS_SURGE, 15);
                       action = 0;
                       break;
@@ -86,6 +109,7 @@ int TaskBuoy::execute(){
                   }
 
                   case 1:{ //BOP IT! (ram it)
+		    ROS_INFO("BOPPING IT!");
                     if(ramRedCounter < 1){
                       ramRed.start();
                       ramRedCounter++;
@@ -96,13 +120,13 @@ int TaskBuoy::execute(){
                     pm_.setPidEnabled(AXIS_SWAY, 0);
                     pm_.setControlEffort(AXIS_SWAY, 0);
                     pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-
-                    if(ramRed.getTime() <=2)
-                      pm_.setControlEffort(AXIS_SURGE, 15);
-                    else if(ramRed.getTime() > 2 && ramRed.getTime() <= 2.5)
+		    pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+                    if(ramRed.getTime() <=3)
+                      pm_.setControlEffort(AXIS_SURGE, 45);
+                    else if(ramRed.getTime() >3 && ramRed.getTime() <= 6)
                       pm_.setControlEffort(AXIS_SURGE, 0);
-                    else if(ramRed.getTime() > 2.5 && ramRed.getTime() <= 6)
-                      pm_.setControlEffort(AXIS_SURGE, -15);
+                    else if(ramRed.getTime() > 6 && ramRed.getTime() <= 10)
+                      pm_.setControlEffort(AXIS_SURGE, -35);
                     else{
                       pm_.setControlEffort(AXIS_SURGE, 0);
                       action = 2;
