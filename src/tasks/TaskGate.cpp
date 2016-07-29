@@ -204,7 +204,7 @@ int TaskGate::execute(){
       case 2:{ //return succeeded, and please proceed to the nearest task as quickly and calmly as possible, keeping in mind that it may be behind you
 	if(upCount < 1)
 	  upTimer.start();
-	
+
         while(upTimer.getTime() < 5){
 	  ros::spinOnce;
           gateRate.sleep();
@@ -214,7 +214,7 @@ int TaskGate::execute(){
    pm_.setControlEffort(AXIS_HEAVE, 0);
    return succeeded;
         break;
-      
+
      }
     };
 
@@ -223,4 +223,3 @@ int TaskGate::execute(){
 
   }//while ros::ok
 }//execute
-

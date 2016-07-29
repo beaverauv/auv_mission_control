@@ -11,6 +11,10 @@
 #include <auv_mission_control/StateMachine.h>
 
 
+#define COLOR_RED 0
+#define COLOR_GREEN 1
+
+
 class TaskGateVision{
 public:
   TaskGateVision();
@@ -34,7 +38,7 @@ private:
   int goCounter = 0;
   int finalCounter = 0;
   int maxJump = 45;
-  
+
   double killSwitch;
   double currentDepth;
   double startSwitch;
@@ -64,13 +68,26 @@ private:
 
 
   int camInUse;
+  int currentColor;
+  int minFrontL = 0;
+  int maxFrontL = 255;
+  int minFrontA = 0;
+  int maxFrontA = 255;
+  int minFrontB = 0;
+  int maxFrontB = 255;
 
-  int minR = 0;
-  int maxR = 255;
-  int minG = 0;
-  int maxG = 255;
-  int minB = 0;
-  int maxB = 255;
+  int minBottomL = 0;
+  int maxBottomL = 255;
+  int minBottomA = 0;
+  int maxBottomA = 255;
+  int minBottomB = 0;
+  int maxBottomB = 255;
+
+  cv::Scalar redMin = cv::Scalar(0, 0, 0);
+  cv::Scalar redMax = cv::Scalar(255, 255, 255);
+
+  cv::Scalar greenMin = cv::Scalar(0, 0, 0);
+  cv::Scalar greenMax = cv::Scalar(255, 255, 255);
 
 
 };

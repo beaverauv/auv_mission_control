@@ -55,9 +55,9 @@ Camera cam;
       case 2: { //gate
 
         ROS_INFO("EXECUTING GATE TASK");
-        TaskBuoy gate(&pm, &cam);
+        TaskBuoy buoy(&pm, &cam);
         //int outcome = 10;
-	int outcome = gate.execute();
+	int outcome =  buoy.execute();
         ROS_INFO("outcome %d", outcome);
 
         if (outcome == succeeded)

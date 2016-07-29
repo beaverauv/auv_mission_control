@@ -119,7 +119,7 @@ int TaskBuoy::execute(){
                     objectFound = 0;
                   }
 
-                  case 0:{ //approach first buoy (red)
+                  case 0:{ //approach first buoy (red) YO MA OG GIMMME CENTROID OF RED
                     ColorSpace = 0;  //(red)
                     if(!objectFound || dArea > 74419200){
                       pm_.setControlEffort(AXIS_SURGE, 0);
@@ -133,6 +133,8 @@ int TaskBuoy::execute(){
                       pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_HEAVE, INPUT_CAM_FRONT, 240);
                       pm_.setControlEffort(AXIS_SURGE, 15);
+                      action = 0;
+                      break;
                     }
                   }
 

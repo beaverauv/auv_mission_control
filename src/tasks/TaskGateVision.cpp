@@ -18,17 +18,6 @@ int TaskGateVision::execute(){
   pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
   pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
 
-  cv::namedWindow("Original", CV_WINDOW_AUTOSIZE);
-  cv::namedWindow("controlGate", CV_WINDOW_AUTOSIZE);
-
-  cv::createTrackbar("minR", "controlGate", &minR, 255);
-  cv::createTrackbar("maxR", "controlGate", &maxR, 255);
-  cv::createTrackbar("minG", "controlGate", &minG, 255);
-  cv::createTrackbar("maxG", "controlGate", &maxG, 255);
-  cv::createTrackbar("minB", "controlGate", &minB, 255);
-  cv::createTrackbar("maxB", "controlGate", &maxB, 255);
-
-
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
 
   ros::spinOnce();
@@ -37,29 +26,31 @@ int TaskGateVision::execute(){
 
   cam_.update();
   cv::Mat original;
-  if (camInUse == INPUT_CAM_FRONT){
-    original = cam_.getFront();
-  }
-  else{
-    original = cam_.getBottom();
-  }
-//  cv::Mat imgHSV = original;
   cv::Mat imgThresh;
 
-  cv::inRange(original, cv::Scalar(minR, minG, minB), cv::Scalar(maxR, maxG, maxB), imgThresh);
+  original = cam_.getFront();
+  if (currentColor == COLOR_RED){
+    cv::inRange(original, redMin, redMax, imgThresh);
+  } else if (currentColor = COLOR_GREEN) {
+    cv::inRange(original, greenMin, greenMax, imgThresh);
+  }
+
+//  cv::Mat imgHSV = original;
+
+  cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
   cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+
+  cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+  cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+
   cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10,10)));
 
   cv::Moments oMoments = cv::moments(imgThresh);
 
-  int dM01 = oMoments.m01;
-  int dM10 = oMoments.m10;
-  double dArea = oMoments.m00;
-  int posX = dM10 / dArea;
-  int posY = dM01 / dArea;
-  double posXdouble = (double)posX;
-  double posYdouble = (double)posY;
-  double posXcorrected = 640 - posXdouble;
+  double posX = oMoments.m10 / oMoments.m00;
+  double posY = oMoments.m01 / oMoments.m00;
+  double posXcorrected = 640 - posX;
+  double posYcorrected = posY; //here for continuity
 
   // minR = 0;
   // maxR = 0;
@@ -183,8 +174,8 @@ int TaskGateVision::execute(){
       if(goCounter < 1){
         forwardTimer.start() ;
         goCounter++;
-        prevPosX = posXdouble;
-        prevPosY = posYdouble;
+        prevPosX = posXcorrected;
+        prevPosY = posYcorrected;
         ROS_INFO("Using vision to navigate to gate");
       }
 
@@ -200,7 +191,7 @@ int TaskGateVision::execute(){
           break;
         }
 
-        if(fabs(prevPosX - posXdouble) > maxJump || fabs(prevPosY - posYdouble) > maxJump){ //checks if vision jumped too far
+        if(fabs(prevPosX - posXcorrected) > maxJump || fabs(prevPosY - posYcorrected) > maxJump){ //checks if vision jumped too far
           ROS_WARN("Jump in position of centroid of gate exceeds max jump. Switching to dead reckoning");
           action = 2;
           break;
@@ -262,7 +253,7 @@ int TaskGateVision::execute(){
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
 
-        if(fabs(240 - posYdouble) <= 10){
+        if(fabs(240 - posYcorrected) <= 10){
           if(finalCounter < 1){
             finalTimer.start();
             finalCounter ++;
