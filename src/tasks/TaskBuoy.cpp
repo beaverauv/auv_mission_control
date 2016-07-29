@@ -117,7 +117,9 @@ int TaskBuoy::execute(){
                     }
 
                     pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, redDepth);
-                    pm_.setPidEnabled(AXIS_SWAY, 0);
+		   ROS_INFO("RED DEPTH %f", redDepth);
+                   pm_.setPlantState(AXIS_HEAVE, pm_.getDepth()); 
+		   pm_.setPidEnabled(AXIS_SWAY, 0);
                     pm_.setControlEffort(AXIS_SWAY, 0);
                     pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 		    pm_.setPlantState(AXIS_YAW, pm_.getYaw());

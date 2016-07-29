@@ -83,7 +83,7 @@ int TaskGate::execute(){
 
           startTimer = false;
           rosInfoCounter++;
-          if(true)//(error < .01)
+          if(error < .01)
             break;
           ros::spinOnce();
           gateRate.sleep();
