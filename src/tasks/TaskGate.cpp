@@ -53,6 +53,7 @@ int TaskGate::execute(){
 
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+        pm_.setZero();
 
         while(ros::ok){
           pm_.setPlantState(AXIS_HEAVE, pm_.getYaw());
@@ -196,17 +197,17 @@ int TaskGate::execute(){
       case 2:{ //return succeeded, and please proceed to the nearest task as quickly and calmly as possible, keeping in mind that it may be behind you
 	if(upCount < 1)
 	  upTimer.start();
-	
+
         while(upTimer.getTime() < 5){
 	  ros::spinOnce;
           gateRate.sleep();
 	  pm_.setPidEnabled(AXIS_HEAVE, 0);
-	  pm_.setControlEffort(AXIS_HEAVE, 50);	  
-}     
+	  pm_.setControlEffort(AXIS_HEAVE, 50);
+}
    pm_.setControlEffort(AXIS_HEAVE, 0);
    return succeeded;
         break;
-      
+
      }
     };
 
@@ -215,4 +216,3 @@ int TaskGate::execute(){
 
   }//while ros::ok
 }//execute
-

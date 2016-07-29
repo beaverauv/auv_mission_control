@@ -39,7 +39,7 @@ Camera cam;
           ROS_INFO("START");
           mainTimer.start();
           timerStarted = true;
-          while(mainTimer.getTime() < 20){
+          while(mainTimer.getTime() < 2){
             ros::spinOnce;
             stateRate.sleep();
           }
@@ -55,8 +55,7 @@ Camera cam;
       case 2: { //gate
 
         ROS_INFO("EXECUTING GATE TASK");
-        TaskGateVision gateVision(&pm, &cam);
-        int outcome = 10;
+        TaskGate gate(&pm, &cam);
 	//int outcome = gateVision.execute();
         ROS_INFO("outcome %d", outcome);
 
