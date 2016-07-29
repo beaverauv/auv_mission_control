@@ -1,9 +1,9 @@
 <launch>
 
-  <!-- <node pkg="rosserial_python" type="serial_node.py" name="$(anon foo)">
+  <node pkg="rosserial_python" type="serial_node.py" name="$(anon foo)">
     <param name="port" value="/dev/ttyACM0"/>
     <param name="baud" value="57600"/>
-  </node> -->
+  </node>
 
   <node pkg="auv_mission_control" type="state_machine_cont" name="$(anon state_machine_cont)" output="screen">
   </node>
@@ -58,10 +58,10 @@
     <param name="windup_limit" value="10" />
     <param name="cutoff_frequency" value="20" />
     <param name="diagnostic_period" value="0.25" />
-    <param name="topic_from_controller" value="controlEffort_surge" />
-    <param name="topic_from_plant" value="state_surge " />
-    <param name="setpoint_topic" value="setpoint_surge" />
-    <param name="topic_pid_enable" value="surge_pid_enable" />
+    <param name="topic_from_controller" value="controlEffort_yaw" />
+    <param name="topic_from_plant" value="state_yaw " />
+    <param name="setpoint_topic" value="setpoint_yaw" />
+    <param name="topic_pid_enable" value="surge_pid_yaw" />
 
   </node>
 

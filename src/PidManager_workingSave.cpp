@@ -1,5 +1,5 @@
 #include <auv_mission_control/PidManager.h>
-
+//hi
 double depth_;
 bool bKillSwitchState_;
 double plantSurge_;
@@ -10,7 +10,7 @@ double plantPitch_;
 double plantYaw_;
 sensor_msgs::Imu imu_;
 bool subImuHasBeenCalled;
-double yawInitValue;
+
 /*
 void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
   plant_surge_vision = vision->surge;
@@ -44,7 +44,6 @@ void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
 //  imu_ = *imu_msg;
   //ROS_INFO("boop");
   plantYaw_ = imu_msg->orientation.z;
-  ROS_INFO("recieved value%f", plantYaw_); 
   subImuHasBeenCalled = true;
 
 }
@@ -169,7 +168,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
       std_msgs::Float64 msgSetpointHeave;
 
       if (input_type == INPUT_DEPTH){
-        paramHeave.kP = 0.75;//.;
+        paramHeave.kP = 75;//.;
         paramHeave.kD = 0;//.;
         paramHeave.kI = 0;//30.;
 	paramHeave.Kp_scale = 100;
@@ -251,11 +250,12 @@ void PidManager::setPlantState(int axis, double plantValue){
   else if(axis == AXIS_SWAY)
     pubStateSway.publish(msgPlantValue);
   else if(axis == AXIS_HEAVE){
+   ROS_INFO("boop");
+   ROS_INFO("publishing heave: %f", plantValue);
    pubStateHeave.publish(msgPlantValue);
-}
+}  
   else if(axis == AXIS_YAW){
     pubStateYaw.publish(msgPlantValue);
-    ROS_INFO("publishing yaw %f", msgPlantValue);
 }
   else{
     ROS_ERROR("bad input type");
@@ -263,8 +263,7 @@ void PidManager::setPlantState(int axis, double plantValue){
 }
 }
 void PidManager::setZero(int sensor){
-  if(subImuHasBeenCalled)
-    yawInitValue = getYaw();
+
 }
 
 bool PidManager::getKill(){
@@ -298,24 +297,12 @@ double PidManager::getDepth(){
 }
 
 double PidManager::getYaw(){
-  double yaw;
-  //OS_INFO("here");
+	//OS_INFO("here");
   if(!subImuHasBeenCalled){
 	return 0;
 }
   else{
-    yaw = plantYaw_ - yawInitValue;
-
-//-190. +180 = -10.          -170 + - 20 = -190. -190 - 180 = 10. 180 - 10 = 170;
-  if(yaw < -180){
-    double difference = yaw + 180;
-    return 180 - difference;
-  }
-  else if (yaw > 180){ //160 + 30 = 190. 190 - 180 = 10. -180 + 10;
-    double difference = yaw - 180;
-    return -180 + difference;
-
-  }
+    return plantYaw_;
 
 }
 }

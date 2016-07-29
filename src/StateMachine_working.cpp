@@ -1,5 +1,5 @@
 #include <auv_mission_control/StateMachine.h>
-
+//hi
 Timer mainTimer;
 bool timerStarted = false;
 double timeSinceStart;
@@ -39,11 +39,7 @@ Camera cam;
           ROS_INFO("START");
           mainTimer.start();
           timerStarted = true;
-          while(mainTimer.getTime() < 2){
-            ros::spinOnce;
-            stateRate.sleep();
-          }
-	}
+        }
         else
           currentState = 0;
         break;
@@ -56,7 +52,7 @@ Camera cam;
 
         ROS_INFO("EXECUTING GATE TASK");
         TaskGate gate(&pm, &cam);
-	//int outcome = gateVision.execute();
+        int outcome = gate.execute();
         ROS_INFO("outcome %d", outcome);
 
         if (outcome == succeeded)

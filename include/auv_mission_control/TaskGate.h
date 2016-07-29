@@ -55,6 +55,8 @@ private:
   double setpoint_surge;
   double plantState_surge;
 
+  Timer upTimer;
+  int upCount = 0;
 
 
 
