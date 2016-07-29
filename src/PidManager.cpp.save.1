@@ -44,7 +44,7 @@ void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
 //  imu_ = *imu_msg;
   //ROS_INFO("boop");
   plantYaw_ = imu_msg->orientation.z;
-//  ROS_INFO("recieved value%f", plantYaw_); 
+  //ROS_INFO("recieved value%f", plantYaw_); 
   subImuHasBeenCalled = true;
 
 }
@@ -107,6 +107,7 @@ PidManager::PidManager(ros::NodeHandle* nh) : nh_(*nh){
   this->setSetpoint(AXIS_SURGE, INPUT_IMU_POS, 0.0);
   this->setSetpoint(AXIS_SWAY, INPUT_IMU_POS, 0.0);
   this->setSetpoint(AXIS_HEAVE, INPUT_DEPTH, 0.0);
+
   this->setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0.0);
 }
 
@@ -254,7 +255,7 @@ void PidManager::setPlantState(int axis, double plantValue){
 }
   else if(axis == AXIS_YAW){
     pubStateYaw.publish(msgPlantValue);
-  //  ROS_INFO("publishing yaw %f", msgPlantValue);
+    //ROS_INFO("publishing yaw %f", msgPlantValue);
 }
   else{
     ROS_ERROR("bad input type");
@@ -263,9 +264,8 @@ void PidManager::setPlantState(int axis, double plantValue){
 }
 void PidManager::setZero(int sensor){
   if(subImuHasBeenCalled)
-    yawInitValue = plantYaw_;
+    yawInitValue = getYaw();
 }
-
 
 bool PidManager::getKill(){
   if(!subKillHasBeenCalled){
@@ -298,27 +298,25 @@ double PidManager::getDepth(){
 }
 
 double PidManager::getYaw(){
+  double yaw;
   //OS_INFO("here");
   if(!subImuHasBeenCalled){
 	return 0;
 }
   else{
-    double delta = yawInitValue - plantYaw_;
-    double correctedYaw;
-    if(delta > 180){
-      correctedYaw = -360 + delta;
-    }
-    else if(delta < -180){
-      correctedYaw = 360 + delta;
-    }
-    else{
-      correctedYaw = delta;
-    }
-    
-    ROS_INFO("Corrected yaw value %f", correctedYaw);
-    ROS_INFO("raw yaw value %f", plantYaw_);
-    ROS_INFO("Yaw zero value %f", yawInitValue);
-    return correctedYaw;
+    yaw = plantYaw_ - yawInitValue;
+
+//-190. +180 = -10.          -170 + - 20 = -190. -190 - 180 = 10. 180 - 10 = 170;
+  if(yaw < -180){
+    double difference = yaw + 180;
+    return 180 - difference;
+  }
+  else if (yaw > 180){ //160 + 30 = 190. 190 - 180 = 10. -180 + 10;
+    double difference = yaw - 180;
+    return -180 + difference;
+
+  }
+
 }
 }
 

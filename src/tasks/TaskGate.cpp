@@ -40,6 +40,14 @@ int TaskGate::execute(){
 
         //pm_.setControlEffort(AXIS_SWAY, 0);
         //pm_.setControlEffort(AXIS_SURGE, 0);
+        pm_.setZero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
+        pm_.setZero(AXIS_YAW);
 
 
         killSwitch = pm_.getKill();
@@ -52,16 +60,16 @@ int TaskGate::execute(){
         ROS_INFO("Vroom Vroom going do depth");
 
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
 
         while(ros::ok){
           pm_.setPlantState(AXIS_HEAVE, pm_.getYaw());
 
           currentDepth = pm_.getDepth();
-          double error = fabs(currentDepth - -1);
+          double error = fabs(currentDepth - -.1);
           if(rosInfoCounter%20000000 == 0)
 //            ROS_INFO("YAW = %f", pm_.getYaw());
-          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());
           pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
           killSwitch = pm_.getKill();
@@ -81,7 +89,7 @@ int TaskGate::execute(){
 
         ROS_INFO("Near depth setoint of %f; currently at %f. Starting depth timer.", -1.25, pm_.getDepth());
         pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
         pm_.setPlantState(AXIS_YAW, pm_.getYaw());
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
@@ -95,7 +103,7 @@ int TaskGate::execute(){
 
         if(depthCounter < 1 && startTimer == true){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());
           pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
@@ -114,7 +122,7 @@ int TaskGate::execute(){
 
         while(ros::ok && goToDepth_time.getTime() < 5){//just chill
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());
           pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
@@ -123,7 +131,7 @@ int TaskGate::execute(){
             ROS_ERROR("Kill switch detected");
             return kill;
             break;
-          }          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+          }          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
           ros::spinOnce();
           gateRate.sleep();
         }
@@ -142,7 +150,7 @@ int TaskGate::execute(){
         if (forwardCounter < 1)
           driveForwards_time.start();
         forwardCounter++;
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
         pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
         pm_.setPlantState(AXIS_YAW, pm_.getYaw());
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
@@ -157,7 +165,7 @@ int TaskGate::execute(){
 
         while(driveForwards_time.getTime() < 50){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());
           pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
@@ -180,7 +188,7 @@ int TaskGate::execute(){
           return kill;
           break;
         }
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1);
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -.1);
 
         pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
         pm_.setPlantState(AXIS_YAW, pm_.getYaw());
@@ -201,7 +209,7 @@ int TaskGate::execute(){
 	  ros::spinOnce;
           gateRate.sleep();
 	  pm_.setPidEnabled(AXIS_HEAVE, 0);
-	  pm_.setControlEffort(AXIS_HEAVE, 50);	  
+	  pm_.setControlEffort(AXIS_HEAVE, -10);	  
 }     
    pm_.setControlEffort(AXIS_HEAVE, 0);
    return succeeded;

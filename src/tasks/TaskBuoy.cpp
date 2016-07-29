@@ -157,6 +157,7 @@ int TaskBuoy::execute(){
                     else{
                       pm_.setControlEffort(AXIS_SURGE, 0);
                       action = 2;
+		      return 0;
                       break;
                     }
                   }
