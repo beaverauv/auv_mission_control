@@ -133,7 +133,7 @@ int TaskGate::execute(){
             ROS_ERROR("Kill switch detected");
             return kill;
             break;
-          }          
+          }
           pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
           ros::spinOnce();
           gateRate.sleep();
@@ -166,7 +166,7 @@ int TaskGate::execute(){
         }
 
 
-        while(driveForwards_time.getTime() < 20){
+        while(driveForwards_time.getTime() < 35){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
           pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());
@@ -212,8 +212,8 @@ int TaskGate::execute(){
 	  ros::spinOnce;
           gateRate.sleep();
 	  pm_.setPidEnabled(AXIS_HEAVE, 0);
-	  pm_.setControlEffort(AXIS_HEAVE, -10);	  
-}     
+	  pm_.setControlEffort(AXIS_HEAVE, -10);
+}
    pm_.setControlEffort(AXIS_HEAVE, 0);
    return succeeded;
         break;

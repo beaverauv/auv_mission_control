@@ -37,6 +37,7 @@ int TaskBuoy::execute(){
                 if (currentColor == COLOR_RED){
                   cv::inRange(imgLab, redMin, redMax, imgThresh);
                   ROS_INFO("COLOR IS RED");
+
 		} else if (currentColor = COLOR_GREEN) {
                   cv::inRange(imgLab, greenMin, greenMax, imgThresh);
                 }
@@ -118,7 +119,7 @@ int TaskBuoy::execute(){
 
                     pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, redDepth);
 		   ROS_INFO("RED DEPTH %f", redDepth);
-                   pm_.setPlantState(AXIS_HEAVE, pm_.getDepth()); 
+                   pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
 		   pm_.setPidEnabled(AXIS_SWAY, 0);
                     pm_.setControlEffort(AXIS_SWAY, 0);
                     pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);

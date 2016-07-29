@@ -42,6 +42,8 @@ public:
   double kD;
   double kI;
   double Kp_scale;
+  double Kd_scale;
+  double Ki_scale;
 };
 
 class PidManager{

@@ -44,7 +44,7 @@ void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
 //  imu_ = *imu_msg;
   //ROS_INFO("boop");
   plantYaw_ = imu_msg->orientation.z;
-//  ROS_INFO("recieved value%f", plantYaw_); 
+//  ROS_INFO("recieved value%f", plantYaw_);
   subImuHasBeenCalled = true;
 
 }
@@ -124,6 +124,8 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
       paramSurge.kI = 1;
       //same deal
     }
+
+
     else {
     //  cout << "The specified input_type does not exist";
       ROS_ERROR("The input_type does not exist for axis SURGE");
@@ -152,6 +154,9 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
         paramSway.kI = 1;
         //same deal
       }
+
+
+
       else {
         //cout << "The specified input_type does not exist";
         ROS_ERROR("The input_type does not exist for axis SWAY");
@@ -171,7 +176,9 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
         paramHeave.kP = 0.6;//.;
         paramHeave.kD = 0;//.;
         paramHeave.kI = 0;//30.;
-	paramHeave.Kp_scale = 100;
+      	paramHeave.Kp_scale = 100;
+        paramHeave.Kd_scale = 100;
+        paramHeave.Ki_scale = 100;
         //set tuning for surge axis on depth sensor
         //subscribe to this as plant state
         //publish setpoint
@@ -179,9 +186,12 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
       else if (input_type == INPUT_CAM_FRONT){
         ROS_INFO("beep boop");
-	paramHeave.kP = 0.01;
-        paramHeave.kD = 0.005;
-        paramHeave.kI = 0.005;
+	      paramHeave.kP = 1;
+        paramHeave.kD = 0.5;
+        paramHeave.kI = 0.5;
+        paramHeave.Kp_scale = 0.01;
+        paramHeave.Kd_scale = 0.01;
+        paramHeave.Ki_scale = 0.01;
         //set tuning for front CAM_FRONT, set as plant state
       }
 
@@ -201,24 +211,32 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
     std_msgs::Float64 msgSetpointYaw;
 
     if (input_type == INPUT_IMU_POS){
-      paramYaw.kP = 0.2;
-      paramYaw.kD = 0.1;
-      paramYaw.kI = 0.1;
-      //set tuning for surge axis on imu position
+      paramYaw.kP = 2;
+      paramYaw.kD = 1;
+      paramYaw.kI = 1;
+      paramHeave.Kp_scale = .1;
+      paramHeave.Kd_scale = .1;
+      paramHeave.Ki_scale = .1;      //set tuning for surge axis on imu position
       //subscribe to this as plant state
       //publish setpoint
     }
 
     else if (input_type == INPUT_CAM_FRONT){
-      paramYaw.kP = 0.038;
-      paramYaw.kD = 0.01;
-      paramYaw.kI = 0.028;
+      paramYaw.kP = 3.8;
+      paramYaw.kD = 1;
+      paramYaw.kI = 2.8;
+      paramHeave.Kp_scale = .01;
+      paramHeave.Kd_scale = .01;
+      paramHeave.Ki_scale = .01;
       //set tuning for front CAM_FRONT, set as plant state
     }
     else if (input_type == INPUT_CAM_BTM){
       paramYaw.kP = 0.5;
       paramYaw.kD = 1;
       paramYaw.kI = 1;
+      paramHeave.Kp_scale = 1;
+      paramHeave.Kd_scale = 1;
+      paramHeave.Ki_scale = 1;
       //same deal
     }
     else{
@@ -387,6 +405,18 @@ void PidManager::updateParams(int axis){
      conf.doubles.push_back(double_param);
      srv_req.config = conf;
 
+     double_param.name="Kp_scale";
+     double_param.value=paramSurge.Kp_scale;
+     conf.doubles.push_back(double_param);
+
+     double_param.name="Kd_scale";
+     double_param.value=paramSurge.Kd_scale;
+     conf.doubles.push_back(double_param);
+
+     double_param.name="Ki_scale";
+     double_param.value=paramSurge.Ki_scale;
+     conf.doubles.push_back(double_param);
+
      ros::service::call("/surge_pid/set_parameters", srv_req, srv_resp);
 
   }
@@ -402,6 +432,18 @@ void PidManager::updateParams(int axis){
 
     double_param.name = "Kd";
     double_param.value = paramSway.kD;
+    conf.doubles.push_back(double_param);
+
+    double_param.name="Kp_scale";
+    double_param.value=paramSway.Kp_scale;
+    conf.doubles.push_back(double_param);
+
+    double_param.name="Kd_scale";
+    double_param.value=paramSway.Kd_scale;
+    conf.doubles.push_back(double_param);
+
+    double_param.name="Ki_scale";
+    double_param.value=paramSway.Ki_scale;
     conf.doubles.push_back(double_param);
 
     srv_req.config = conf;
@@ -427,6 +469,14 @@ void PidManager::updateParams(int axis){
     double_param.value=paramHeave.Kp_scale;
     conf.doubles.push_back(double_param);
 
+    double_param.name="Kd_scale";
+    double_param.value=paramHeave.Kd_scale;
+    conf.doubles.push_back(double_param);
+
+    double_param.name="Ki_scale";
+    double_param.value=paramHeave.Ki_scale;
+    conf.doubles.push_back(double_param);
+
     srv_req.config = conf;
 
     ros::service::call("/heave_pid/set_parameters", srv_req, srv_resp);
@@ -444,6 +494,18 @@ void PidManager::updateParams(int axis){
 
     double_param.name = "Kd";
     double_param.value = paramYaw.kD;
+    conf.doubles.push_back(double_param);
+
+    double_param.name="Kp_scale";
+    double_param.value=paramYaw.Kp_scale;
+    conf.doubles.push_back(double_param);
+
+    double_param.name="Kd_scale";
+    double_param.value=paramYaw.Kd_scale;
+    conf.doubles.push_back(double_param);
+
+    double_param.name="Ki_scale";
+    double_param.value=paramYaw.Ki_scale;
     conf.doubles.push_back(double_param);
 
     srv_req.config = conf;
