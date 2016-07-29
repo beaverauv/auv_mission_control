@@ -186,9 +186,9 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
       else if (input_type == INPUT_CAM_FRONT){
         ROS_INFO("beep boop");
-	      paramHeave.kP = 1;
-        paramHeave.kD = 0.5;
-        paramHeave.kI = 0.5;
+	      paramHeave.kP = .5;
+        paramHeave.kD = 0.3;
+        paramHeave.kI = 0.3;
         paramHeave.Kp_scale = 0.01;
         paramHeave.Kd_scale = 0.01;
         paramHeave.Ki_scale = 0.01;
@@ -211,9 +211,9 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
     std_msgs::Float64 msgSetpointYaw;
 
     if (input_type == INPUT_IMU_POS){
-      paramYaw.kP = 2;
-      paramYaw.kD = 1;
-      paramYaw.kI = 1;
+      paramYaw.kP = 2.5;
+      paramYaw.kD = 1.5;
+      paramYaw.kI = 1.5;
       paramHeave.Kp_scale = .1;
       paramHeave.Kd_scale = .1;
       paramHeave.Ki_scale = .1;      //set tuning for surge axis on imu position
@@ -222,9 +222,9 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
     }
 
     else if (input_type == INPUT_CAM_FRONT){
-      paramYaw.kP = 3.8;
-      paramYaw.kD = 1;
-      paramYaw.kI = 2.8;
+      paramYaw.kP = 5;
+      paramYaw.kD = 1.5;
+      paramYaw.kI = 3.5;
       paramHeave.Kp_scale = .01;
       paramHeave.Kd_scale = .01;
       paramHeave.Ki_scale = .01;
