@@ -1,6 +1,6 @@
 #include <auv_mission_control/TaskGate.h>
 
-double thisDepth = -0.35; // make -2
+double thisDepth = -0.6; // make -2
 double markerErrorY;
 double markerErrorX;
 double offsetAngle;
@@ -18,7 +18,7 @@ TaskGate::~TaskGate(){
 }
 
 int TaskGate::execute(){
-
+   ROS_INFO("TASK GATE EXECUTE");
   ros::Rate gateRate(20.);
 
   //pm_.pidEnable("ALL", true);//turns on all 6 pid controllers
@@ -67,7 +67,9 @@ int TaskGate::execute(){
 
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
-
+	pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+	
+	
         while(ros::ok){
           pm_.setPlantState(AXIS_HEAVE, pm_.getYaw());
 
@@ -182,9 +184,13 @@ int TaskGate::execute(){
             break;
           }
 
-          vision_.findMarker();
+//          vision_.findMarker();
+  ROS_INFO("found marker");
+
           double markerArea = vision_.getMarkerArea();
-          if(markerArea > 6000000){
+  ROS_INFO("got area");
+          
+if(markerArea > 6000000){
             pm_.setPidEnabled(AXIS_SURGE, true);
             pm_.setPlantState(AXIS_SURGE, vision_.getMarkerCoordY());
             pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);

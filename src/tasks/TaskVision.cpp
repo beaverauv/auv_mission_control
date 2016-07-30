@@ -67,9 +67,10 @@ double TaskVision::getBuoyCoordY(){
 }
 
 void TaskVision::findMarker(){
+  ROS_INFO("FIND MARKER CALLED");
   cam_.updateBottom();
   imgOrigBottom = cam_.getBottom();
-
+  ROS_INFO("GOT IMAGES");
   cv::cvtColor(imgOrigBottom, imgHlsBottom, CV_BGR2HLS);
 
   cv::inRange(imgHlsBottom, sRedMin, sRedMax, imgThreshBottom);
@@ -82,6 +83,7 @@ void TaskVision::findMarker(){
 
   cv::dilate(imgThreshBottom, imgContoursBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7,7)));
   cv::dilate(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7,7)));
+  ROS_INFO("THRESHOLDING DONE");
 
   momentsMarker = cv::moments(imgThreshBottom);
 
@@ -93,9 +95,13 @@ void TaskVision::findMarker(){
   //here for if we need it
   markerCoordCorrectedX = markerCoordX;
   markerCoordCorrectedY = markerCoordY;
+  ROS_INFO("MOMENTSx");
 
   cv::findContours( imgContoursBottom, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
-
+  ROS_INFO("found contours");
+  numLargeContours = 0;
+  largestArea = 0;
+  largestContourIndex = 0;
   for( int i = 0; i < contours.size(); i++ )
   {
           double count = contours[i].size();
@@ -112,10 +118,15 @@ void TaskVision::findMarker(){
                   largestContourIndex = i;
           }
   }
+  ROS_INFO("went through contours");
 
   if (numLargeContours >= 1) {
-          markerRect = cv::fitEllipse(contours[largestContourIndex]);
-
+  ROS_INFO("here");
+	  double count = contours[largestContourIndex].size();
+	  if (count > 5)
+          	markerRect = cv::fitEllipse(contours[largestContourIndex]);
+	  
+  ROS_INFO("but not here");
 
           //cv::Point2f rect_points[4];
 
@@ -130,8 +141,10 @@ void TaskVision::findMarker(){
 
 
   } else {
-          //ROS_INFO("No Contours greater than 6");
+          ROS_INFO("No Contours greater than 6");
   }
+  ROS_INFO("calculated angle");
+
 }
 
 
