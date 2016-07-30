@@ -2,15 +2,15 @@
 
 
 
-void TaskVision::TaskVision(){
+TaskVision::TaskVision(){
 
 }
 
-void TaskVision::TaskVision(){
+TaskVision::~TaskVision(){
 
 }
 
-void TaskVision::TaskVision(Camera* cam) : cam_(*cam){
+TaskVision::TaskVision(Camera* cam) : cam_(*cam){
 
 }
 
@@ -37,7 +37,7 @@ void TaskVision::findBuoy(int color){
 
   cv::dilate(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7,7)));
 
-  momentsBuoy = cv::Moments(imgThreshBottom);
+  momentsBuoy = cv::moments(imgThreshBottom);
 
   buoyArea = momentsBuoy.m00;
 
@@ -57,12 +57,12 @@ double TaskVision::getBuoyArea(){
 }
 
 
-int TaskVision::getBuoyCoordX(){
+double TaskVision::getBuoyCoordX(){
   return buoyCoordCorrectedX;
 }
 
 
-int TaskVision::getBuoyCoordY(){
+double TaskVision::getBuoyCoordY(){
   return buoyCoordCorrectedY;
 }
 
@@ -72,13 +72,7 @@ void TaskVision::findMarker(){
 
   cv::cvtColor(imgOrigBottom, imgHlsBottom, CV_BGR2HLS);
 
-  if (color == COLOR_RED){
-    cv::inRange(imgHlsBottom, sRedMin, sRedMax, imgThreshBottom);
-  } else if (color == COLOR_GREEN){
-    cv::inRange(imgHlsBottom, sGreenMin, sGreenMax, imgThreshBottom);
-  } else {
-    ROS_ERROR("[TASK VISION] INVALID COLOR");
-  }
+  cv::inRange(imgHlsBottom, sRedMin, sRedMax, imgThreshBottom);
 
   cv::dilate(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
   cv::erode(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
@@ -89,12 +83,12 @@ void TaskVision::findMarker(){
   cv::dilate(imgThreshBottom, imgContoursBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7,7)));
   cv::dilate(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7,7)));
 
-  markerMoments = cv::Moments(imgThreshBottom);
+  momentsMarker = cv::moments(imgThreshBottom);
 
-  markerArea = momentsmarker.m00;
+  markerArea = momentsMarker.m00;
 
-  markerCoordX = momentsmarker.m10 / markerArea;
-  markerCoordY = momentsmarker.m01 / markerArea;
+  markerCoordX = momentsMarker.m10 / markerArea;
+  markerCoordY = momentsMarker.m01 / markerArea;
 
   //here for if we need it
   markerCoordCorrectedX = markerCoordX;

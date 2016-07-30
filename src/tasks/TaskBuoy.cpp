@@ -4,7 +4,7 @@ TaskBuoy::TaskBuoy(){
 }
 
 
-TaskBuoy::TaskBuoy(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+TaskBuoy::TaskBuoy(PidManager* pm, Camera* cam, TaskVision* vision) : pm_(*pm), cam_(*cam), vision_(*vision){
         ROS_INFO("YAAARRRGGGG I BE STARTIN TO SCUTTLE ME SHIP");
 }
 
@@ -35,13 +35,14 @@ int TaskBuoy::execute(){
                 cv::Mat imgThresh;
 
                 original = cam_.getFront();
-                if (currentColor == COLOR_RED){
+              if (currentColor == COLOR_RED){
                   cv::inRange(imgLab, redMin, redMax, imgThresh);
                   ROS_INFO("YAAARRRGGGG THE COLOR BE RED");
 
-		} else if (currentColor = COLOR_GREEN) {
+		          }
+              else if (currentColor = COLOR_GREEN) {
                   cv::inRange(imgLab, greenMin, greenMax, imgThresh);
-                }
+              }
 
               //  cv::Mat imgHSV = original;
 
@@ -55,28 +56,22 @@ int TaskBuoy::execute(){
 
                 cv::Moments oMoments = cv::moments(imgThresh);
                 double dArea = oMoments.m00;
-	        ROS_INFO("\033[2J\033[1;1H");
-          ROS_INFO("YAAARRRGGGG I BE SCUTTLING ME SHIP");
-		ROS_INFO("dArea %f", dArea);
+	              ROS_INFO("\033[2J\033[1;1H");
+                ROS_INFO("YAAARRRGGGG I BE SCUTTLING ME SHIP");
+		            ROS_INFO("dArea %f", dArea);
                 double posX = oMoments.m10 / dArea;
-	        ROS_INFO("posX %f", posX);
+	              ROS_INFO("posX %f", posX);
                 double posY = oMoments.m01 / dArea;
-	        ROS_INFO("posY %f", posY);
+	              ROS_INFO("posY %f", posY);
                 double posXcorrected = posX;// - posX;
                 ROS_INFO("posXcorrected initial %f", posXcorrected);
- 	       double posYcorrected = posY; //here for continuity
-	        ROS_INFO("posYcorrected initial %f", posYcorrected);
+ 	              double posYcorrected = posY; //here for continuity
+	              ROS_INFO("posYcorrected initial %f", posYcorrected);
 
                 cv::circle(original, cv::Point(posX, posY), 7, cv::Scalar(255, 255, 255), -1);
                 cv::circle(original, cv::Point(posX, posY), 8, cv::Scalar(0, 0, 0), 2);
                 switch(action){
 
-                  if (dArea > minObjectArea) {
-                    objectFound = 1;
-                  }
-                  else{
-                    objectFound = 0;
-                  }
                   case 0:{
                     pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);
                     double errorBuoy = fabs(-2.75 - pm_.getDepth());
@@ -88,7 +83,7 @@ int TaskBuoy::execute(){
                   }
                   case 1:{ //approach first buoy (red) YO MA OG GIMMME CENTROID OF RED
                     ColorSpace = 0;  //(red)
-                    if(dArea >= 6250000){//!objectFound || dArea > 74419200){
+                    if(dArea >= 6250000){//!objectFound || dArea > 74419200)
                       pm_.setControlEffort(AXIS_SURGE, 0);
                       redDepth = pm_.getDepth();
                       action = 2;
@@ -102,15 +97,15 @@ int TaskBuoy::execute(){
                       if(posYcorrected == posYcorrected) //checks for NaN, doesn't set if is
 		                    pm_.setPlantState(AXIS_HEAVE, posYcorrected);
 		                  else
-			                    pm_.setPlantState(AXIS_HEAVE, 240);
+			                  pm_.setPlantState(AXIS_HEAVE, 240);
 		                  if(posXcorrected == posXcorrected){
 		                      pm_.setPlantState(AXIS_YAW, posXcorrected);
 			                    pm_.setPlantState(AXIS_YAW, posXcorrected);
                       }
-		      else{
-			pm_.setPlantState(AXIS_YAW, 360);
-			pm_.setPlantState(AXIS_SWAY, 360);
-		     }
+		                  else{
+			                    pm_.setPlantState(AXIS_YAW, 360);
+			                    pm_.setPlantState(AXIS_SWAY, 360);
+              		    }
 		      ROS_INFO("posXcorrected %f", posXcorrected);
                       ROS_INFO("posYcorrected %f", posYcorrected);
                       pm_.setControlEffort(AXIS_SURGE, 15);
@@ -119,8 +114,9 @@ int TaskBuoy::execute(){
                     }
                   }
 
+
                   case 2:{ //BOP IT! (ram it)
-		    ROS_INFO("YAAARRRGGGG I BE RAMMING IT");
+		                ROS_INFO("YAAARRRGGGG I BE RAMMING IT");
                     if(ramRedCounter < 1){
                       ramRed.start();
                       ramRedCounter++;
@@ -128,12 +124,12 @@ int TaskBuoy::execute(){
                     }
 
                     pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, redDepth);
-		   ROS_INFO("RED DEPTH %f", redDepth);
-                   pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
-		   pm_.setPidEnabled(AXIS_SWAY, 0);
+		                ROS_INFO("RED DEPTH %f", redDepth);
+                    pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+		                pm_.setPidEnabled(AXIS_SWAY, 0);
                     pm_.setControlEffort(AXIS_SWAY, 0);
                     pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-		    pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+		                pm_.setPlantState(AXIS_YAW, pm_.getYaw());
                     if(ramRed.getTime() <=3)
                       pm_.setControlEffort(AXIS_SURGE, 45);
                     else if(ramRed.getTime() >3 && ramRed.getTime() <= 6)
@@ -147,84 +143,6 @@ int TaskBuoy::execute(){
                       break;
                     }
                   }
-
-                  case 3:{ //approach second buoy (green)
-
-                  }
-
-                  case 4:{ //BOP-IT! (ram it)
-
-                  }
-
-                  case 5:{//PULL-IT! (back off)
-
-                  }
-
-                  case 6:{//TWIST IT! (go around)
-
-                  }
-
-                  case 7:{ //move on
-
-                  }
-
-                  case 9:{//SPIN IT! (look around if can't find object)
-
-                  }
-
-                }
-
-/*
-                if (dArea > 74419200) { //  Stop, move backwards and switch to the next buoy
-
-
-                }
-                else { // move forwards
-
-
-                ROS_ERROR(" Object found? %d Coords(corrected): %f %f ", objectFound, posXcorrected, posYcorrected);
-
-                if (cv::waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-                {
-                        break;
-                }
-
-                if(!outOfSight) {
-
-
-                        if (fabs(plantState_sway - setpoint_sway) > 40) {//SOME REASONABLE DEADBAND
-                                pm_.setControlEffort(AXIS_SURGE, 0); //makes it so the robot doesn't try to move forward if the sway and heave are outside of a DEADBAND
-
-                        }
-
-                        else{
-                                pm_.setControlEffort(AXIS_SURGE, surgeSpeed); //random number for now, will need to be replaced by testing. Will probably be a percent, but idk
-                        }
-
-
-
-                }
-
-                else{ // if out of sight...
-
-
-                        pm_.setPidEnabled(AXIS_SWAY, false);
-                        pm_.setPidEnabled(AXIS_SURGE, false);//disable PID
-
-                        if (true) {//check if there is a centroid tracked.... if there is, go to. It will be path marker
-                                pm_.setPidEnabled(AXIS_SURGE, true);
-                                pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240); //set to go straight until centroid is in middle of bottom cam
-                                if(fabs(plantState_surge - setpoint_surge) < 10) { //if it's pretty close to centered
-                                        sleep(5); //give it some time to finish up
-                                        return succeeded; //yay
-                                }
-                        }
-                        else{
-                                pm_.setControlEffort(AXIS_SURGE, 30);
-                        }
-
-                }//else
-*/
-  } //ros::ok
-
-}
+                };
+              }
+            }

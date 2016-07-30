@@ -10,7 +10,7 @@
 class TaskBuoy{
 public:
   TaskBuoy();
-  TaskBuoy(PidManager* pm, Camera* cam);
+  TaskBuoy(PidManager* pm, Camera* cam, TaskVision* vision);
   ~TaskBuoy();
 
   int execute();
@@ -19,7 +19,7 @@ private:
   //variables go here;
   PidManager pm_;
   Camera cam_;
-
+  TaskVision vision_;
   int ColorSpace = 0;
   int currentCamera = INPUT_CAM_FRONT;
 

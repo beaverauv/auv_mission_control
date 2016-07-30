@@ -5,6 +5,8 @@
 #define COLOR_GREEN 1
 
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 #include <ros/ros.h>
 
 #include <auv_mission_control/Camera.h>
@@ -16,7 +18,7 @@ class TaskVision {
 public:
   TaskVision();
   TaskVision(Camera* cam);
-  TaskVision~();
+  ~TaskVision();
 
 
   void findBuoy(int color);
@@ -40,19 +42,22 @@ private:
   cv::Scalar sGreenMin = cv::Scalar(0, 0, 0);
   cv::Scalar sGreenMax = cv::Scalar(255, 255, 255);
 
+  cv::Scalar sOrangeMin = cv::Scalar(0,0,0);
+  cv::Scalar sOrangeMax = cv::Scalar(255,255,255);
+
   cv::Mat imgOrigFront;
   cv::Mat imgOrigBottom;
 
   cv::Mat imgHlsFront;
-  cv::Mat imgHlsBottom
+  cv::Mat imgHlsBottom;
 
   cv::Mat imgThreshFront;
   cv::Mat imgThreshBottom;
 
   cv::Mat imgContoursBottom;
 
-  cv::Moments buoyMoments;
-  cv::Moments markerMoments;
+  cv::Moments momentsBuoy;
+  cv::Moments momentsMarker;
 
   double buoyArea;
   double buoyCoordX;
@@ -60,6 +65,14 @@ private:
 
   double buoyCoordCorrectedX;
   double buoyCoordCorrectedY;
+
+  double markerArea;
+  double markerCoordX;
+  double markerCoordY;
+
+  double markerCoordCorrectedX;
+  double markerCoordCorrectedY;
+
 
   std::vector <std::vector <cv::Point> > contours;
   std::vector <cv::Vec4i> hierarchy;

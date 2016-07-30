@@ -9,7 +9,7 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
+#include <auv_mission_control/TaskVision.h>
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Camera.h>
 #include <auv_mission_control/StateMachine.h>
@@ -19,7 +19,7 @@ class TaskGate{
 public:
 
   TaskGate();
-  TaskGate(PidManager* pm, Camera* cam);
+  TaskGate(PidManager* pm, Camera* cam, TaskVision *vision);
   ~TaskGate();
 
   int execute();
@@ -28,6 +28,7 @@ private:
   //variables go here;
   PidManager pm_;
   Camera cam_;
+  TaskVision vision_;
   bool startTimer = 0;
 
   int ColorSpace = 0;
@@ -41,6 +42,9 @@ private:
   int depthCounter = 0;
   Timer driveForwards_time;
   int forwardCounter = 0;
+  Timer markerTimer;
+  int markerCounter = 0;
+  int reZeroCounter = 0;
   double surgeSpeed = 25;
   double previousDepth;
   double currentDepth;
@@ -55,8 +59,7 @@ private:
   double setpoint_surge;
   double plantState_surge;
 
-  Timer upTimer;
-  int upCount = 0;
+
 
 
 

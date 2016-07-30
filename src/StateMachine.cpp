@@ -19,6 +19,7 @@ ros::Rate stateRate(20);
 
 PidManager pm(&nh);
 Camera cam;
+TaskVision vision(&cam);
 
   while(ros::ok){ //careful
   if(timerStarted)
@@ -52,7 +53,7 @@ Camera cam;
 
       case 1: { //gate
         ROS_INFO("EXECUTING GATE TASK");
-        TaskGate gate(&pm, &cam);
+        TaskGate gate(&pm, &cam, &vision);
 	int outcome = gate.execute();
        // ROS_INFO("outcome %d", outcome);
 
@@ -74,7 +75,7 @@ Camera cam;
       case 2: { //buoy
 
         ROS_INFO("EXECUTING BUOY TASK");
-        TaskBuoy buoy(&pm, &cam);
+        TaskBuoy buoy(&pm, &cam, &vision);
         //int outcome = 10;
 	int outcome =  buoy.execute();
         //ROS_INFO("outcome %d", outcome);

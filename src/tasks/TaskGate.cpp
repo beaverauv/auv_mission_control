@@ -1,12 +1,15 @@
 #include <auv_mission_control/TaskGate.h>
 
-double thisDepth = -0.25;
+double thisDepth = -0.35; // make -2
+double markerErrorY;
+double markerErrorX;
+double offsetAngle;
 
 TaskGate::TaskGate(){
 }
 
 
-TaskGate::TaskGate(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+TaskGate::TaskGate(PidManager* pm, Camera* cam, TaskVision* vision) : pm_(*pm), cam_(*cam), vision_(*vision){
   ROS_INFO("TASK GATE INIT");
 }
 
@@ -22,6 +25,7 @@ int TaskGate::execute(){
 
   while(ros::ok){ // change so it's while keep running, some value that determines whether to keep running
   killSwitch = pm_.getKill();
+  vision_.findMarker();
   if(killSwitch){
     ROS_ERROR("Kill switch detected");
     return kill;
@@ -149,7 +153,7 @@ int TaskGate::execute(){
 
 
       case 1: {
-        ROS_INFO("Vroom Vroom going forwards");
+        ROS_INFO("YAAARRRGGGG AVAST YE I BE MOVIN FORWARDS");
         if (forwardCounter < 1)
           driveForwards_time.start();
         forwardCounter++;
@@ -166,63 +170,99 @@ int TaskGate::execute(){
         }
 
 
-        while(driveForwards_time.getTime() < 35){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
           pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());
           pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
-          pm_.setControlEffort(AXIS_SURGE, 50);
           killSwitch = pm_.getKill();
           if(killSwitch){
             ROS_ERROR("Kill switch detected");
             return kill;
             break;
           }
+
+          vision_.findMarker();
+          double markerArea = vision_.getMarkerArea();
+          if(markerArea > 6000000){
+            pm_.setPidEnabled(AXIS_SURGE, true);
+            pm_.setPlantState(AXIS_SURGE, vision_.getMarkerCoordY());
+            pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
+            markerErrorY = fabs(240 - vision_.getMarkerCoordY());
+            if(markerErrorY < 10){
+              ROS_INFO("YAAARRRGGGG I THINK ME SURGE BE OVER TH' MARKER");
+              action = 2;
+              break;
+            }
+          }
+          else
+            pm_.setControlEffort(AXIS_SURGE, 60);
+
+          pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
+          pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+          pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+          pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
+
           ros::spinOnce();
           gateRate.sleep();
-        }
+          action = 1;
+          break;//
+      }//end case 1
 
-        pm_.setControlEffort(AXIS_SURGE, 0);
-
-        killSwitch = pm_.getKill();
-        if(killSwitch){
-          ROS_ERROR("Kill switch detected");
-          return kill;
-          break;
-        }
-        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
-
-        pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+      case 2:{ //return succeeded, and please proceed to the nearest task as quickly and calmly as possible, keeping in mind that it may be behind you
+        if(reZeroCounter < 1)
+          pm_.setZero(AXIS_YAW);
         pm_.setPlantState(AXIS_YAW, pm_.getYaw());
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
-
-        pm_.setControlEffort(AXIS_SURGE, 0);
-        ROS_INFO("I THINK that I'm through the gate");
-        action = 2;
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);
+        pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+        pm_.setPidEnabled(AXIS_SURGE, true);
+        pm_.setPlantState(AXIS_SURGE, vision_.getMarkerCoordY());
+        pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
+        pm_.setPidEnabled(AXIS_SWAY, true);
+        pm_.setPlantState(AXIS_SWAY, vision_.getMarkerCoordX());
+        pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_BTM, 360);
+        markerErrorX = fabs(360 - vision_.getMarkerCoordX());
+        markerErrorY = fabs(240 - vision_.getMarkerCoordY());
+        if(markerErrorX < 20 && markerErrorY < 20){
+          if(markerCounter < 1)
+            markerTimer.start();
+          while(markerTimer.getTime() < 3)
+            vision_.findMarker();
+          offsetAngle = vision_.getMarkerAngle();
+          ROS_INFO("YAAARRRGGGG I FOUND TH' ANGLE TO BE %f DEGREES.", offsetAngle);
+          action = 3;
+        }
+        else
+          action = 2;
         break;
 
       }
 
-      case 2:{ //return succeeded, and please proceed to the nearest task as quickly and calmly as possible, keeping in mind that it may be behind you
-	if(upCount < 1)
-	  upTimer.start();
-
-  while(upTimer.getTime() < 5){
-	  ros::spinOnce;
-          gateRate.sleep();
-	  pm_.setPidEnabled(AXIS_HEAVE, 0);
-	  pm_.setControlEffort(AXIS_HEAVE, -10);
-}
-   pm_.setControlEffort(AXIS_HEAVE, 0);
-   return succeeded;
+      case 3:{
+        ROS_INFO("YAAARRRGGGG I BE ROTATING TO TH' MARKER");
+        pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);
+        pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
+        pm_.setPlantState(AXIS_SURGE, vision_.getMarkerCoordY());
+        pm_.setSetpoint(AXIS_SURGE, INPUT_CAM_BTM, 240);
+        pm_.setPlantState(AXIS_SWAY, vision_.getMarkerCoordX());
+        pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_BTM, 360);
+        pm_.setSetpoint(AXIS_YAW, INPUT_CAM_BTM, offsetAngle);
+        pm_.setPlantState(AXIS_YAW, vision_.getMarkerAngle());
+        pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, offsetAngle);
+        pm_.setPlantState(AXIS_YAW, pm_.getYaw());
+        if(fabs(pm_.getYaw() - offsetAngle) < 1){
+          ROS_INFO("YAAARRRGGGG I MATCHED TH' YAW AND BE HEADING TO SCUTTLE TH' SHIP");
+          pm_.setZero(AXIS_YAW);
+          return succeeded;
+        }
+        else
+          action = 3;
         break;
 
+      }
      }
-    };
-
-    ros::spinOnce();
-    gateRate.sleep();
-
-  }//while ros::ok
+     ros::spinOnce();
+     gateRate.sleep();
+    }
 }//execute
