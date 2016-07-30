@@ -61,9 +61,9 @@ TaskVision vision(&cam);
           currentState = 2;
 	  ROS_INFO("Gate task succeeded. Transitioning to Buoy task");
         }
-	else if (outcome == timeout || getTimeout())
+	else if (outcome == timeout)// || getTimeout())
           currentState = 8;
-        else if (outcome == kill || pm.getKill()){
+        else if (outcome == kill){
           currentState = 9;
           ROS_INFO("kill");
         }
@@ -75,7 +75,7 @@ TaskVision vision(&cam);
       case 2: { //buoy
 
         ROS_INFO("EXECUTING BUOY TASK");
-        TaskBuoy buoy(&pm, &cam, &vision);
+        TaskBuoy buoy(&pm, &vision);
         //int outcome = 10;
 	int outcome =  buoy.execute();
         //ROS_INFO("outcome %d", outcome);

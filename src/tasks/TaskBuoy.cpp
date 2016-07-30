@@ -4,7 +4,7 @@ TaskBuoy::TaskBuoy(){
 }
 
 
-TaskBuoy::TaskBuoy(PidManager* pm, Camera* cam, TaskVision* vision) : pm_(*pm), cam_(*cam), vision_(*vision){
+TaskBuoy::TaskBuoy(PidManager* pm, TaskVision* vision) : pm_(*pm), vision_(*vision){
         ROS_INFO("YAAARRRGGGG I BE STARTIN TO SCUTTLE ME SHIP");
 }
 
@@ -21,97 +21,65 @@ int TaskBuoy::execute(){
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         // pm_.taskDelay(5);
 	currentColor = COLOR_RED;
-  depthCounter = 0;
+	  depthCounter = 0;
         while (ros::ok) {
 
                 ros::spinOnce();
 
                 pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
 
-                cam_.updateFront();
-                cv::Mat original = cam_.getFront();
-		cv::Mat imgLab;
-		cv::cvtColor(original, imgLab, CV_BGR2Lab);
-                cv::Mat imgThresh;
+	        ROS_INFO("\033[2J\033[1;1H");
 
-                original = cam_.getFront();
-              if (currentColor == COLOR_RED){
-                  cv::inRange(imgLab, redMin, redMax, imgThresh);
-                  ROS_INFO("YAAARRRGGGG THE COLOR BE RED");
-
-		          }
-              else if (currentColor = COLOR_GREEN) {
-                  cv::inRange(imgLab, greenMin, greenMax, imgThresh);
-              }
-
-              //  cv::Mat imgHSV = original;
-
-                cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
-                cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
-
-                cv::erode(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
-                cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
-
-                cv::dilate(imgThresh, imgThresh, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10,10)));
-
-                cv::Moments oMoments = cv::moments(imgThresh);
-                double dArea = oMoments.m00;
-	              ROS_INFO("\033[2J\033[1;1H");
-                ROS_INFO("YAAARRRGGGG I BE SCUTTLING ME SHIP");
-		            ROS_INFO("dArea %f", dArea);
-                double posX = oMoments.m10 / dArea;
-	              ROS_INFO("posX %f", posX);
-                double posY = oMoments.m01 / dArea;
-	              ROS_INFO("posY %f", posY);
-                double posXcorrected = posX;// - posX;
-                ROS_INFO("posXcorrected initial %f", posXcorrected);
- 	              double posYcorrected = posY; //here for continuity
-	              ROS_INFO("posYcorrected initial %f", posYcorrected);
-
-                cv::circle(original, cv::Point(posX, posY), 7, cv::Scalar(255, 255, 255), -1);
-                cv::circle(original, cv::Point(posX, posY), 8, cv::Scalar(0, 0, 0), 2);
+		vision_.findBuoy(currentColor);
+		double posXcorrected = vision_.getBuoyCoordX();
+		double posYcorrected = vision_.getBuoyCoordY();
+		double dArea = vision_.getBuoyArea();
                 switch(action){
 
                   case 0:{
                     pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);
-                    double errorBuoy = fabs(-2.75 - pm_.getDepth());
-                    if(errorBuoy >= .2)
+		    double errorBuoy = fabs(-2.75 - pm_.getDepth());
+                    if(false)
+		    //if(errorBuoy >= .2)
                       action = 0;
                     else
                       action = 1;
                     break;
                   }
                   case 1:{ //approach first buoy (red) YO MA OG GIMMME CENTROID OF RED
-                    ColorSpace = 0;  //(red)
-                    if(dArea >= 6250000){//!objectFound || dArea > 74419200)
+                    currentColor = COLOR_RED;
+                    if(waitCounter < 1){
+			waitTimer.start();
+		        waitCounter++;
+		    }
+
+```		    if(waitTimer.getTime() < 10){
                       pm_.setControlEffort(AXIS_SURGE, 0);
-                      redDepth = pm_.getDepth();
-                      action = 2;
-                      ROS_INFO("YAAARRRGGGG I BE IN PLACE TO RAM TH' FIRST BUOY.");
-                      break;
                     }
                     else{
+		`     pm_.setControlEffort(AXIS_SURGE, 15);
+                    }
                       pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_HEAVE, INPUT_CAM_FRONT, 240);
+
                       if(posYcorrected == posYcorrected) //checks for NaN, doesn't set if is
-		                    pm_.setPlantState(AXIS_HEAVE, posYcorrected);
-		                  else
-			                  pm_.setPlantState(AXIS_HEAVE, 240);
-		                  if(posXcorrected == posXcorrected){
-		                      pm_.setPlantState(AXIS_YAW, posXcorrected);
-			                    pm_.setPlantState(AXIS_YAW, posXcorrected);
+		        pm_.setPlantState(AXIS_HEAVE, posYcorrected);
+		      else
+			pm_.setPlantState(AXIS_HEAVE, 240);
+		      if(posXcorrected == posXcorrected){
+	                 pm_.setPlantState(AXIS_YAW, posXcorrected);
+                         pm_.setPlantState(AXIS_YAW, posXcorrected);
                       }
-		                  else{
-			                    pm_.setPlantState(AXIS_YAW, 360);
-			                    pm_.setPlantState(AXIS_SWAY, 360);
-              		    }
-		      ROS_INFO("posXcorrected %f", posXcorrected);
-                      ROS_INFO("posYcorrected %f", posYcorrected);
-                      pm_.setControlEffort(AXIS_SURGE, 15);
-                      action = 1;
-                      break;
-                    }
+                      else{
+                         pm_.setPlantState(AXIS_YAW, 360);
+                        pm_.setPlantState(AXIS_SWAY, 360);
+              	      }
+		      if(vision_.getBuoyArea() > 7000000)
+			action = 2;
+		      else
+			action = 1;
+		      break;
                   }
 
 

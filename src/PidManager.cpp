@@ -171,7 +171,6 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
   else if (axis == AXIS_HEAVE){
 
       std_msgs::Float64 msgSetpointHeave;
-
       if (input_type == INPUT_DEPTH){
         paramHeave.kP = 0.6;//.;
         paramHeave.kD = 0;//.;
@@ -209,20 +208,19 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
   else if (axis == AXIS_YAW){
     std_msgs::Float64 msgSetpointYaw;
+      ROS_INFO("set yaw called");
 
     if (input_type == INPUT_IMU_POS){
       paramYaw.kP = .5;
       paramYaw.kD = 0;
       paramYaw.kI = 0;
       paramHeave.Kp_scale = .1;
-      paramHeave.Kd_scale = .1;
-      paramHeave.Ki_scale = .1;      //set tuning for surge axis on imu position
       //subscribe to this as plant state
       //publish setpoint
     }
 
     else if (input_type == INPUT_CAM_FRONT){
-      paramYaw.kP = 5;
+      paramYaw.kP = .5;
       paramYaw.kD = 1.5;
       paramYaw.kI = 3.5;
       paramHeave.Kp_scale = .01;
@@ -266,14 +264,16 @@ void PidManager::setPlantState(int axis, double plantValue){
 
   if(axis == AXIS_SURGE)
     pubStateSurge.publish(msgPlantValue);
-  else if(axis == AXIS_SWAY)
+  else if(axis == AXIS_SWAY){
     pubStateSway.publish(msgPlantValue);
+   ROS_INFO("heave sway called");
+}
   else if(axis == AXIS_HEAVE){
    pubStateHeave.publish(msgPlantValue);
 }
   else if(axis == AXIS_YAW){
     pubStateYaw.publish(msgPlantValue);
-  //  ROS_INFO("publishing yaw %f", msgPlantValue);
+    ROS_INFO("publishing yaw %f", msgPlantValue);
 }
   else{
     ROS_ERROR("bad input type");

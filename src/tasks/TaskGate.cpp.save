@@ -166,7 +166,7 @@ int TaskGate::execute(){
         }
 
 
-        while(driveForwards_time.getTime() < 5){
+        while(driveForwards_time.getTime() < 35){
           pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
           pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
           pm_.setPlantState(AXIS_YAW, pm_.getYaw());

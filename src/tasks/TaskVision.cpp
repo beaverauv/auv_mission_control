@@ -16,28 +16,29 @@ TaskVision::TaskVision(Camera* cam) : cam_(*cam){
 
 
 void TaskVision::findBuoy(int color){
-  cam_.updateBottom();
-  imgOrigBottom = cam_.getBottom();
+  cam_.updateFront();
+  imgOrigFront = cam_.getFront();
 
-  cv::cvtColor(imgOrigBottom, imgHlsBottom, CV_BGR2HLS);
+  cv::cvtColor(imgOrigFront, imgHlsFront, CV_BGR2HLS);
 
   if (color == COLOR_RED){
-    cv::inRange(imgHlsBottom, sRedMin, sRedMax, imgThreshBottom);
+    ROS_INFO("COLOR IS RED");
+    cv::inRange(imgHlsFront, sRedMin, sRedMax, imgThreshFront);
   } else if (color == COLOR_GREEN){
-    cv::inRange(imgHlsBottom, sGreenMin, sGreenMax, imgThreshBottom);
+    cv::inRange(imgHlsFront, sGreenMin, sGreenMax, imgThreshFront);
   } else {
     ROS_ERROR("[TASK VISION] INVALID COLOR");
   }
 
-  cv::dilate(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
-  cv::erode(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+  cv::dilate(imgThreshFront, imgThreshFront, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+  cv::erode(imgThreshFront, imgThreshFront, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
 
-  cv::erode(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
-  cv::dilate(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+  cv::erode(imgThreshFront, imgThreshFront, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
+  cv::dilate(imgThreshFront, imgThreshFront, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));
 
-  cv::dilate(imgThreshBottom, imgThreshBottom, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7,7)));
+  cv::dilate(imgThreshFront, imgThreshFront, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7,7)));
 
-  momentsBuoy = cv::moments(imgThreshBottom);
+  momentsBuoy = cv::moments(imgThreshFront);
 
   buoyArea = momentsBuoy.m00;
 

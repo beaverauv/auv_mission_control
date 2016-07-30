@@ -10,7 +10,7 @@
 class TaskBuoy{
 public:
   TaskBuoy();
-  TaskBuoy(PidManager* pm, Camera* cam, TaskVision* vision);
+  TaskBuoy(PidManager* pm, TaskVision* vision);
   ~TaskBuoy();
 
   int execute();
@@ -18,34 +18,17 @@ public:
 private:
   //variables go here;
   PidManager pm_;
-  Camera cam_;
   TaskVision vision_;
-  int ColorSpace = 0;
-  int currentCamera = INPUT_CAM_FRONT;
 
-
-  cv::Scalar redMin = cv::Scalar(73, 153, 143);
-  cv::Scalar redMax = cv::Scalar(107, 187, 255);
-
-  cv::Scalar greenMin = cv::Scalar(0, 0, 0);
-  cv::Scalar greenMax = cv::Scalar(255, 255, 255);
-
-  int minR = 0; // R_MIN
-  int maxR = 255; // R_MAX
-  int minG = 0; // G_MIN
-  int maxG = 255; // G_MAX
-  int minB = 0; // B_MIN
-  int maxB = 255; // B_MAX
-
-  const int minObjectArea = 20*20; //20x20 blob
-  bool objectFound;
   int currentColor;
-
+  int objectFound;
   int action = 0;
   Timer goToDepth_time;
   int depthCounter = 0;
   Timer driveForwards_time;
   int forwardCounter = 0;
+  Timer waitTimer;
+  int waitCounter = 0;
   double surgeSpeed = 25;
   double previousDepth;
   double distanceFromEdge_left;
