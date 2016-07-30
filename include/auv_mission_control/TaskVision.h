@@ -43,7 +43,7 @@ private:
   cv::Scalar sGreenMax = cv::Scalar(255, 255, 255);
 
   cv::Scalar sOrangeMin = cv::Scalar(0,0,0);
-  cv::Scalar sOrangeMax = cv::Scalar(255,255,255);
+  cv::Scalar sOrangeMax = cv::Scalar(76,85,200);
 
   cv::Mat imgOrigFront;
   cv::Mat imgOrigBottom;
