@@ -10,7 +10,6 @@
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/TaskGate.h>
 #include <auv_mission_control/TaskBuoy.h>
-#include <auv_mission_control/TaskGateVision.h>
 #include <auv_mission_control/Camera.h>
 
 

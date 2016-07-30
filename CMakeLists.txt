@@ -201,8 +201,8 @@ ${OpenCV_INCLUDE_DIRS}
 add_library(state_machine
 	src/PidManager.cpp
 	src/Camera.cpp
+  src/tasks/TaskVision.cpp
 	src/tasks/TaskGate.cpp
-  src/tasks/TaskGateVision.cpp
   src/tasks/TaskBuoy.cpp
   src/tasks/TaskMarker.cpp
   src/tasks/TaskKill.cpp
@@ -222,4 +222,3 @@ add_dependencies(state_machine_cont
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
-
