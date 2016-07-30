@@ -208,7 +208,7 @@ int TaskGate::execute(){
 	if(upCount < 1)
 	  upTimer.start();
 
-        while(upTimer.getTime() < 5){
+  while(upTimer.getTime() < 5){
 	  ros::spinOnce;
           gateRate.sleep();
 	  pm_.setPidEnabled(AXIS_HEAVE, 0);

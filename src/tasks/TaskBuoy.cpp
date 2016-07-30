@@ -5,7 +5,7 @@ TaskBuoy::TaskBuoy(){
 
 
 TaskBuoy::TaskBuoy(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
-        ROS_INFO("TASK BUOY INIT");
+        ROS_INFO("YAAARRRGGGG I BE STARTIN TO SCUTTLE ME SHIP");
 }
 
 TaskBuoy::~TaskBuoy(){
@@ -21,6 +21,7 @@ int TaskBuoy::execute(){
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -1.25);
         // pm_.taskDelay(5);
 	currentColor = COLOR_RED;
+  depthCounter = 0;
         while (ros::ok) {
 
                 ros::spinOnce();
@@ -36,7 +37,7 @@ int TaskBuoy::execute(){
                 original = cam_.getFront();
                 if (currentColor == COLOR_RED){
                   cv::inRange(imgLab, redMin, redMax, imgThresh);
-                  ROS_INFO("COLOR IS RED");
+                  ROS_INFO("YAAARRRGGGG THE COLOR BE RED");
 
 		} else if (currentColor = COLOR_GREEN) {
                   cv::inRange(imgLab, greenMin, greenMax, imgThresh);
@@ -55,6 +56,7 @@ int TaskBuoy::execute(){
                 cv::Moments oMoments = cv::moments(imgThresh);
                 double dArea = oMoments.m00;
 	        ROS_INFO("\033[2J\033[1;1H");
+          ROS_INFO("YAAARRRGGGG I BE SCUTTLING ME SHIP");
 		ROS_INFO("dArea %f", dArea);
                 double posX = oMoments.m10 / dArea;
 	        ROS_INFO("posX %f", posX);
@@ -75,14 +77,22 @@ int TaskBuoy::execute(){
                   else{
                     objectFound = 0;
                   }
-
-                  case 0:{ //approach first buoy (red) YO MA OG GIMMME CENTROID OF RED
+                  case 0:{
+                    pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, -2.75);
+                    double errorBuoy = fabs(-2.75 - pm_.getDepth());
+                    if(errorBuoy >= .2)
+                      action = 0;
+                    else
+                      action = 1;
+                    break;
+                  }
+                  case 1:{ //approach first buoy (red) YO MA OG GIMMME CENTROID OF RED
                     ColorSpace = 0;  //(red)
-                    if(dArea >= 3250000){//!objectFound || dArea > 74419200){
+                    if(dArea >= 6250000){//!objectFound || dArea > 74419200){
                       pm_.setControlEffort(AXIS_SURGE, 0);
                       redDepth = pm_.getDepth();
-                      action = 1;
-                      ROS_INFO("In place to ram first buoy. BOP IT!");
+                      action = 2;
+                      ROS_INFO("YAAARRRGGGG I BE IN PLACE TO RAM TH' FIRST BUOY.");
                       break;
                     }
                     else{
@@ -90,12 +100,12 @@ int TaskBuoy::execute(){
                       pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_HEAVE, INPUT_CAM_FRONT, 240);
                       if(posYcorrected == posYcorrected) //checks for NaN, doesn't set if is
-		        pm_.setPlantState(AXIS_HEAVE, posYcorrected);
-		      else
-			pm_.setPlantState(AXIS_HEAVE, 240);
-		      if(posXcorrected == posXcorrected){
-		        pm_.setPlantState(AXIS_YAW, posXcorrected);
-			pm_.setPlantState(AXIS_YAW, posXcorrected);
+		                    pm_.setPlantState(AXIS_HEAVE, posYcorrected);
+		                  else
+			                    pm_.setPlantState(AXIS_HEAVE, 240);
+		                  if(posXcorrected == posXcorrected){
+		                      pm_.setPlantState(AXIS_YAW, posXcorrected);
+			                    pm_.setPlantState(AXIS_YAW, posXcorrected);
                       }
 		      else{
 			pm_.setPlantState(AXIS_YAW, 360);
@@ -104,13 +114,13 @@ int TaskBuoy::execute(){
 		      ROS_INFO("posXcorrected %f", posXcorrected);
                       ROS_INFO("posYcorrected %f", posYcorrected);
                       pm_.setControlEffort(AXIS_SURGE, 15);
-                      action = 0;
+                      action = 1;
                       break;
                     }
                   }
 
-                  case 1:{ //BOP IT! (ram it)
-		    ROS_INFO("BOPPING IT!");
+                  case 2:{ //BOP IT! (ram it)
+		    ROS_INFO("YAAARRRGGGG I BE RAMMING IT");
                     if(ramRedCounter < 1){
                       ramRed.start();
                       ramRedCounter++;
@@ -132,14 +142,10 @@ int TaskBuoy::execute(){
                       pm_.setControlEffort(AXIS_SURGE, -35);
                     else{
                       pm_.setControlEffort(AXIS_SURGE, 0);
-                      action = 2;
+                      action = 3;
 		      return 0;
                       break;
                     }
-                  }
-
-                  case 2:{ //TWIST IT! (rotate to match green)
-
                   }
 
                   case 3:{ //approach second buoy (green)
@@ -175,8 +181,6 @@ int TaskBuoy::execute(){
                 }
                 else { // move forwards
 
-
-                }
 
                 ROS_ERROR(" Object found? %d Coords(corrected): %f %f ", objectFound, posXcorrected, posYcorrected);
 

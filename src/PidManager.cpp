@@ -211,9 +211,9 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
     std_msgs::Float64 msgSetpointYaw;
 
     if (input_type == INPUT_IMU_POS){
-      paramYaw.kP = 2.5;
-      paramYaw.kD = 1.5;
-      paramYaw.kI = 1.5;
+      paramYaw.kP = .5;
+      paramYaw.kD = 0;
+      paramYaw.kI = 0;
       paramHeave.Kp_scale = .1;
       paramHeave.Kd_scale = .1;
       paramHeave.Ki_scale = .1;      //set tuning for surge axis on imu position
