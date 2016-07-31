@@ -199,8 +199,10 @@ ${OpenCV_INCLUDE_DIRS}
 # catkin_add_nosetests(test)
 
 add_library(state_machine
+  src/StateMachine.cpp
 	src/PidManager.cpp
 	src/Camera.cpp
+  src/tasks/Task.cpp
   src/tasks/TaskVision.cpp
 	src/tasks/TaskGate.cpp
   src/tasks/TaskBuoy.cpp
@@ -215,7 +217,7 @@ add_dependencies(state_machine
   ${catkin_EXPORTED_TARGETS}
 )
 
-add_executable(state_machine_cont src/StateMachine.cpp)
+add_executable(state_machine_cont src/main.cpp)
 
 target_link_libraries(state_machine_cont ${catkin_LIBRARIES} state_machine  ${OpenCV_LIBRARIES})
 add_dependencies(state_machine_cont

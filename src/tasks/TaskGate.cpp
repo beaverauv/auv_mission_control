@@ -7,12 +7,18 @@ TaskGate::TaskGate(){
 
 
 TaskGate::TaskGate(PidManager* pm, Camera* cam, TaskVision* vision) : pm_(*pm), cam_(*cam), vision_(*vision){
-  ROS_INFO("TASK GATE INIT");
+  AUV_INFO("Init");
 }
 
 TaskGate::~TaskGate(){
 
 }
+
+
+std::string TaskGate::getTag(){
+  return std::string("[Task Gate]");
+}
+
 
 int TaskGate::execute(){
 

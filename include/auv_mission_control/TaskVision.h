@@ -9,17 +9,19 @@
 
 #include <ros/ros.h>
 
+#include <auv_mission_control/Task.h>
 #include <auv_mission_control/Camera.h>
 
 
 
 
-class TaskVision {
+class TaskVision: public Task{
 public:
   TaskVision();
   TaskVision(Camera* cam);
   ~TaskVision();
 
+  std::string getTag();
 
   void findBuoy(int color);
   double getBuoyArea();

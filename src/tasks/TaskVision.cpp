@@ -3,7 +3,6 @@
 
 
 TaskVision::TaskVision(){
-
 }
 
 TaskVision::~TaskVision(){
@@ -11,7 +10,12 @@ TaskVision::~TaskVision(){
 }
 
 TaskVision::TaskVision(Camera* cam) : cam_(*cam){
+  AUV_INFO("Init");
+}
 
+
+std::string TaskVision::getTag(){
+  return std::string("[Task Vision]");
 }
 
 
@@ -126,7 +130,7 @@ void TaskVision::findMarker(){
 	  double count = contours[largestContourIndex].size();
 	  if (count > 5)
           	markerRect = cv::fitEllipse(contours[largestContourIndex]);
-	  
+
   ROS_INFO("but not here");
 
           //cv::Point2f rect_points[4];

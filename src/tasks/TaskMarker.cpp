@@ -11,6 +11,12 @@ TaskMarker::~TaskMarker(){
 
 }
 
+
+std::string TaskMarker::getTag(){
+  return std::string("[Task Marker]");
+}
+
+
 int TaskMarker::execute(){
 
   pm_.setPidEnabled(AXIS_SURGE, false);

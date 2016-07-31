@@ -11,7 +11,14 @@ TaskKill::~TaskKill(){
 
 }
 
+
+std::string TaskKill::getTag(){
+  return std::string("[Task Kill]");
+}
+
+
 int TaskKill::execute(){
+  AUV_INFO("Killing AUV");
   pm_.setPidEnabled(AXIS_SURGE, false);
   pm_.setPidEnabled(AXIS_SWAY, false);
   pm_.setPidEnabled(AXIS_HEAVE, false);

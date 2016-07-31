@@ -18,6 +18,12 @@ Camera::Camera(){
 //
 }
 
+
+std::string Camera::getTag(){
+  return std::string("[Task Buoy]");
+}
+
+
 Camera::~Camera(){
 
 }

@@ -5,11 +5,15 @@ TaskBuoy::TaskBuoy(){
 
 
 TaskBuoy::TaskBuoy(PidManager* pm, TaskVision* vision) : pm_(*pm), vision_(*vision){
-        ROS_INFO("YAAARRRGGGG I BE STARTIN TO SCUTTLE ME SHIP");
+        AUV_INFO("INIT");
 }
 
 TaskBuoy::~TaskBuoy(){
 
+}
+
+std::string TaskBuoy::getTag(){
+  return std::string("[Task Buoy]");
 }
 
 
@@ -53,11 +57,11 @@ int TaskBuoy::execute(){
 		        waitCounter++;
 		    }
 
-```		    if(waitTimer.getTime() < 10){
+		    if(waitTimer.getTime() < 10){
                       pm_.setControlEffort(AXIS_SURGE, 0);
                     }
                     else{
-		`     pm_.setControlEffort(AXIS_SURGE, 15);
+		     pm_.setControlEffort(AXIS_SURGE, 15);
                     }
                       pm_.setSetpoint(AXIS_YAW, INPUT_CAM_FRONT, 360);
                       pm_.setSetpoint(AXIS_SWAY, INPUT_CAM_FRONT, 360);

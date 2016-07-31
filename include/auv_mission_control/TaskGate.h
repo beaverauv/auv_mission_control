@@ -9,18 +9,22 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <auv_mission_control/Task.h>
 #include <auv_mission_control/TaskVision.h>
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Camera.h>
 #include <auv_mission_control/StateMachine.h>
 
 
-class TaskGate{
+class TaskGate: public Task{
 public:
 
   TaskGate();
   TaskGate(PidManager* pm, Camera* cam, TaskVision *vision);
   ~TaskGate();
+
+  std::string getTag();
+
 
   int execute();
 

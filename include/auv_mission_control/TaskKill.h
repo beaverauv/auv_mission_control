@@ -2,15 +2,19 @@
 #define TASKKILL_H
 
 #include <auv_mission_control/PidManager.h>
+#include <auv_mission_control/Task.h>
 
 
-class TaskKill{
+class TaskKill: public Task{
 public:
   TaskKill();
   TaskKill(PidManager* pm);
   ~TaskKill();
 
   int execute();
+
+  std::string getTag();
+
 
 private:
   //variables go here;

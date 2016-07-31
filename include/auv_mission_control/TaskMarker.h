@@ -8,14 +8,19 @@
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Camera.h>
 #include <auv_mission_control/StateMachine.h>
+#include <auv_mission_control/Task.h>
 
 
 
-class TaskMarker{
+class TaskMarker: public Task{
 public:
   TaskMarker();
   TaskMarker(PidManager* pm, Camera* cam);
   ~TaskMarker();
+
+  std::string getTag();
+
+
 
   int execute();
 

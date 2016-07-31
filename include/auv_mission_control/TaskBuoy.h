@@ -2,16 +2,18 @@
 #define TaskBuoy_H
 
 #include <unistd.h>
-
+#include <auv_mission_control/Task.h>
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Camera.h>
 #include <auv_mission_control/StateMachine.h>
 
-class TaskBuoy{
+class TaskBuoy: public Task {
 public:
   TaskBuoy();
   TaskBuoy(PidManager* pm, TaskVision* vision);
   ~TaskBuoy();
+
+  std::string getTag();
 
   int execute();
 
