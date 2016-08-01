@@ -12,10 +12,6 @@ TaskMarker::~TaskMarker(){
 }
 
 
-std::string TaskMarker::getTag(){
-  return std::string("[Task Marker]");
-}
-
 
 int TaskMarker::execute(){
 

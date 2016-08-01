@@ -12,9 +12,6 @@ TaskKill::~TaskKill(){
 }
 
 
-std::string TaskKill::getTag(){
-  return std::string("[Task Kill]");
-}
 
 
 int TaskKill::execute(){

@@ -14,12 +14,6 @@ TaskGate::~TaskGate(){
 
 }
 
-
-std::string TaskGate::getTag(){
-  return std::string("[Task Gate]");
-}
-
-
 int TaskGate::execute(){
 
   ros::Rate gateRate(20.);

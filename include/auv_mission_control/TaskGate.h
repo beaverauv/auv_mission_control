@@ -23,8 +23,9 @@ public:
   TaskGate(PidManager* pm, Camera* cam, TaskVision *vision);
   ~TaskGate();
 
-  std::string getTag();
-
+  std::string getTag(){
+    return std::string("[Task Gate]");
+  }
 
   int execute();
 

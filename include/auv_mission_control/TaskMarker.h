@@ -18,7 +18,9 @@ public:
   TaskMarker(PidManager* pm, Camera* cam);
   ~TaskMarker();
 
-  std::string getTag();
+  std::string getTag(){
+    return std::string("[Task Marker]");
+  }
 
 
 

@@ -21,7 +21,9 @@ public:
   TaskVision(Camera* cam);
   ~TaskVision();
 
-  std::string getTag();
+  std::string getTag(){
+    return std::string("[Task Vision]");
+  }
 
   void findBuoy(int color);
   double getBuoyArea();

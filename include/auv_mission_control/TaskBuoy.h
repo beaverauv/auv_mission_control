@@ -13,8 +13,9 @@ public:
   TaskBuoy(PidManager* pm, TaskVision* vision);
   ~TaskBuoy();
 
-  std::string getTag();
-
+  std::string getTag(){
+    return std::string("[Task Buoy]");
+  }
   int execute();
 
 private:

@@ -13,8 +13,9 @@ public:
 
   int execute();
 
-  std::string getTag();
-
+  std::string getTag(){
+    return std::string("[Task Kill]");
+  }
 
 private:
   //variables go here;

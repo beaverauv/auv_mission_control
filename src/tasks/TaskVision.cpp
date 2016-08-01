@@ -14,11 +14,6 @@ TaskVision::TaskVision(Camera* cam) : cam_(*cam){
 }
 
 
-std::string TaskVision::getTag(){
-  return std::string("[Task Vision]");
-}
-
-
 void TaskVision::findBuoy(int color){
   cam_.updateFront();
   imgOrigFront = cam_.getFront();

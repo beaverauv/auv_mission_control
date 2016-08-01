@@ -12,10 +12,6 @@ TaskBuoy::~TaskBuoy(){
 
 }
 
-std::string TaskBuoy::getTag(){
-  return std::string("[Task Buoy]");
-}
-
 
 int TaskBuoy::execute(){
         //pm_.setPidEnabled("ALL", true);//turns on all 6 pid controllers
