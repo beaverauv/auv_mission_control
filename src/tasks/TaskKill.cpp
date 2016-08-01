@@ -15,15 +15,15 @@ TaskKill::~TaskKill(){
 
 
 int TaskKill::execute(){
-  AUV_INFO("Killing AUV");
-  pm_.setPidEnabled(AXIS_SURGE, false);
-  pm_.setPidEnabled(AXIS_SWAY, false);
-  pm_.setPidEnabled(AXIS_HEAVE, false);
-  pm_.setPidEnabled(AXIS_YAW, false);
+        AUV_INFO("Killing AUV");
+        pm_.setPidEnabled(AXIS_SURGE, false);
+        pm_.setPidEnabled(AXIS_SWAY, false);
+        pm_.setPidEnabled(AXIS_HEAVE, false);
+        pm_.setPidEnabled(AXIS_YAW, false);
 
-  pm_.setControlEffort(AXIS_SURGE, 0);
-  pm_.setControlEffort(AXIS_SWAY, 0);
-  pm_.setControlEffort(AXIS_HEAVE, 0);
-  pm_.setControlEffort(AXIS_YAW, 0);
+        pm_.setControlEffort(AXIS_SURGE, 0);
+        pm_.setControlEffort(AXIS_SWAY, 0);
+        pm_.setControlEffort(AXIS_HEAVE, 0);
+        pm_.setControlEffort(AXIS_YAW, 0);
 
 }

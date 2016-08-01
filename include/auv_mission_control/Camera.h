@@ -7,25 +7,25 @@
 #include <auv_mission_control/Task.h>
 
 
-class Camera: public Task {
+class Camera : public Task {
 private:
-  cv::VideoCapture frontCap;
-  cv::VideoCapture bottomCap;
+        cv::VideoCapture frontCap;
+        cv::VideoCapture bottomCap;
 
 
-  cv::Mat lastFrontImage;
-  cv::Mat lastBottomImage;
+        cv::Mat lastFrontImage;
+        cv::Mat lastBottomImage;
 
-  std::string getTag();
+        std::string getTag();
 
 
 public:
-  Camera();
-  ~Camera();
-  cv::Mat getFront();
-  cv::Mat getBottom();
-  void updateFront();
-  void updateBottom();
+        Camera();
+        ~Camera();
+        cv::Mat getFront();
+        cv::Mat getBottom();
+        void updateFront();
+        void updateBottom();
 
 };
 

@@ -15,80 +15,79 @@
 
 
 
-class TaskVision: public Task{
+class TaskVision : public Task {
 public:
-  TaskVision();
-  TaskVision(Camera* cam);
-  ~TaskVision();
+        TaskVision();
+        TaskVision(Camera* cam);
+        ~TaskVision();
 
-  std::string getTag(){
-    return std::string("[Task Vision]");
-  }
+        std::string getTag(){
+                return std::string("[Task Vision]");
+        }
 
-  void findBuoy(int color);
-  double getBuoyArea();
-  double getBuoyCoordX();
-  double getBuoyCoordY();
+        void findBuoy(int color);
+        double getBuoyArea();
+        double getBuoyCoordX();
+        double getBuoyCoordY();
 
-  void findMarker();
-  double getMarkerArea();
-  double getMarkerCoordX();
-  double getMarkerCoordY();
-  double getMarkerAngle();
+        void findMarker();
+        double getMarkerArea();
+        double getMarkerCoordX();
+        double getMarkerCoordY();
+        double getMarkerAngle();
 
 private:
 
-  Camera cam_;
+        Camera cam_;
+        cv::Scalar sRedMin = cv::Scalar(0, 0, 123);
+        cv::Scalar sRedMax = cv::Scalar(68, 152, 239);
 
-  cv::Scalar sRedMin = cv::Scalar(0, 0, 123);
-  cv::Scalar sRedMax = cv::Scalar(68, 152, 239);
+        cv::Scalar sGreenMin = cv::Scalar(0, 0, 0);
+        cv::Scalar sGreenMax = cv::Scalar(255, 255, 255);
 
-  cv::Scalar sGreenMin = cv::Scalar(0, 0, 0);
-  cv::Scalar sGreenMax = cv::Scalar(255, 255, 255);
+        cv::Scalar sOrangeMin = cv::Scalar(0,0,0);
+        cv::Scalar sOrangeMax = cv::Scalar(76,85,200);
 
-  cv::Scalar sOrangeMin = cv::Scalar(0,0,0);
-  cv::Scalar sOrangeMax = cv::Scalar(76,85,200);
+        cv::Mat imgOrigFront;
+        cv::Mat imgOrigBottom;
 
-  cv::Mat imgOrigFront;
-  cv::Mat imgOrigBottom;
+        cv::Mat imgHlsFront;
+        cv::Mat imgHlsBottom;
 
-  cv::Mat imgHlsFront;
-  cv::Mat imgHlsBottom;
+        cv::Mat imgThreshFront;
+        cv::Mat imgThreshBottom;
 
-  cv::Mat imgThreshFront;
-  cv::Mat imgThreshBottom;
+        cv::Mat imgContoursBottom;
 
-  cv::Mat imgContoursBottom;
+        cv::Moments momentsBuoy;
+        cv::Moments momentsMarker;
 
-  cv::Moments momentsBuoy;
-  cv::Moments momentsMarker;
+        double buoyArea;
+        double buoyCoordX;
+        double buoyCoordY;
 
-  double buoyArea;
-  double buoyCoordX;
-  double buoyCoordY;
+        double buoyCoordCorrectedX;
+        double buoyCoordCorrectedY;
 
-  double buoyCoordCorrectedX;
-  double buoyCoordCorrectedY;
+        double markerArea;
+        double markerCoordX;
+        double markerCoordY;
 
-  double markerArea;
-  double markerCoordX;
-  double markerCoordY;
-
-  double markerCoordCorrectedX;
-  double markerCoordCorrectedY;
+        double markerCoordCorrectedX;
+        double markerCoordCorrectedY;
 
 
-  std::vector <std::vector <cv::Point> > contours;
-  std::vector <cv::Vec4i> hierarchy;
+        std::vector <std::vector <cv::Point> > contours;
+        std::vector <cv::Vec4i> hierarchy;
 
-  cv::RotatedRect markerRect;
+        cv::RotatedRect markerRect;
 
-  int largestArea;
-  int largestContourIndex;
-  int numLargeContours;
+        int largestArea;
+        int largestContourIndex;
+        int numLargeContours;
 
-  double currentAngle;
-  double averagedAngle;
+        double currentAngle;
+        double averagedAngle;
 
 };
 

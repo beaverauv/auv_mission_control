@@ -2,8 +2,8 @@
 
 
 int main(int argc, char* argv[]){
-  ros::init(argc, argv, "state_machine");
-  StateMachine state;
+        ros::init(argc, argv, "state_machine");
+        StateMachine state;
 
-  state.execute();
+        state.execute();
 }

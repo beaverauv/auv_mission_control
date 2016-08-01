@@ -8,14 +8,14 @@
 
 class Task {
 public:
-  Task();
-  ~Task();
+        Task();
+        ~Task();
 
 
-  void AUV_INFO(char * format, ...);
-  void AUV_ERROR(char * format, ...);
+        void AUV_INFO(char * format, ...);
+        void AUV_ERROR(char * format, ...);
 
-  virtual std::string getTag();
+        virtual std::string getTag();
 
 private:
 

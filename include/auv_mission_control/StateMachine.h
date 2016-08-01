@@ -13,22 +13,21 @@
 #define kill 2
 
 
-class StateMachine: public Task {
+class StateMachine : public Task {
 public:
+        StateMachine();
+        ~StateMachine();
 
-  StateMachine();
-  ~StateMachine();
+        std::string getTag();
 
-  std::string getTag();
-
-  int execute();
+        int execute();
 
 private:
-  ros::NodeHandle nh_;
-  PidManager pm_;
-  Camera cam_;
-  TaskVision vision_;
-  //TaskGate gate_;
+        ros::NodeHandle nh_;
+        PidManager pm_;
+        Camera cam_;
+        TaskVision vision_;
+        //TaskGate gate_;
 
 
 };

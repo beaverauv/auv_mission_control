@@ -9,9 +9,9 @@ Timer::~Timer(){
 }
 
 void Timer::start(){
-  startTime = ros::Time::now().toSec();
+        startTime = ros::Time::now().toSec();
 }
 
 double Timer::getTime(){
-  return ros::Time::now().toSec() - startTime;
+        return ros::Time::now().toSec() - startTime;
 }

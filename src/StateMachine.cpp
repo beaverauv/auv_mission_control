@@ -2,10 +2,10 @@
 
 
 StateMachine::StateMachine(){
-  AUV_INFO("Init");
-  pm_ = PidManager(&nh_);
-  vision_ = TaskVision(&cam_);
-  //gate_ = TaskGate(&pm_, &vision_);
+        AUV_INFO("Init");
+        pm_ = PidManager(&nh_);
+        vision_ = TaskVision(&cam_);
+        //gate_ = TaskGate(&pm_, &vision_);
 
 }
 
@@ -14,9 +14,9 @@ StateMachine::~StateMachine(){
 }
 
 std::string StateMachine::getTag(){
-  return std::string("[State Machine]");
+        return std::string("[State Machine]");
 }
 
 int StateMachine::execute(){
-  AUV_INFO("Execute");
+        AUV_INFO("Execute");
 }

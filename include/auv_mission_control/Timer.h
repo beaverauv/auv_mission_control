@@ -3,17 +3,17 @@
 
 #include "ros/ros.h"
 
-class Timer{
+class Timer {
 
 private:
-  double startTime;
+        double startTime;
 
 public:
-  Timer();
-  ~Timer();
+        Timer();
+        ~Timer();
 
-  void start();
-  double getTime();
+        void start();
+        double getTime();
 
 
 

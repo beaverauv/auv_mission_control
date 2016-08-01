@@ -16,53 +16,53 @@
 #include <auv_mission_control/StateMachine.h>
 
 
-class TaskGate: public Task{
+class TaskGate : public Task {
 public:
 
-  TaskGate();
-  TaskGate(PidManager* pm, Camera* cam, TaskVision *vision);
-  ~TaskGate();
+        TaskGate();
+        TaskGate(PidManager* pm, Camera* cam, TaskVision *vision);
+        ~TaskGate();
 
-  std::string getTag(){
-    return std::string("[Task Gate]");
-  }
+        std::string getTag(){
+                return std::string("[Task Gate]");
+        }
 
-  int execute();
+        int execute();
 
 private:
-  //variables go here;
-  PidManager pm_;
-  Camera cam_;
-  TaskVision vision_;
-  bool startTimer = 0;
+        //variables go here;
+        PidManager pm_;
+        Camera cam_;
+        TaskVision vision_;
+        bool startTimer = 0;
 
-  int ColorSpace = 0;
-  const int minObjectArea = 20*20; //20x20 blob
-  bool objectFound;
+        int ColorSpace = 0;
+        const int minObjectArea = 20*20; //20x20 blob
+        bool objectFound;
 
-  bool killSwitch = 0;
+        bool killSwitch = 0;
 
-  int action = 0;
-  Timer goToDepth_time;
-  int depthCounter = 0;
-  Timer driveForwards_time;
-  int forwardCounter = 0;
-  Timer markerTimer;
-  int markerCounter = 0;
-  int reZeroCounter = 0;
-  double surgeSpeed = 25;
-  double previousDepth;
-  double currentDepth;
-  int rosInfoCounter;
-  double distanceFromEdge_left;
-  double distanceFromEdge_right;
-  bool outOfSight;
-  double plantState_sway;
-  double plantState_heave;
-  double setpoint_sway;
-  double setpoint_heave;
-  double setpoint_surge;
-  double plantState_surge;
+        int action = 0;
+        Timer goToDepth_time;
+        int depthCounter = 0;
+        Timer driveForwards_time;
+        int forwardCounter = 0;
+        Timer markerTimer;
+        int markerCounter = 0;
+        int reZeroCounter = 0;
+        double surgeSpeed = 25;
+        double previousDepth;
+        double currentDepth;
+        int rosInfoCounter;
+        double distanceFromEdge_left;
+        double distanceFromEdge_right;
+        bool outOfSight;
+        double plantState_sway;
+        double plantState_heave;
+        double setpoint_sway;
+        double setpoint_heave;
+        double setpoint_surge;
+        double plantState_surge;
 
 
 

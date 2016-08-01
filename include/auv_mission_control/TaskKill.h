@@ -5,21 +5,21 @@
 #include <auv_mission_control/Task.h>
 
 
-class TaskKill: public Task{
+class TaskKill : public Task {
 public:
-  TaskKill();
-  TaskKill(PidManager* pm);
-  ~TaskKill();
+        TaskKill();
+        TaskKill(PidManager* pm);
+        ~TaskKill();
 
-  int execute();
+        int execute();
 
-  std::string getTag(){
-    return std::string("[Task Kill]");
-  }
+        std::string getTag(){
+                return std::string("[Task Kill]");
+        }
 
 private:
-  //variables go here;
-  PidManager pm_;
+        //variables go here;
+        PidManager pm_;
 };
 
 #endif
