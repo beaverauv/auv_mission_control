@@ -1,44 +1,72 @@
 #include <auv_mission_control/Camera.h>
 
 
+
+
 Camera::Camera(){
-        frontCap.open(0);
-        if (!frontCap.isOpened()) {
+        capFront.open(0);
+        if (!capFront.isOpened()) {
                 ROS_ERROR("Unable to open Front Camera");
         }
 
-        bottomCap.open(1);
-        if (!bottomCap.isOpened()) {
+        capBottom.open(1);
+        if (!capBottom.isOpened()) {
                 ROS_ERROR("Unable to open bottom Camera");
         }
-        frontCap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-        frontCap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
-        bottomCap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-        bottomCap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+
+        capFront.set(CV_CAP_PROP_FRAME_WIDTH, imgWidth);
+        capFront.set(CV_CAP_PROP_FRAME_HEIGHT, imgHeight);
+        capBottom.set(CV_CAP_PROP_FRAME_WIDTH, imgWidth);
+        capBottom.set(CV_CAP_PROP_FRAME_HEIGHT, imgHeight);
+
+        capFront.set(CV_CAP_PROP_FPS, camFPS);
+        capBottom.set(CV_CAP_PROP_FPS, camFPS);
+
+        threadCam = std::thread(updateFrames);
+
 //
 }
 
 
-std::string Camera::getTag(){
-        return std::string("[Task Buoy]");
-}
-
 
 Camera::~Camera(){
+        ~threadCam();
+        stopRecording();
+}
+
+Camera::startRecording(){
+        writerFront.open(filenameVideoFront, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
+        writerBottom.open(filenameVideoBottom, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
+
+        isRecording = true;
+}
+
+Camera::stopRecording(){
+        if (isRecording) {
+                writerFront.release();
+                writerBottom.release();
+        }
 
 }
 
-void Camera::updateFront(){
 
-        if (!frontCap.read(lastFrontImage)) {
-                ROS_ERROR("Failed to read from front camera");
-        }
-}
+void Camera::updateFrames(){
+        while (true) {
+                if (!capFront.read(lastFrontImage)) {
+                        ROS_ERROR("Failed to read from front camera");
+                }
 
-void Camera::updateBottom(){
-        if (!bottomCap.read(lastBottomImage)) {
-                ROS_ERROR("Failed to read from bottom Camera");
+                if (!capBottom.read(lastBottomImage)) {
+                        ROS_ERROR("Failed to read from bottom Camera");
+                }
+
+                if (isRecording) {
+                        writerFront.write(lastFrontImage);
+                        writerBottom.write(lastBottomImage);
+                }
+                fpsRate.sleep();
         }
+
 }
 
 cv::Mat Camera::getFront(){
