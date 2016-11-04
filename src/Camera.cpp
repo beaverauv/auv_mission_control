@@ -22,7 +22,6 @@ Camera::Camera(){
         capFront.set(CV_CAP_PROP_FPS, camFPS);
         capBottom.set(CV_CAP_PROP_FPS, camFPS);
 
-        threadCam = std::thread(updateFrames);
 
 //
 }
@@ -30,42 +29,51 @@ Camera::Camera(){
 
 
 Camera::~Camera(){
-        ~threadCam();
         stopRecording();
 }
 
-Camera::startRecording(){
+void Camera::startRecording(){
+        time_t rawtime;
+        struct tm * timeinfo;
+        char buffer[80];
+
+        time (&rawtime);
+        timeinfo = localtime(&rawtime);
+        strftime(buffer,80,"%d-%m-%Y %I:%M:%S",timeinfo);
+        std::string str(buffer);
+
+        filenameVideoFront = 'FrontVid-' + buffer;
+        filenameVideoBottom = 'BottomVid-' + buffer;
+        AUV_INFO("Writing Video to " + filenameVideoFront + " and " + filenameVideoFront);
+
         writerFront.open(filenameVideoFront, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
         writerBottom.open(filenameVideoBottom, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
 
         isRecording = true;
 }
 
-Camera::stopRecording(){
+void Camera::stopRecording(){
         if (isRecording) {
                 writerFront.release();
                 writerBottom.release();
         }
-
 }
 
 
 void Camera::updateFrames(){
-        while (true) {
-                if (!capFront.read(lastFrontImage)) {
-                        ROS_ERROR("Failed to read from front camera");
-                }
-
-                if (!capBottom.read(lastBottomImage)) {
-                        ROS_ERROR("Failed to read from bottom Camera");
-                }
-
-                if (isRecording) {
-                        writerFront.write(lastFrontImage);
-                        writerBottom.write(lastBottomImage);
-                }
-                fpsRate.sleep();
+        if (!capFront.read(lastFrontImage)) {
+                ROS_ERROR("Failed to read from front camera");
         }
+
+        if (!capBottom.read(lastBottomImage)) {
+                ROS_ERROR("Failed to read from bottom Camera");
+        }
+
+        if (isRecording) {
+                writerFront.write(lastFrontImage);
+                writerBottom.write(lastBottomImage);
+        }
+        fpsRate.sleep();
 
 }
 

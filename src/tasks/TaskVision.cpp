@@ -5,17 +5,19 @@
 TaskVision::TaskVision(){
 }
 
+// TaskVision::TaskVision(Camera* cam) : cam_(*cam){
+//         AUV_INFO("Init");
+// }
+
 TaskVision::~TaskVision(){
 
 }
 
-TaskVision::TaskVision(Camera* cam) : cam_(*cam){
-        AUV_INFO("Init");
-}
+
 
 
 void TaskVision::findBuoy(int color){
-        cam_.updateFront();
+        cam_.updateFrames();
         imgOrigFront = cam_.getFront();
 
         cv::cvtColor(imgOrigFront, imgHlsFront, CV_BGR2HLS);
@@ -68,7 +70,7 @@ double TaskVision::getBuoyCoordY(){
 
 void TaskVision::findMarker(){
         ROS_INFO("FIND MARKER CALLED");
-        cam_.updateBottom();
+        cam_.updateFrames();
         imgOrigBottom = cam_.getBottom();
         ROS_INFO("GOT IMAGES");
         cv::cvtColor(imgOrigBottom, imgHlsBottom, CV_BGR2HLS);

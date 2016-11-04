@@ -1,7 +1,7 @@
 #ifndef CAMERA_MANAGER_H
 #define CAMERA_MANAGER_H
 
-#include <thread.h>
+#include <ctime>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
@@ -9,6 +9,8 @@
 
 
 #include <auv_mission_control/Task.h>
+
+
 
 
 class Camera : public Task {
@@ -35,10 +37,9 @@ private:
         std::string filenameVideoBottom;
 
         ros::Rate fpsRate = ros::Rate(camFPS);
-        std::thread threadRecord;
 
-        std::string Camera::getTag(){
-                return std::string("[Task Buoy]");
+        std::string getTag(){
+                return std::string("[Camera]");
         }
 
 public:
@@ -48,8 +49,9 @@ public:
         cv::Mat getBottom();
 
         void startRecording();
+        void stopRecording();
 
-        void updateFrames(void *);
+        void updateFrames();
 
 };
 

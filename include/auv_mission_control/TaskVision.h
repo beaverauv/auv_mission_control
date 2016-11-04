@@ -18,7 +18,7 @@
 class TaskVision : public Task {
 public:
         TaskVision();
-        TaskVision(Camera* cam);
+        // TaskVision(Camera* cam);
         ~TaskVision();
 
         std::string getTag(){

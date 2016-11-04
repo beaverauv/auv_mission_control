@@ -4,7 +4,8 @@ TaskMarker::TaskMarker(){
 }
 
 
-TaskMarker::TaskMarker(PidManager* pm, Camera* cam) : pm_(*pm), cam_(*cam){
+TaskMarker::TaskMarker(PidManager* pm, TaskVision* vision) : pm_(*pm), vision_(*vision){
+  AUV_INFO("Init");
 }
 
 TaskMarker::~TaskMarker(){

@@ -199,12 +199,13 @@ ${OpenCV_INCLUDE_DIRS}
 # catkin_add_nosetests(test)
 
 add_library(state_machine
+  src/main.cpp
   src/StateMachine.cpp
-	src/PidManager.cpp
-	src/Camera.cpp
+  src/PidManager.cpp
+  src/Camera.cpp
   src/tasks/Task.cpp
   src/tasks/TaskVision.cpp
-	src/tasks/TaskGate.cpp
+  src/tasks/TaskGate.cpp
   src/tasks/TaskBuoy.cpp
   src/tasks/TaskMarker.cpp
   src/tasks/TaskKill.cpp

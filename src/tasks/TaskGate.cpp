@@ -6,7 +6,7 @@ TaskGate::TaskGate(){
 }
 
 
-TaskGate::TaskGate(PidManager* pm, Camera* cam, TaskVision* vision) : pm_(*pm), cam_(*cam), vision_(*vision){
+TaskGate::TaskGate(PidManager* pm, TaskVision* vision) : pm_(*pm), vision_(*vision){
         AUV_INFO("Init");
 }
 

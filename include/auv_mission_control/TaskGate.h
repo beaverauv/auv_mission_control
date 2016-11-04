@@ -20,7 +20,7 @@ class TaskGate : public Task {
 public:
 
         TaskGate();
-        TaskGate(PidManager* pm, Camera* cam, TaskVision *vision);
+        TaskGate(PidManager* pm, TaskVision* vision);
         ~TaskGate();
 
         std::string getTag(){
@@ -32,12 +32,11 @@ public:
 private:
         //variables go here;
         PidManager pm_;
-        Camera cam_;
         TaskVision vision_;
         bool startTimer = 0;
 
         int ColorSpace = 0;
-        const int minObjectArea = 20*20; //20x20 blob
+        int minObjectArea = 20*20; //20x20 blob
         bool objectFound;
 
         bool killSwitch = 0;

@@ -15,7 +15,7 @@
 class TaskMarker : public Task {
 public:
         TaskMarker();
-        TaskMarker(PidManager* pm, Camera* cam);
+        TaskMarker(PidManager* pm, TaskVision* vision);
         ~TaskMarker();
 
         std::string getTag(){
@@ -29,7 +29,7 @@ public:
 private:
         //variables go here;
         PidManager pm_;
-        Camera cam_;
+        TaskVision vision_;
         Timer swayTimer;
         Timer depthTimer;
         Timer yawTimer;
