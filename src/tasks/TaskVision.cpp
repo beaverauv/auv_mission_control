@@ -5,9 +5,9 @@
 TaskVision::TaskVision(){
 }
 
-// TaskVision::TaskVision(Camera* cam) : cam_(*cam){
-//         AUV_INFO("Init");
-// }
+TaskVision::TaskVision(Camera* cam) : cam_(*cam){
+        AUV_INFO("Init");
+}
 
 TaskVision::~TaskVision(){
 

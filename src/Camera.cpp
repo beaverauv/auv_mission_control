@@ -1,17 +1,21 @@
 #include <auv_mission_control/Camera.h>
 
-
-
-
 Camera::Camera(){
+        AUV_INFO("Init");
         capFront.open(0);
         if (!capFront.isOpened()) {
-                ROS_ERROR("Unable to open Front Camera");
+                AUV_ERROR("Unable to open Front Camera");
+        } else {
+                AUV_INFO("Opened Front Camera");
+                isFrontOpened = true;
         }
 
         capBottom.open(1);
         if (!capBottom.isOpened()) {
-                ROS_ERROR("Unable to open bottom Camera");
+                AUV_ERROR("Unable to open bottom Camera");
+        } else {
+                AUV_INFO("Opened Bottom Camera");
+                isBottomOpened = true;
         }
 
         capFront.set(CV_CAP_PROP_FRAME_WIDTH, imgWidth);
@@ -39,42 +43,51 @@ void Camera::startRecording(){
 
         time (&rawtime);
         timeinfo = localtime(&rawtime);
-        strftime(buffer,80,"%d-%m-%Y %I:%M:%S",timeinfo);
+        strftime(buffer,80,"%d-%m-%Y-%I:%M:%S",timeinfo);
         std::string str(buffer);
 
-        filenameVideoFront = 'FrontVid-' + buffer;
-        filenameVideoBottom = 'BottomVid-' + buffer;
-        AUV_INFO("Writing Video to " + filenameVideoFront + " and " + filenameVideoFront);
+        sprintf(filenameVideoFront, "FrontVid-%s.mp4", buffer);
+        sprintf(filenameVideoBottom, "BottomVid-%s.mp4", buffer);
 
-        writerFront.open(filenameVideoFront, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
-        writerBottom.open(filenameVideoBottom, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
+        AUV_INFO("Writing Video to %s and %s", filenameVideoFront, filenameVideoBottom);
 
-        isRecording = true;
+        if (isFrontOpened) {
+                writerFront.open(filenameVideoFront, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
+                isFrontRecording = true;
+        }
+
+        if (isBottomOpened) {
+                writerBottom.open(filenameVideoBottom, codeFourcc, camFPS, cv::Size(imgWidth, imgHeight));
+                isBottomRecording = true;
+        }
+
 }
 
 void Camera::stopRecording(){
-        if (isRecording) {
+        if (isFrontRecording)
                 writerFront.release();
+
+        if (isBottomOpened)
                 writerBottom.release();
-        }
 }
 
 
 void Camera::updateFrames(){
-        if (!capFront.read(lastFrontImage)) {
-                ROS_ERROR("Failed to read from front camera");
+        if (isFrontOpened){
+          if (!capFront.read(lastFrontImage)) {
+                  ROS_ERROR("Failed to read from front camera");
+          } else if (isFrontRecording){
+            writerFront.write(lastFrontImage);
+          }
         }
 
-        if (!capBottom.read(lastBottomImage)) {
-                ROS_ERROR("Failed to read from bottom Camera");
+        if (isBottomOpened){
+          if (!capBottom.read(lastBottomImage)) {
+                  ROS_ERROR("Failed to read from front camera");
+          } else if (isBottomRecording) {
+            writerBottom.write(lastBottomImage);
+          }
         }
-
-        if (isRecording) {
-                writerFront.write(lastFrontImage);
-                writerBottom.write(lastBottomImage);
-        }
-        fpsRate.sleep();
-
 }
 
 cv::Mat Camera::getFront(){

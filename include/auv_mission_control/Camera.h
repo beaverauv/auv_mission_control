@@ -18,8 +18,15 @@ private:
         cv::VideoCapture capFront;
         cv::VideoCapture capBottom;
 
+        bool isFrontOpened = false;
+        bool isBottomOpened = false;
+
         cv::VideoWriter writerFront;
         cv::VideoWriter writerBottom;
+
+        bool isFrontRecording = false;
+        bool isBottomRecording = false;
+
 
         cv::Mat lastFrontImage;
         cv::Mat lastBottomImage;
@@ -29,12 +36,11 @@ private:
 
         int camFPS = 24;
 
-        bool isRecording = false;
 
         int codeFourcc = CV_FOURCC('H','2','6','4');
 
-        std::string filenameVideoFront;
-        std::string filenameVideoBottom;
+        char filenameVideoFront[1024];
+        char filenameVideoBottom[1024];
 
         ros::Rate fpsRate = ros::Rate(camFPS);
 

@@ -14,6 +14,7 @@
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
 
+#include <auv_mission_control/Task.h>
 #include <auv_motor_control/pid_enable.h>
 #include <auv_mission_control/axes.h>
 #include <auv_mission_control/Timer.h>
@@ -46,7 +47,7 @@ public:
         double Ki_scale;
 };
 
-class PidManager {
+class PidManager : public Task {
 
 private:
 
@@ -101,6 +102,18 @@ private:
 
         int testCount = 0;
 
+        double depth_;
+        bool bKillSwitchState_;
+        double plantSurge_;
+        double plantSway_;
+        double plantHeave_;
+        double plantRoll_;
+        double plantPitch_;
+        double plantYaw_;
+        sensor_msgs::Imu imu_;
+        bool subImuHasBeenCalled;
+        double yawInitValue;
+
 
 public:
 
@@ -109,6 +122,9 @@ public:
 
         ~PidManager();
 
+        std::string getTag(){
+                return std::string("[PidManager]");
+        }
 
 
         void taskDelay(int seconds);

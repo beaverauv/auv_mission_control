@@ -1,20 +1,20 @@
-#include <auv_mission_control/TaskGate.h>
+#include <auv_mission_control/TaskQualGate.h>
 
 double thisDepth = -0.25;
 
-TaskGate::TaskGate(){
+TaskQualGate::TaskQualGate(){
 }
 
 
-TaskGate::TaskGate(PidManager* pm, TaskVision* vision) : pm_(*pm), vision_(*vision){
+TaskQualGate::TaskQualGate(PidManager* pm, TaskVision* vision) : pm_(*pm), vision_(*vision){
         AUV_INFO("Init");
 }
 
-TaskGate::~TaskGate(){
+TaskQualGate::~TaskQualGate(){
 
 }
 
-int TaskGate::execute(){
+int TaskQualGate::execute(){
 
         ros::Rate gateRate(20.);
 

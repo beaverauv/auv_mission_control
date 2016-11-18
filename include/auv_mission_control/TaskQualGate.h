@@ -1,5 +1,5 @@
-#ifndef TaskGate_H
-#define TaskGate_H
+#ifndef TASKQUALGATE_H
+#define TASKQUALGATE_H
 
 
 #include <iostream>
@@ -9,6 +9,8 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
+
 #include <auv_mission_control/Task.h>
 #include <auv_mission_control/TaskVision.h>
 #include <auv_mission_control/PidManager.h>
@@ -16,12 +18,12 @@
 #include <auv_mission_control/StateMachine.h>
 
 
-class TaskGate : public Task {
+class TaskQualGate : public Task {
 public:
 
-        TaskGate();
-        TaskGate(PidManager* pm, TaskVision* vision);
-        ~TaskGate();
+        TaskQualGate();
+        TaskQualGate(PidManager* pm, TaskVision* vision);
+        ~TaskQualGate();
 
         std::string getTag(){
                 return std::string("[Task Gate]");

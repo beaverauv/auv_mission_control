@@ -55,7 +55,7 @@ int main(int argc, char **argv){
 
                 case 1: { //gate
                         ROS_INFO("EXECUTING GATE TASK");
-                        TaskGate gate(&pm, &cam, &vision);
+                        TaskQualGate gate(&pm, &cam, &vision);
                         int outcome = gate.execute();
                         // ROS_INFO("outcome %d", outcome);
 

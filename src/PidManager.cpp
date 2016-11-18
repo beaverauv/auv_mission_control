@@ -1,16 +1,6 @@
 #include <auv_mission_control/PidManager.h>
 
-double depth_;
-bool bKillSwitchState_;
-double plantSurge_;
-double plantSway_;
-double plantHeave_;
-double plantRoll_;
-double plantPitch_;
-double plantYaw_;
-sensor_msgs::Imu imu_;
-bool subImuHasBeenCalled;
-double yawInitValue;
+
 /*
    void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
    plant_surge_vision = vision->surge;
@@ -23,7 +13,7 @@ double yawInitValue;
 void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
         depth_ = depth_msg->data;
         subDepthHasBeenCalled = true;
-        //ROS_INFO("depth_ %f", depth_);
+        AUV_INFO("depth_ %f", depth_);
 }
 
 
