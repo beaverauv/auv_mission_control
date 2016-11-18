@@ -2,6 +2,9 @@
 #define CAMERA_MANAGER_H
 
 #include <ctime>
+#include <sstream>
+#include <iostream>
+
 
 #include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
@@ -9,7 +12,6 @@
 
 
 #include <auv_mission_control/Task.h>
-
 
 
 

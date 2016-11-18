@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <auv_mission_control/Task.h>
 #include <auv_mission_control/PidManager.h>
+#include <auv_mission_control/TaskVision.h>
 #include <auv_mission_control/Camera.h>
-#include <auv_mission_control/StateMachine.h>
 
 class TaskBuoy : public Task {
 public:
@@ -20,8 +20,8 @@ public:
 
 private:
         //variables go here;
-        PidManager pm_;
-        TaskVision vision_;
+        PidManager* pm_;
+        TaskVision* vision_;
 
         int currentColor;
         int objectFound;

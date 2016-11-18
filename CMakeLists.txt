@@ -205,9 +205,9 @@ add_library(state_machine
   src/Camera.cpp
   src/tasks/Task.cpp
   src/tasks/TaskVision.cpp
-  src/tasks/TaskQualGate.cpp
+  src/tasks/TaskGate.cpp
   src/tasks/TaskBuoy.cpp
-  src/tasks/TaskMarker.cpp
+#  src/tasks/TaskMarker.cpp
   src/tasks/TaskKill.cpp
   src/Timer.cpp
 )

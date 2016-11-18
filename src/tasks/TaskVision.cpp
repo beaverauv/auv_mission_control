@@ -5,8 +5,12 @@
 TaskVision::TaskVision(){
 }
 
-TaskVision::TaskVision(Camera* cam) : cam_(*cam){
+TaskVision::TaskVision(Camera* cam) : cam_(cam){
         AUV_INFO("Init");
+
+        AUV_DEBUG("Recieved Cam pointer: %x", cam);
+        AUV_DEBUG("Current Cam pointer: %x", cam_);
+
 }
 
 TaskVision::~TaskVision(){
@@ -17,8 +21,8 @@ TaskVision::~TaskVision(){
 
 
 void TaskVision::findBuoy(int color){
-        cam_.updateFrames();
-        imgOrigFront = cam_.getFront();
+        cam_->updateFrames();
+        imgOrigFront = cam_->getFront();
 
         cv::cvtColor(imgOrigFront, imgHlsFront, CV_BGR2HLS);
 
@@ -41,8 +45,8 @@ void TaskVision::findBuoy(int color){
 
         momentsBuoy = cv::moments(imgThreshFront);
 
-        buoyArea = momentsBuoy.m00;
 
+        buoyArea = momentsBuoy.m00;
         buoyCoordX = momentsBuoy.m10 / buoyArea;
         buoyCoordY = momentsBuoy.m01 / buoyArea;
 
@@ -70,8 +74,8 @@ double TaskVision::getBuoyCoordY(){
 
 void TaskVision::findMarker(){
         ROS_INFO("FIND MARKER CALLED");
-        cam_.updateFrames();
-        imgOrigBottom = cam_.getBottom();
+        cam_->updateFrames();
+        imgOrigBottom = cam_->getBottom();
         ROS_INFO("GOT IMAGES");
         cv::cvtColor(imgOrigBottom, imgHlsBottom, CV_BGR2HLS);
 

@@ -4,11 +4,10 @@
 #include <cmath>
 #include <unistd.h>
 
-
+#include <auv_mission_control/Task.h>
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Camera.h>
-#include <auv_mission_control/StateMachine.h>
-#include <auv_mission_control/Task.h>
+//#include <auv_mission_control/StateMachine.h>
 
 
 
@@ -28,8 +27,8 @@ public:
 
 private:
         //variables go here;
-        PidManager pm_;
-        TaskVision vision_;
+        PidManager* pm_;
+        TaskVision* vision_;
         Timer swayTimer;
         Timer depthTimer;
         Timer yawTimer;

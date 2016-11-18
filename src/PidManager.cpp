@@ -13,7 +13,7 @@
 void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
         depth_ = depth_msg->data;
         subDepthHasBeenCalled = true;
-        AUV_INFO("depth_ %f", depth_);
+        //AUV_INFO("depth_ %f", depth_);
 }
 
 
@@ -118,7 +118,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
                 else {
                         //  cout << "The specified input_type does not exist";
-                        ROS_ERROR("The input_type does not exist for axis SURGE");
+                        AUV_ERROR("The input_type does not exist for axis SURGE");
                 }
 
                 this->updateParams(AXIS_SURGE);
@@ -149,7 +149,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
                 else {
                         //cout << "The specified input_type does not exist";
-                        ROS_ERROR("The input_type does not exist for axis SWAY");
+                        AUV_ERROR("The input_type does not exist for axis SWAY");
                 }
 
                 this->updateParams(AXIS_SWAY);
@@ -186,7 +186,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
                 else {
                         // << "The specified input_type does not exist";
-                        ROS_ERROR("The input_type does not exist for axis HEAVE");
+                        AUV_ERROR("The input_type does not exist for axis HEAVE");
                 }
 
                 this->updateParams(AXIS_HEAVE);
@@ -198,7 +198,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
         else if (axis == AXIS_YAW) {
                 std_msgs::Float64 msgSetpointYaw;
-                ROS_INFO("set yaw called");
+                //ROS_INFO("set yaw called");
 
                 if (input_type == INPUT_IMU_POS) {
                         paramYaw.kP = .5;
@@ -229,7 +229,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
                 }
                 else{
                         //  cout << "the specified input_type for axis 'YAW' does not exist";
-                        ROS_ERROR("The input_type does not exist for axis YAW");
+                        AUV_ERROR("The input_type does not exist for axis YAW");
                 }
 
                 this->updateParams(AXIS_YAW);
@@ -240,7 +240,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
         else{
                 //  cout << "the specified axis does not exist";
-                ROS_ERROR("The axis %d %s", axis, "does not exist");
+                AUV_ERROR("The axis %d %s", axis, "does not exist");
         }
 
 
@@ -252,21 +252,26 @@ void PidManager::setPlantState(int axis, double plantValue){
         std_msgs::Float64 msgPlantValue;
         msgPlantValue.data = plantValue;
 
-        if(axis == AXIS_SURGE)
+        if(axis == AXIS_SURGE) {
                 pubStateSurge.publish(msgPlantValue);
+                AUV_DEBUG("Pub surge called");
+        }
         else if(axis == AXIS_SWAY) {
                 pubStateSway.publish(msgPlantValue);
-                ROS_INFO("heave sway called");
+                AUV_DEBUG("Pub sway called");
         }
         else if(axis == AXIS_HEAVE) {
                 pubStateHeave.publish(msgPlantValue);
+                AUV_DEBUG("Pub heave called");
+
         }
         else if(axis == AXIS_YAW) {
                 pubStateYaw.publish(msgPlantValue);
-                ROS_INFO("publishing yaw %f", msgPlantValue);
+                AUV_DEBUG("Pub yaw called");
+                //ROS_INFO("publishing yaw %f", msgPlantValue.data);
         }
         else{
-                ROS_ERROR("bad input type");
+                AUV_ERROR("bad input type");
 
         }
 }

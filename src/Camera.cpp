@@ -3,6 +3,7 @@
 Camera::Camera(){
         AUV_INFO("Init");
         capFront.open(0);
+
         if (!capFront.isOpened()) {
                 AUV_ERROR("Unable to open Front Camera");
         } else {
@@ -73,20 +74,20 @@ void Camera::stopRecording(){
 
 
 void Camera::updateFrames(){
-        if (isFrontOpened){
-          if (!capFront.read(lastFrontImage)) {
-                  ROS_ERROR("Failed to read from front camera");
-          } else if (isFrontRecording){
-            writerFront.write(lastFrontImage);
-          }
+        if (isFrontOpened) {
+                if (!capFront.read(lastFrontImage)) {
+                        ROS_ERROR("Failed to read from front camera");
+                } else if (isFrontRecording) {
+                        writerFront.write(lastFrontImage);
+                }
         }
 
-        if (isBottomOpened){
-          if (!capBottom.read(lastBottomImage)) {
-                  ROS_ERROR("Failed to read from front camera");
-          } else if (isBottomRecording) {
-            writerBottom.write(lastBottomImage);
-          }
+        if (isBottomOpened) {
+                if (!capBottom.read(lastBottomImage)) {
+                        ROS_ERROR("Failed to read from front camera");
+                } else if (isBottomRecording) {
+                        writerBottom.write(lastBottomImage);
+                }
         }
 }
 

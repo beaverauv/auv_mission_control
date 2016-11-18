@@ -19,7 +19,7 @@ public:
 
 private:
         //variables go here;
-        PidManager pm_;
+        PidManager* pm_;
 };
 
 #endif

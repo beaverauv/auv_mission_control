@@ -1,17 +1,16 @@
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
 
+
 #include <auv_mission_control/Task.h>
 #include <auv_mission_control/Camera.h>
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/TaskVision.h>
-#include <auv_mission_control/TaskQualGate.h>
+#include <auv_mission_control/TaskGate.h>
 #include <auv_mission_control/TaskMarker.h>
 #include <auv_mission_control/TaskBuoy.h>
 
-#define succeeded 0
-#define timeout 1
-#define kill 2
+
 
 
 class StateMachine : public Task {
@@ -30,8 +29,9 @@ private:
         PidManager* pm_;
         Camera* cam_;
         TaskVision* vision_;
-        //TaskQualGate* gate_;
-
+        //TaskGate* gate_;
+        //TaskMarker* marker_;
+        TaskBuoy* buoy_;
 
 };
 

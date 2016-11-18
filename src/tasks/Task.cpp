@@ -29,7 +29,7 @@ void Task::AUV_FATAL(std::string string, ...){
         const char * format = string.c_str();
         char buffer[1024];
         std::va_list args;
-        va_start (args, format);
+        va_start (args, string);
         vsnprintf (buffer, 1023, format, args);
 
         ROS_FATAL("%s %s", getTag().c_str(), buffer);
@@ -59,7 +59,7 @@ void Task::AUV_ERROR(std::string string, ...){
         const char * format = string.c_str();
         char buffer[1024];
         std::va_list args;
-        va_start (args, format);
+        va_start (args, string);
         vsnprintf (buffer, 1023, format, args);
 
         ROS_ERROR("%s %s", getTag().c_str(), buffer);
@@ -88,7 +88,7 @@ void Task::AUV_WARN(std::string string, ...){
         const char * format = string.c_str();
         char buffer[1024];
         std::va_list args;
-        va_start (args, format);
+        va_start (args, string);
         vsnprintf (buffer, 1023, format, args);
 
         ROS_WARN("%s %s", getTag().c_str(), buffer);
@@ -116,7 +116,7 @@ void Task::AUV_INFO(std::string string, ...){
         const char * format = string.c_str();
         char buffer[1024];
         std::va_list args;
-        va_start (args, format);
+        va_start (args, string);
         vsnprintf (buffer, 1023, format, args);
 
         ROS_INFO("%s %s", getTag().c_str(), buffer);
@@ -141,7 +141,7 @@ void Task::AUV_DEBUG(std::string string, ...){
         const char * format = string.c_str();
         char buffer[1024];
         std::va_list args;
-        va_start (args, format);
+        va_start (args, string);
         vsnprintf (buffer, 1023, format, args);
 
         ROS_DEBUG("%s %s", getTag().c_str(), buffer);

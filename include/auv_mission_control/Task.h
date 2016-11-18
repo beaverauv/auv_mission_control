@@ -5,6 +5,9 @@
 #include <cstdarg>
 #include <ros/ros.h>
 
+#define SUB_SUCCEEDED 0
+#define SUB_TIMEOUT 1
+#define SUB_KILL 2
 
 class Task {
 public:
@@ -32,7 +35,8 @@ private:
 
 
 protected:
-    Task(const Task & task) { /*...*/ }
+        Task(const Task &task) { /*...*/
+        }
 
 };
 

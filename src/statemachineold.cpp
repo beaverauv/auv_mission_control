@@ -55,15 +55,15 @@ int main(int argc, char **argv){
 
                 case 1: { //gate
                         ROS_INFO("EXECUTING GATE TASK");
-                        TaskQualGate gate(&pm, &cam, &vision);
+                        TaskGate gate(&pm, &cam, &vision);
                         int outcome = gate.execute();
                         // ROS_INFO("outcome %d", outcome);
 
-                        if (outcome == succeeded) {
+                        if (outcome == SUB_SUCCEEDED) {
                                 currentState = 2;
-                                ROS_INFO("Gate task succeeded. Transitioning to Buoy task");
+                                ROS_INFO("Gate task SUB_SUCCEEDED. Transitioning to Buoy task");
                         }
-                        else if (outcome == timeout) // || getTimeout())
+                        else if (outcome == SUB_TIMEOUT) // || getTimeout())
                                 currentState = 8;
                         else if (outcome == kill) {
                                 currentState = 9;
@@ -82,13 +82,13 @@ int main(int argc, char **argv){
                         int outcome =  buoy.execute();
                         //ROS_INFO("outcome %d", outcome);
 
-                        if (outcome == succeeded) {
+                        if (outcome == SUB_SUCCEEDED) {
                                 currentState = 10;
-                                ROS_INFO("Buoy task succeeded. Resetting to init state");
+                                ROS_INFO("Buoy task SUB_SUCCEEDED. Resetting to init state");
                         }
-                        else if (outcome == timeout || getTimeout())
+                        else if (outcome == SUB_TIMEOUT || getTimeout())
                                 currentState = 8;
-                        else if (outcome == kill || pm.getKill()) {
+                        else if (outcome == SUB_KILL|| pm.getKill()) {
                                 currentState = 9;
                                 ROS_INFO("kill");
                         }

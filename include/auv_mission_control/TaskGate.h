@@ -1,5 +1,5 @@
-#ifndef TASKQUALGATE_H
-#define TASKQUALGATE_H
+#ifndef TASKGATE_H
+#define TASKGATE_H
 
 
 #include <iostream>
@@ -12,18 +12,18 @@
 
 
 #include <auv_mission_control/Task.h>
-#include <auv_mission_control/TaskVision.h>
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Camera.h>
-#include <auv_mission_control/StateMachine.h>
+#include <auv_mission_control/TaskVision.h>
+//#include <auv_mission_control/StateMachine.h>
 
 
-class TaskQualGate : public Task {
+class TaskGate : public Task {
 public:
 
-        TaskQualGate();
-        TaskQualGate(PidManager* pm, TaskVision* vision);
-        ~TaskQualGate();
+        TaskGate();
+        TaskGate(PidManager* pm, TaskVision* vision);
+        ~TaskGate();
 
         std::string getTag(){
                 return std::string("[Task Gate]");
@@ -33,9 +33,11 @@ public:
 
 private:
         //variables go here;
-        PidManager pm_;
-        TaskVision vision_;
+        PidManager* pm_;
+        TaskVision* vision_;
         bool startTimer = 0;
+        double thisDepth = -0.25;
+
 
         int ColorSpace = 0;
         int minObjectArea = 20*20; //20x20 blob
