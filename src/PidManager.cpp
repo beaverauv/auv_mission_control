@@ -1,47 +1,8 @@
 #include <auv_mission_control/PidManager.h>
 
 
-/*
-   void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
-   plant_surge_vision = vision->surge;
-   plant_sway_vision = vision->sway;
-   plant_heave_vision = vision->heave;
-   plant_yaw_vision = vision->yaw;
-   }
- */
-
-void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
-        depth_ = depth_msg->data;
-        subDepthHasBeenCalled = true;
-        //AUV_INFO("depth_ %f", depth_);
-}
-
-
-void PidManager::startCallBack(const std_msgs::Bool::ConstPtr& start_msg){
-        bStartSwitchState_ = start_msg->data;
-        //bStartSwitchState_ = false;
-        subStartHasBeenCalled = true;
-
-}
-
-void PidManager::killCallBack(const std_msgs::Bool::ConstPtr& kill_msg){
-        bKillSwitchState_ = kill_msg->data;
-//  ROS_INFO("kill_msg->data = %d", kill_msg->data);
-        subKillHasBeenCalled = true;
-}
-
-void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
-//  imu_ = *imu_msg;
-//ROS_INFO("boop");
-        plantYaw_ = imu_msg->orientation.z;
-//  ROS_INFO("recieved value%f", plantYaw_);
-        subImuHasBeenCalled = true;
-
-}
-
-
-
 PidManager::PidManager(){
+  AUV_INFO("Init");
 }
 
 
@@ -101,6 +62,44 @@ PidManager::PidManager(ros::NodeHandle* nh) : nh_(*nh){
 }
 
 PidManager::~PidManager(){
+
+}
+
+/*
+   void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
+   plant_surge_vision = vision->surge;
+   plant_sway_vision = vision->sway;
+   plant_heave_vision = vision->heave;
+   plant_yaw_vision = vision->yaw;
+   }
+ */
+
+void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
+        depth_ = depth_msg->data;
+        subDepthHasBeenCalled = true;
+        //AUV_INFO("depth_ %f", depth_);
+}
+
+
+void PidManager::startCallBack(const std_msgs::Bool::ConstPtr& start_msg){
+        bStartSwitchState_ = start_msg->data;
+        //bStartSwitchState_ = false;
+        subStartHasBeenCalled = true;
+
+}
+
+void PidManager::killCallBack(const std_msgs::Bool::ConstPtr& kill_msg){
+        bKillSwitchState_ = kill_msg->data;
+//  ROS_INFO("kill_msg->data = %d", kill_msg->data);
+        subKillHasBeenCalled = true;
+}
+
+void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
+//  imu_ = *imu_msg;
+//ROS_INFO("boop");
+        plantYaw_ = imu_msg->orientation.z;
+//  ROS_INFO("recieved value%f", plantYaw_);
+        subImuHasBeenCalled = true;
 
 }
 
