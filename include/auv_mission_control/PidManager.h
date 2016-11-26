@@ -17,7 +17,6 @@
 #include <auv_mission_control/Task.h>
 #include <auv_motor_control/pid_enable.h>
 #include <auv_mission_control/axes.h>
-#include <auv_mission_control/Timer.h>
 
 //Axis definitions
 #define AXIS_SURGE 0

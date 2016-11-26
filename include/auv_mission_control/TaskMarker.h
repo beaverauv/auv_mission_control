@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include <auv_mission_control/Task.h>
+#include <auv_mission_control/TaskVision.h>
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Camera.h>
 //#include <auv_mission_control/StateMachine.h>
@@ -29,9 +30,9 @@ private:
         //variables go here;
         PidManager* pm_;
         TaskVision* vision_;
-        Timer swayTimer;
-        Timer depthTimer;
-        Timer yawTimer;
+        // Timer swayTimer;
+        // Timer depthTimer;
+        // Timer yawTimer;
         int action = 0;
         bool objectFound;
         double plantState_sway;

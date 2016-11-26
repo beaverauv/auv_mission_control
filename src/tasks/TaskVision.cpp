@@ -5,12 +5,9 @@
 TaskVision::TaskVision(){
 }
 
-TaskVision::TaskVision(Camera* cam) : cam_(cam){
-        AUV_INFO("Init");
-
-        AUV_DEBUG("Recieved Cam pointer: %x", cam);
-        AUV_DEBUG("Current Cam pointer: %x", cam_);
-
+TaskVision::TaskVision(std::shared_ptr<Camera> cam) : cam_(cam){
+        AUV_INFO("Contructor");
+        AUV_DEBUG("[Pointers] [CAM] %x", cam_.get());
 }
 
 TaskVision::~TaskVision(){
@@ -32,7 +29,7 @@ void TaskVision::findBuoy(int color){
         } else if (color == COLOR_GREEN) {
                 cv::inRange(imgHlsFront, sGreenMin, sGreenMax, imgThreshFront);
         } else {
-                ROS_ERROR("[TASK VISION] INVALID COLOR");
+                ROS_ERROR("INVALID COLOR");
         }
 
         cv::dilate(imgThreshFront, imgThreshFront, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5,5)));

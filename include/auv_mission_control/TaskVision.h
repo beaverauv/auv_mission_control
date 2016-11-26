@@ -4,9 +4,10 @@
 #define COLOR_RED 0
 #define COLOR_GREEN 1
 
+#include <memory>
+
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
 #include <ros/ros.h>
 
 #include <auv_mission_control/Task.h>
@@ -18,7 +19,7 @@
 class TaskVision : public Task {
 public:
         TaskVision();
-        TaskVision(Camera* cam);
+        TaskVision(std::shared_ptr<Camera> cam);
         ~TaskVision();
 
         std::string getTag(){
@@ -38,7 +39,7 @@ public:
 
 private:
 
-        Camera* cam_;
+        std::shared_ptr<Camera> cam_;
         cv::Scalar sRedMin = cv::Scalar(0, 0, 123);
         cv::Scalar sRedMax = cv::Scalar(68, 152, 239);
 

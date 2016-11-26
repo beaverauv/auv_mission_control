@@ -2,7 +2,7 @@
 
 
 PidManager::PidManager(){
-  AUV_INFO("Init");
+        AUV_INFO("Constructor");
 }
 
 

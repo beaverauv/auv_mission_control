@@ -46,11 +46,11 @@ private:
         bool killSwitch = 0;
 
         int action = 0;
-        Timer goToDepth_time;
+        // Timer goToDepth_time;
         int depthCounter = 0;
-        Timer driveForwards_time;
+        // Timer driveForwards_time;
         int forwardCounter = 0;
-        Timer markerTimer;
+        // Timer markerTimer;
         int markerCounter = 0;
         int reZeroCounter = 0;
         double surgeSpeed = 25;
