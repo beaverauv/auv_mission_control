@@ -8,10 +8,12 @@
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/Camera.h>
 #include <auv_mission_control/PidManager.h>
-#include <auv_mission_control/TaskVision.h>
+#include <auv_mission_control/Vision.h>
+#include <auv_mission_control/TaskTest.h>
 #include <auv_mission_control/TaskGate.h>
-#include <auv_mission_control/TaskMarker.h>
 #include <auv_mission_control/TaskBuoy.h>
+#include <auv_mission_control/TaskMarker.h>
+
 
 
 class StateMachine : public Task {
@@ -37,18 +39,24 @@ private:
                 struct Box {
                         Box() : pm_(new PidManager(&nh_)),
                                 cam_(new Camera()),
-                                vision_(new TaskVision(cam_)),
-                                gate_(new TaskGate(pm_.get(), vision_.get())),
-                                buoy_(new TaskBuoy(pm_, vision_))
+                                vision_(new Vision(cam_)),
+                                gate_(new TaskGate(pm_, vision_)),
+                                buoy_(new TaskBuoy(pm_, vision_)),
+                                marker_(new TaskMarker(pm_, vision_)),
+                                test_(new TaskTest(pm_, vision_))
+
                         {
 
                         }
                         ros::NodeHandle nh_;
                         std::shared_ptr<PidManager> pm_;
                         std::shared_ptr<Camera> cam_;
-                        std::shared_ptr<TaskVision> vision_;
+                        std::shared_ptr<Vision> vision_;
                         std::shared_ptr<TaskGate> gate_;
                         std::shared_ptr<TaskBuoy> buoy_;
+                        std::shared_ptr<TaskMarker> marker_;
+                        std::shared_ptr<TaskTest> test_;
+
 
                 };
 
@@ -60,6 +68,10 @@ private:
 
                 }
 
+                void whatever(){
+                        AUV_INFO("HERE");
+                }
+
 
 private:
                 // special actions
@@ -68,11 +80,11 @@ private:
                 }
                 void init(){
                         AUV_DEBUG("Initalize");
-                        AUV_DEBUG("Created PM Pointer: %x", box().pm_.get());
-                        AUV_DEBUG("Created Cam pointer: %x", box().cam_.get());
-                        AUV_DEBUG("Created Vision pointer: %x", box().vision_.get());
-                        AUV_DEBUG("Created Gate pointer: %x", box().gate_.get());
-                        AUV_DEBUG("Created Buoy pointer: %x", box().buoy_.get());
+                        AUV_DEBUG("[Pointers] [PM]: %x", box().pm_.get());
+                        AUV_DEBUG("[Pointers] [CAM]: %x", box().cam_.get());
+                        AUV_DEBUG("[Pointers] [VISION]: %x", box().vision_.get());
+                        AUV_DEBUG("[Pointers] [GATE]: %x", box().gate_.get());
+                        AUV_DEBUG("[Pointers] [BUOY]: %x", box().buoy_.get());
 
                         setState<Init>();
 
@@ -82,26 +94,6 @@ private:
 
         };
 
-//         SUBSTATE(Timer, Top) {
-//                 struct Box {
-//                         Box() : waitTime(0), currentState(Top::alias()), startTime(0) {
-//                         }
-//                         double waitTime;
-//                         Macho::Alias currentState;
-//                         double startTime;
-//                 };
-//                 STATE(Timer)
-//                 void run();
-// private:
-//                 void entry(){
-//                         AUV_DEBUG("Timer::entry");
-//                 }
-//                 void init(double waitTime, Macho::Alias currentState){
-//                         box().waitTime = waitTime;
-//                         box().currentState = currentState;
-//                         box().startTime = ros::Time::now().toSec();
-//                 }
-//         };
 
 // A substate
         SUBSTATE(Init, Top) {
@@ -125,33 +117,6 @@ private:
 
         };
 
-        SUBSTATE(Gate, Top) {
-
-
-                STATE(Gate)
-
-                void run();
-
-private:
-                void entry(){
-                        AUV_DEBUG("Gate::entry");
-                }
-
-        };
-
-        SUBSTATE(Buoy, Top) {
-
-
-                STATE(Buoy)
-
-                void run();
-
-private:
-                void entry();
-
-        };
-
-
         SUBSTATE(Kill, Top) {
 
 
@@ -165,6 +130,68 @@ private:
                 }
 
         };
+
+        SUBSTATE(Test, Top) {
+
+
+                STATE(Test)
+
+                void run();
+
+private:
+                template<class S >
+                void init(Macho::Machine machine, Macho::IEvent<S> * event){
+                        AUV_DEBUG("Test::entry");
+                        Top::box().test_->prepare(event);
+                }
+
+        };
+
+        SUBSTATE(Gate, Top) {
+
+
+                STATE(Gate)
+
+                void run();
+
+private:
+                void entry(){
+                        AUV_DEBUG("Gate::entry");
+                        Top::box().gate_->prepare();
+                }
+
+        };
+
+        SUBSTATE(Buoy, Top) {
+
+
+                STATE(Buoy)
+
+                void run();
+
+private:
+                void entry(){
+                        AUV_DEBUG("Buoy::entry");
+                        Top::box().buoy_->prepare();
+                }
+
+        };
+
+        SUBSTATE(Marker, Top) {
+
+
+                STATE(Marker)
+
+                void run();
+
+private:
+                void entry(){
+                        AUV_DEBUG("Marker::entry");
+                        Top::box().marker_->prepare();
+                }
+
+        };
+
 
 
 

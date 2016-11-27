@@ -5,11 +5,12 @@ TaskGate::TaskGate(){
 }
 
 
-TaskGate::TaskGate(PidManager* pm, TaskVision* vision) : pm_(pm), vision_(vision){
+TaskGate::TaskGate(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
         AUV_INFO("Constructor");
-
         AUV_DEBUG("[Pointers] [PM]: %x", pm);
         AUV_DEBUG("[Pointers] [VISION]: %x", vision);
+        stateGate_->setLocalPointers(pm, vision);
+        //stateBuoy_->setVision(vision);
 
 
 }
@@ -18,7 +19,13 @@ TaskGate::~TaskGate(){
 
 }
 
+void TaskGate::prepare(){
+        stateGate_->initialize();
+}
+
 int TaskGate::execute(){
+
+        stateGate_->run();
 
 //         ros::Rate gateRate(20.);
 //
@@ -222,3 +229,9 @@ int TaskGate::execute(){
 //
 //         } //while ros::ok
 } //execute
+
+void TaskGate::Init::run() {
+        AUV_DEBUG("Init::run");
+        AUV_DEBUG("Waiting for 3 seconds");
+        setState<Timer::Timer<Top> >(3.0, Macho::State<Init>());
+}

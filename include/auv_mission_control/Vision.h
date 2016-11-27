@@ -16,14 +16,14 @@
 
 
 
-class TaskVision : public Task {
+class Vision : public Task {
 public:
-        TaskVision();
-        TaskVision(std::shared_ptr<Camera> cam);
-        ~TaskVision();
+        Vision();
+        Vision(std::shared_ptr<Camera> cam);
+        ~Vision();
 
         std::string getTag(){
-                return std::string("[Task Vision]");
+                return std::string("[Vision]");
         }
 
         void findBuoy(int color);

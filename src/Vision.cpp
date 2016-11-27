@@ -1,23 +1,23 @@
-#include <auv_mission_control/TaskVision.h>
+#include <auv_mission_control/Vision.h>
 
 
 
-TaskVision::TaskVision(){
+Vision::Vision(){
 }
 
-TaskVision::TaskVision(std::shared_ptr<Camera> cam) : cam_(cam){
+Vision::Vision(std::shared_ptr<Camera> cam) : cam_(cam){
         AUV_INFO("Contructor");
         AUV_DEBUG("[Pointers] [CAM] %x", cam_.get());
 }
 
-TaskVision::~TaskVision(){
+Vision::~Vision(){
 
 }
 
 
 
 
-void TaskVision::findBuoy(int color){
+void Vision::findBuoy(int color){
         cam_->updateFrames();
         imgOrigFront = cam_->getFront();
 
@@ -55,21 +55,21 @@ void TaskVision::findBuoy(int color){
 }
 
 
-double TaskVision::getBuoyArea(){
+double Vision::getBuoyArea(){
         return buoyArea;
 }
 
 
-double TaskVision::getBuoyCoordX(){
+double Vision::getBuoyCoordX(){
         return buoyCoordCorrectedX;
 }
 
 
-double TaskVision::getBuoyCoordY(){
+double Vision::getBuoyCoordY(){
         return buoyCoordCorrectedY;
 }
 
-void TaskVision::findMarker(){
+void Vision::findMarker(){
         ROS_INFO("FIND MARKER CALLED");
         cam_->updateFrames();
         imgOrigBottom = cam_->getBottom();
@@ -151,21 +151,21 @@ void TaskVision::findMarker(){
 }
 
 
-double TaskVision::getMarkerArea(){
+double Vision::getMarkerArea(){
         return markerArea;
 }
 
 
-double TaskVision::getMarkerCoordX(){
+double Vision::getMarkerCoordX(){
         return markerCoordCorrectedX;
 }
 
 
-double TaskVision::getMarkerCoordY(){
+double Vision::getMarkerCoordY(){
         return markerCoordCorrectedY;
 }
 
 
-double TaskVision::getMarkerAngle(){
+double Vision::getMarkerAngle(){
         return averagedAngle;
 }

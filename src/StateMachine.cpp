@@ -21,7 +21,7 @@ StateMachine::StateMachine(){
         // cam_ = new Camera();
         // AUV_DEBUG("Created Cam pointer: %x", cam_);
         // //cam_->startRecording();
-        // vision_ = new TaskVision(cam_);
+        // vision_ = new Vision(cam_);
         // AUV_DEBUG("Created Vision pointer: %x", vision_);
         //
         //
@@ -61,22 +61,31 @@ void StateMachine::Init::run() {
         AUV_DEBUG("Init::run");
         AUV_DEBUG("Waiting for 3 seconds");
         //setState<Timer>(3.0, Macho::State<Buoy>());
-        setState<Timer::Timer<Top> >(3.0, Macho::State<Buoy>());
+        //AUV_DEBUG("StateMachine::Init::run: ID %d", Macho::State<Top>()._KeyData)
+        //Macho::IEvent<StateMachine::Top> * event = Macho::Event(&StateMachine::Top::whatever);
+        setState<Timer::Timer<Top> >(3.0, Macho::State<Test>(machine(), Macho::Event(&StateMachine::Top::whatever) ));
+        //setState<Test>(Macho::State<Top>);
 }
+
+void StateMachine::Test::run(){
+        Top::box().test_->execute();
+}
+
 
 void StateMachine::Gate::run(){
-
-}
-
-void StateMachine::Buoy::entry(){
-        AUV_DEBUG("Buoy::entry");
-        Top::box().buoy_->prepare();
+        Top::box().gate_->execute();
 
 }
 
 void StateMachine::Buoy::run(){
         Top::box().buoy_->execute();
 }
+
+void StateMachine::Marker::run(){
+        Top::box().marker_->execute();
+}
+
+
 
 void StateMachine::Kill::run() {
         // AUV_ERROR("Kill::run");

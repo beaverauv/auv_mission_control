@@ -203,12 +203,12 @@ add_library(state_machine
   src/Macho.cpp
   src/PidManager.cpp
   src/Camera.cpp
+  src/Vision.cpp
   src/tasks/Task.cpp
-  src/tasks/TaskVision.cpp
+  src/tasks/TaskTest.cpp
   src/tasks/TaskGate.cpp
   src/tasks/TaskBuoy.cpp
   src/tasks/TaskMarker.cpp
-  src/tasks/TaskKill.cpp
 )
 
 target_link_libraries(state_machine ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})

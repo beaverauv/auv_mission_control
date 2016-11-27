@@ -4,12 +4,12 @@ TaskBuoy::TaskBuoy(){
 }
 
 
-TaskBuoy::TaskBuoy(std::shared_ptr<PidManager> pm, std::shared_ptr<TaskVision> vision){
+TaskBuoy::TaskBuoy(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
         AUV_INFO("Constructor");
         AUV_DEBUG("[Pointers] [PM]: %x", pm);
         AUV_DEBUG("[Pointers] [VISION]: %x", vision);
         stateBuoy_->setLocalPointers(pm, vision);
-        //stateBuoy_->setTaskVision(vision);
+        //stateBuoy_->setVision(vision);
 
 
 }
@@ -130,5 +130,5 @@ int TaskBuoy::execute(){
 void TaskBuoy::Init::run() {
         AUV_DEBUG("Init::run");
         AUV_DEBUG("Waiting for 3 seconds");
-        //setState<Waiting>(3.0, Macho::State<Init>());
+        setState<Timer::Timer<Top> >(3.0, Macho::State<Init>());
 }

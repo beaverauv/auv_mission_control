@@ -4,17 +4,28 @@ TaskMarker::TaskMarker(){
 }
 
 
-TaskMarker::TaskMarker(PidManager* pm, TaskVision* vision) : pm_(pm), vision_(vision){
-        AUV_INFO("Init");
+TaskMarker::TaskMarker(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
+        AUV_INFO("Constructor");
+        AUV_DEBUG("[Pointers] [PM]: %x", pm);
+        AUV_DEBUG("[Pointers] [VISION]: %x", vision);
+        stateMarker_->setLocalPointers(pm, vision);
+        //stateBuoy_->setVision(vision);
+
+
 }
 
 TaskMarker::~TaskMarker(){
 
 }
 
+void TaskMarker::prepare(){
+        stateMarker_->initialize();
+}
 
 
 int TaskMarker::execute(){
+
+        stateMarker_->run();
 
         // pm_->setPidEnabled(AXIS_SURGE, false);
         // pm_->setPidEnabled(AXIS_SWAY, true);
@@ -75,4 +86,10 @@ int TaskMarker::execute(){
         //         break;
         // }
         // }
+}
+
+void TaskMarker::Init::run() {
+        AUV_DEBUG("Init::run");
+        AUV_DEBUG("Waiting for 3 seconds");
+        setState<Timer::Timer<Top> >(3.0, Macho::State<Init>());
 }
