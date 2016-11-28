@@ -9,6 +9,9 @@
 #include <auv_mission_control/PidManager.h>
 #include <auv_mission_control/Vision.h>
 #include <auv_mission_control/Camera.h>
+//#include <auv_mission_control/StateMachine.h>
+
+class StateMachine;
 
 class TaskTest : public Task {
 public:
@@ -20,8 +23,8 @@ public:
                 return std::string("[Task Test]");
         }
         int execute();
-        template<class S >
-        void prepare(Macho::IEvent<S> * event);
+        void prepare();
+        void prepare(std::shared_ptr<StateMachine> statemachine);
 
 private:
         //variables go here
@@ -62,8 +65,9 @@ private:
                 //TOPSTATE(Top) {
                 // Top state variables (visible to all substates)
                 struct Box {
-                        Box() : pm_(0), vision_(0){
+                        Box() : pm_(0), vision_(0), statemachine_(0){
                         }
+                        std::shared_ptr<StateMachine> statemachine_;
                         std::shared_ptr<PidManager> pm_;
                         std::shared_ptr<Vision> vision_;
                         //template<class S>
@@ -75,15 +79,33 @@ private:
                 virtual void run(){
 
                 }
-                template<class S >
-                void initialize(Macho::IEvent<S> * event){
+
+                void initialize(){
+                        // AUV_INFO("%x", Top::box().statemachine_.get());
+
                         setState<Init>();
-                        stateTest_.dispatch(event);
                 }
 
-                void setLocalPointers(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
+                void initialize(std::shared_ptr<StateMachine> statemachine){
+                        Top::box().statemachine_ = statemachine;
+                        // AUV_INFO("%x", Top::box().statemachine_.get());
+
+                        setState<Init>();
+                        //stateTest_.dispatch(event);
+                }
+
+
+
+                void setPointer(std::shared_ptr<PidManager> pm){
                         box().pm_ = pm;
+                }
+
+                void setPointer(std::shared_ptr<Vision> vision){
                         box().vision_ = vision;
+                }
+
+                void setPointer(std::shared_ptr<StateMachine> statemachine){
+                        box().statemachine_ = statemachine;
                 }
 
 private:
@@ -96,6 +118,23 @@ private:
                 // State variables
 
                 STATE(Init)
+                // Event handler
+                void run();
+private:
+                void entry(){
+                        AUV_DEBUG("Init::entry");
+                }
+
+                void init(){
+                        //Top::box().alias_ = alias;
+                }
+        };
+
+
+        SUBSTATE(Whatever, Top) {
+                // State variables
+
+                STATE(Whatever)
                 // Event handler
                 void run();
 private:

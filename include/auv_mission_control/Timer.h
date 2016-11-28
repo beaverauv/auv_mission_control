@@ -15,30 +15,18 @@ TSUBSTATE(Timer, T) {
                 double startTime;
         };
         TSTATE(Timer)
-        void run();
-private:
-        void entry(){
-                //AUV_DEBUG("Timer::entry");
+        inline void run(){
+                if ((ros::Time::now().toSec() - box().startTime) > box().waitTime) {
+                        T::setState(box().currentState);
+                }
         }
-        void init(double waitTime, Macho::Alias currentState){
+private:
+        inline void init(double waitTime, Macho::Alias currentState){
                 box().waitTime = waitTime;
                 box().currentState = currentState;
                 box().startTime = ros::Time::now().toSec();
         }
 };
-
-template<class T>
-void Timer<T>::run() {
-        if ((ros::Time::now().toSec() - box().startTime) > box().waitTime) {
-                //AUV_DEBUG("Waiting done, switching states");
-                //setState(Macho::Anchor<box().currentState, 1>);
-                T::setState(box().currentState);
-                //std::cout << "here" << std::endl;
-        }
-
-}
-
-
 }
 
 

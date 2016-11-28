@@ -2,6 +2,7 @@
 #define STATEMACHINE_H
 
 #include <memory>
+#include <vector>
 
 #include <auv_mission_control/Task.h>
 #include <auv_mission_control/Timer.h>
@@ -15,7 +16,6 @@
 #include <auv_mission_control/TaskMarker.h>
 
 
-
 class StateMachine : public Task {
 public:
         StateMachine();
@@ -27,9 +27,26 @@ public:
 
         int execute();
 
+        void setPointer(std::shared_ptr<StateMachine> statemachine){
+                state_->setPointer(statemachine);
+        }
+
+        template<class S>
+        void queueState(){
+                eventqueue_.push_back(Macho::Event(&StateMachine::Top::setStateLocal<S>));
+        }
+
+        int checkEventQueue(){
+                if (eventqueue_.empty()) return 1;
+                for (EventQueue::iterator it = eventqueue_.begin(); it != eventqueue_.end(); ++it)
+                        state_.dispatch(*it);
+
+                eventqueue_.clear();
+                return 0;
+        }
 
 
-private:
+
         TOPSTATE(Top) {
                 std::string getTag(){
                         return std::string("[State]");
@@ -37,41 +54,42 @@ private:
 
 
                 struct Box {
-                        Box() : pm_(new PidManager(&nh_)),
-                                cam_(new Camera()),
-                                vision_(new Vision(cam_)),
-                                gate_(new TaskGate(pm_, vision_)),
-                                buoy_(new TaskBuoy(pm_, vision_)),
-                                marker_(new TaskMarker(pm_, vision_)),
-                                test_(new TaskTest(pm_, vision_))
+                        Box() : statemachine_(0),
+                                pm_(std::make_shared<PidManager>(&nh_)),
+                                cam_(std::make_shared<Camera>()),
+                                vision_(std::make_shared<Vision>(cam_)),
+                                test_(std::make_shared<TaskTest>(pm_, vision_)),
+                                gate_(std::make_shared<TaskGate>(pm_, vision_)),
+                                buoy_(std::make_shared<TaskBuoy>(pm_, vision_)),
+                                marker_(std::make_shared<TaskMarker>(pm_, vision_))
 
                         {
-
                         }
+
+                        std::shared_ptr<StateMachine> statemachine_;
                         ros::NodeHandle nh_;
                         std::shared_ptr<PidManager> pm_;
                         std::shared_ptr<Camera> cam_;
                         std::shared_ptr<Vision> vision_;
+                        std::shared_ptr<TaskTest> test_;
                         std::shared_ptr<TaskGate> gate_;
                         std::shared_ptr<TaskBuoy> buoy_;
                         std::shared_ptr<TaskMarker> marker_;
-                        std::shared_ptr<TaskTest> test_;
-
-
                 };
-
-
 
                 STATE(Top)
 
                 virtual void run(){
-
                 }
 
-                void whatever(){
-                        AUV_INFO("HERE");
+                void setPointer(std::shared_ptr<StateMachine> statemachine){
+                        box().statemachine_ = statemachine;
                 }
 
+                template<class S>
+                void setStateLocal(){
+                        setState<S>();
+                }
 
 private:
                 // special actions
@@ -85,15 +103,8 @@ private:
                         AUV_DEBUG("[Pointers] [VISION]: %x", box().vision_.get());
                         AUV_DEBUG("[Pointers] [GATE]: %x", box().gate_.get());
                         AUV_DEBUG("[Pointers] [BUOY]: %x", box().buoy_.get());
-
-                        setState<Init>();
-
                 }
-
-
-
         };
-
 
 // A substate
         SUBSTATE(Init, Top) {
@@ -119,7 +130,6 @@ private:
 
         SUBSTATE(Kill, Top) {
 
-
                 STATE(Kill)
 
                 void run();
@@ -128,33 +138,30 @@ private:
                 void entry(){
                         AUV_DEBUG("Kill::entry");
                 }
-
         };
 
         SUBSTATE(Test, Top) {
-
 
                 STATE(Test)
 
                 void run();
 
 private:
-                template<class S >
-                void init(Macho::Machine machine, Macho::IEvent<S> * event){
+                void init(){
                         AUV_DEBUG("Test::entry");
-                        Top::box().test_->prepare(event);
+                        Top::box().test_->prepare(Top::box().statemachine_);
                 }
 
         };
 
         SUBSTATE(Gate, Top) {
 
-
                 STATE(Gate)
 
                 void run();
 
-private:
+private:                        std::shared_ptr<TaskTest> test_;
+
                 void entry(){
                         AUV_DEBUG("Gate::entry");
                         Top::box().gate_->prepare();
@@ -193,9 +200,11 @@ private:
         };
 
 
-
+        typedef std::vector<Macho::IEvent<StateMachine::Top> *> EventQueue;
+        EventQueue eventqueue_;
 
         Macho::Machine<StateMachine::Top> state_;
+
 
 
 };
