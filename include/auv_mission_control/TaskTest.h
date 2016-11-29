@@ -81,8 +81,8 @@ private:
                 }
 
                 void initialize(){
-                        // AUV_INFO("%x", Top::box().statemachine_.get());
 
+                        // AUV_INFO("%x", Top::box().statemachine_.get());
                         setState<Init>();
                 }
 
@@ -107,6 +107,9 @@ private:
                 void setPointer(std::shared_ptr<StateMachine> statemachine){
                         box().statemachine_ = statemachine;
                 }
+                void here(){
+                        AUV_INFO("HERE");
+                }
 
 private:
                 void entry(){
@@ -120,6 +123,9 @@ private:
                 STATE(Init)
                 // Event handler
                 void run();
+                void here(){
+                        AUV_INFO("HERE");
+                }
 private:
                 void entry(){
                         AUV_DEBUG("Init::entry");

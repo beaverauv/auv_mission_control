@@ -46,8 +46,9 @@ void StateMachine::Init::run() {
         //setState<Timer>(3.0, Macho::State<Buoy>());
         //AUV_DEBUG("StateMachine::Init::run: ID %d", Macho::State<Top>()._KeyData)
         //Macho::IEvent<StateMachine::Top> * event = Macho::Event(&StateMachine::Top::whatever);
+
+
         setState<Timer::Timer<Top> >(3.0, Macho::State<Test>() );
-        //setState<Test>(Macho::State<Top>);
 }
 
 void StateMachine::Test::run(){
@@ -74,11 +75,3 @@ void StateMachine::Kill::run() {
         // AUV_ERROR("Kill::run");
         // setState<Init>();
 }
-
-// void StateMachine::Timer::run(){
-//         if ((ros::Time::now().toSec() - box().startTime) > box().waitTime) {
-//                 AUV_DEBUG("Waiting done, switching states");
-//                 setState(box().currentState);
-//
-//         }
-// }
