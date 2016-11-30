@@ -1,5 +1,7 @@
-#include <auv_mission_control/TaskTest.h>
-#include <auv_mission_control/StateMachine.h>
+#include <auv_mission_control/TaskTest.hpp>
+#include <auv_mission_control/StateMachine.hpp>
+#include <auv_mission_control/Timer.hpp>
+
 
 TaskTest::TaskTest(){
 }
@@ -18,13 +20,9 @@ TaskTest::~TaskTest(){
 
 }
 
-void TaskTest::prepare(){
-        //stateTest_->initialize();
-        stateTest_->initialize();
-}
-
 void TaskTest::prepare(std::shared_ptr<StateMachine> statemachine){
-        stateTest_->initialize(statemachine);
+        stateTest_->setPointer(statemachine);
+        stateTest_->initialize();
 }
 
 
@@ -37,9 +35,15 @@ int TaskTest::execute(){
 void TaskTest::Init::run() {
         AUV_DEBUG("Init::run");
         AUV_DEBUG("Waiting for 3 seconds");
-        setState<Timer::Timer<Top> >(3.0, Macho::State<Whatever>());
+        //setState<Timer::Timer<Whatever> >(3.0, Macho::Event(&Top::here));
+        //setState<Timer::Timer<Init> >(3.0, Top::box().statemachine_);
+        setState<Timer::Timer<Init> >(3.0, StateMachine::Gate::alias());
+
+
+        //setState<Timer::Timer<Whatever> >(3.0, Macho::State<Whatever>(), Macho::Event(&TaskTest::Whatever::here));
+        // setState<Timer::Timer<Init> >(3.0);
 }
 
 void TaskTest::Whatever::run() {
-        Top::box().statemachine_->queueState<StateMachine::Gate>();
+        Top::box().statemachine_->queueState<StateMachine::Marker>();
 }

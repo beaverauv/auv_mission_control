@@ -4,16 +4,15 @@
 #include <memory>
 #include <vector>
 
-#include <auv_mission_control/Task.h>
-#include <auv_mission_control/Timer.h>
+#include <auv_mission_control/Task.hpp>
 #include <auv_mission_control/Macho.hpp>
-#include <auv_mission_control/Camera.h>
-#include <auv_mission_control/PidManager.h>
-#include <auv_mission_control/Vision.h>
-#include <auv_mission_control/TaskTest.h>
-#include <auv_mission_control/TaskGate.h>
-#include <auv_mission_control/TaskBuoy.h>
-#include <auv_mission_control/TaskMarker.h>
+#include <auv_mission_control/Camera.hpp>
+#include <auv_mission_control/PidManager.hpp>
+#include <auv_mission_control/Vision.hpp>
+#include <auv_mission_control/TaskTest.hpp>
+#include <auv_mission_control/TaskGate.hpp>
+#include <auv_mission_control/TaskBuoy.hpp>
+#include <auv_mission_control/TaskMarker.hpp>
 
 
 class StateMachine : public Task {
@@ -34,6 +33,10 @@ public:
         template<class S>
         void queueState(){
                 eventqueue_.push_back(Macho::Event(&StateMachine::Top::setStateLocal<S>));
+        }
+
+        void queueState(Macho::Alias alias){
+                eventqueue_.push_back(Macho::Event(&StateMachine::Top::setStateLocal, alias));
         }
 
         int checkEventQueue(){
@@ -89,6 +92,10 @@ public:
                 template<class S>
                 void setStateLocal(){
                         setState<S>();
+                }
+
+                void setStateLocal(Macho::Alias alias){
+                        setState(alias);
                 }
 
 private:
@@ -160,11 +167,11 @@ private:
 
                 void run();
 
-private:                        std::shared_ptr<TaskTest> test_;
+private:
 
                 void entry(){
                         AUV_DEBUG("Gate::entry");
-                        Top::box().gate_->prepare();
+                        Top::box().gate_->prepare(Top::box().statemachine_);
                 }
 
         };
@@ -179,7 +186,7 @@ private:                        std::shared_ptr<TaskTest> test_;
 private:
                 void entry(){
                         AUV_DEBUG("Buoy::entry");
-                        Top::box().buoy_->prepare();
+                        Top::box().buoy_->prepare(Top::box().statemachine_);
                 }
 
         };
@@ -194,7 +201,7 @@ private:
 private:
                 void entry(){
                         AUV_DEBUG("Marker::entry");
-                        Top::box().marker_->prepare();
+                        Top::box().marker_->prepare(Top::box().statemachine_);
                 }
 
         };

@@ -1,4 +1,4 @@
-#include <auv_mission_control/StateMachine.h>
+#include <auv_mission_control/StateMachine.hpp>
 
 Timer mainTimer;
 bool timerStarted = false;

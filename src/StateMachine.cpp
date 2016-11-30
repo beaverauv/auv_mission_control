@@ -1,4 +1,5 @@
-#include <auv_mission_control/StateMachine.h>
+#include <auv_mission_control/StateMachine.hpp>
+#include <auv_mission_control/Timer.hpp>
 
 int main(int argc, char* argv[]){
         ros::init(argc, argv, "state_machine");
@@ -48,7 +49,7 @@ void StateMachine::Init::run() {
         //Macho::IEvent<StateMachine::Top> * event = Macho::Event(&StateMachine::Top::whatever);
 
 
-        setState<Timer::Timer<Top> >(3.0, Macho::State<Test>() );
+        setState<Timer::Timer<Init> >(3.0);
 }
 
 void StateMachine::Test::run(){

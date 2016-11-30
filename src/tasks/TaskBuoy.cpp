@@ -1,4 +1,5 @@
-#include <auv_mission_control/TaskBuoy.h>
+#include <auv_mission_control/TaskBuoy.hpp>
+#include <auv_mission_control/Timer.hpp>
 
 TaskBuoy::TaskBuoy(){
 }
@@ -7,8 +8,8 @@ TaskBuoy::TaskBuoy(){
 TaskBuoy::TaskBuoy(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
         AUV_DEBUG("[Pointers] [PM]: %x", pm.get());
         AUV_DEBUG("[Pointers] [VISION]: %x", vision.get());
-        stateBuoy_->setLocalPointers(pm, vision);
-        //stateBuoy_->setVision(vision);
+        stateBuoy_->setPointer(pm);
+        stateBuoy_->setPointer(vision);
 
 
 }
@@ -17,7 +18,9 @@ TaskBuoy::~TaskBuoy(){
 
 }
 
-void TaskBuoy::prepare(){
+
+void TaskBuoy::prepare(std::shared_ptr<StateMachine> statemachine){
+        stateBuoy_->setPointer(statemachine);
         stateBuoy_->initialize();
 }
 
@@ -129,5 +132,5 @@ int TaskBuoy::execute(){
 void TaskBuoy::Init::run() {
         AUV_DEBUG("Init::run");
         AUV_DEBUG("Waiting for 3 seconds");
-        setState<Timer::Timer<Top> >(3.0, Macho::State<Init>());
+        setState<Timer::Timer<Init> >(3.0);
 }

@@ -14,7 +14,7 @@
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
 
-#include <auv_mission_control/Task.h>
+#include <auv_mission_control/Task.hpp>
 #include <auv_motor_control/pid_enable.h>
 #include <auv_mission_control/axes.h>
 

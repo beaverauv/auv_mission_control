@@ -10,8 +10,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <ros/ros.h>
 
-#include <auv_mission_control/Task.h>
-#include <auv_mission_control/Camera.h>
+#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/Camera.hpp>
 
 
 

@@ -1,4 +1,4 @@
-#include <auv_mission_control/Camera.h>
+#include <auv_mission_control/Camera.hpp>
 
 Camera::Camera(){
         AUV_INFO("Constructor");

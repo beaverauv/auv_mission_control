@@ -1,4 +1,6 @@
-#include <auv_mission_control/TaskMarker.h>
+#include <auv_mission_control/TaskMarker.hpp>
+#include <auv_mission_control/Timer.hpp>
+#include <auv_mission_control/StateMachine.hpp>
 
 TaskMarker::TaskMarker(){
 }
@@ -7,8 +9,8 @@ TaskMarker::TaskMarker(){
 TaskMarker::TaskMarker(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
         AUV_DEBUG("[Pointers] [PM]: %x", pm.get());
         AUV_DEBUG("[Pointers] [VISION]: %x", vision.get());
-        stateMarker_->setLocalPointers(pm, vision);
-        //stateBuoy_->setVision(vision);
+        stateMarker_->setPointer(pm);
+        stateMarker_->setPointer(vision);
 
 
 }
@@ -17,7 +19,8 @@ TaskMarker::~TaskMarker(){
 
 }
 
-void TaskMarker::prepare(){
+void TaskMarker::prepare(std::shared_ptr<StateMachine> statemachine){
+        stateMarker_->setPointer(statemachine);
         stateMarker_->initialize();
 }
 
@@ -90,5 +93,5 @@ int TaskMarker::execute(){
 void TaskMarker::Init::run() {
         AUV_DEBUG("Init::run");
         AUV_DEBUG("Waiting for 3 seconds");
-        setState<Timer::Timer<Top> >(3.0, Macho::State<Init>());
+        setState<Timer::Timer<Init> >(3.0);
 }

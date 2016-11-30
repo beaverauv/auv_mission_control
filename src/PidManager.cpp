@@ -1,4 +1,4 @@
-#include <auv_mission_control/PidManager.h>
+#include <auv_mission_control/PidManager.hpp>
 
 
 PidManager::PidManager(){
@@ -112,6 +112,11 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
                         paramSurge.kD = 1;
                         paramSurge.kI = 1;
                         //same deal
+                } else if (input_type == INPUT_IMU_POS) {
+                        paramSurge.kP = 1;
+                        paramSurge.kD = 1;
+                        paramSurge.kI = 1;
+
                 }
 
 
@@ -142,6 +147,11 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
                         paramSway.kD = 1;
                         paramSway.kI = 1;
                         //same deal
+                } else if (input_type == INPUT_IMU_POS) {
+                        paramSurge.kP = 1;
+                        paramSurge.kD = 1;
+                        paramSurge.kI = 1;
+
                 }
 
 

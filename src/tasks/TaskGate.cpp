@@ -1,4 +1,7 @@
-#include <auv_mission_control/TaskGate.h>
+#include <auv_mission_control/TaskGate.hpp>
+#include <auv_mission_control/Timer.hpp>
+#include <auv_mission_control/StateMachine.hpp>
+
 
 
 TaskGate::TaskGate(){
@@ -8,8 +11,8 @@ TaskGate::TaskGate(){
 TaskGate::TaskGate(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
         AUV_DEBUG("[Pointers] [PM]: %x", pm.get());
         AUV_DEBUG("[Pointers] [VISION]: %x", vision.get());
-        stateGate_->setLocalPointers(pm, vision);
-        //stateBuoy_->setVision(vision);
+        stateGate_->setPointer(pm);
+        stateGate_->setPointer(vision);
 
 
 }
@@ -18,7 +21,8 @@ TaskGate::~TaskGate(){
 
 }
 
-void TaskGate::prepare(){
+void TaskGate::prepare(std::shared_ptr<StateMachine> statemachine){
+        stateGate_->setPointer(statemachine);
         stateGate_->initialize();
 }
 
@@ -232,5 +236,5 @@ int TaskGate::execute(){
 void TaskGate::Init::run() {
         AUV_DEBUG("Init::run");
         AUV_DEBUG("Waiting for 3 seconds");
-        setState<Timer::Timer<Top> >(3.0, Macho::State<Init>());
+        setState<Timer::Timer<Init> >(3.0);
 }

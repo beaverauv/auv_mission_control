@@ -4,14 +4,15 @@
 #include <cmath>
 #include <unistd.h>
 
-#include <auv_mission_control/Task.h>
-#include <auv_mission_control/Timer.h>
-#include <auv_mission_control/Vision.h>
-#include <auv_mission_control/PidManager.h>
-#include <auv_mission_control/Camera.h>
-//#include <auv_mission_control/StateMachine.h>
+// #include <auv_mission_control/Timer.hpp>
+#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/Macho.hpp>
+#include <auv_mission_control/Vision.hpp>
+#include <auv_mission_control/PidManager.hpp>
+#include <auv_mission_control/Camera.hpp>
+//#include <auv_mission_control/StateMachine.hpp>
 
-
+class StateMachine;
 
 class TaskMarker : public Task {
 public:
@@ -26,7 +27,7 @@ public:
 
 
         int execute();
-        void prepare();
+        void prepare(std::shared_ptr<StateMachine> statemachine);
 
 private:
         //variables go here;
@@ -49,10 +50,13 @@ private:
                 //TOPSTATE(Top) {
                 // Top state variables (visible to all substates)
                 struct Box {
-                        Box() : pm_(0), vision_(0){
+                        Box() : pm_(0), vision_(0), statemachine_(0){
                         }
+                        std::shared_ptr<StateMachine> statemachine_;
                         std::shared_ptr<PidManager> pm_;
                         std::shared_ptr<Vision> vision_;
+                        //template<class S>
+                        //Macho::IEvent<S> * event_;
                 };
 
                 STATE(Top)
@@ -64,9 +68,17 @@ private:
                 void initialize(){
                         setState<Init>();
                 }
-                void setLocalPointers(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision){
+
+                void setPointer(std::shared_ptr<PidManager> pm){
                         box().pm_ = pm;
+                }
+
+                void setPointer(std::shared_ptr<Vision> vision){
                         box().vision_ = vision;
+                }
+
+                void setPointer(std::shared_ptr<StateMachine> statemachine){
+                        box().statemachine_ = statemachine;
                 }
 
 private:
