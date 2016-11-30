@@ -1,47 +1,8 @@
-#include <auv_mission_control/PidManager.h>
-
-
-/*
-   void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
-   plant_surge_vision = vision->surge;
-   plant_sway_vision = vision->sway;
-   plant_heave_vision = vision->heave;
-   plant_yaw_vision = vision->yaw;
-   }
- */
-
-void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
-        depth_ = depth_msg->data;
-        subDepthHasBeenCalled = true;
-        //AUV_INFO("depth_ %f", depth_);
-}
-
-
-void PidManager::startCallBack(const std_msgs::Bool::ConstPtr& start_msg){
-        bStartSwitchState_ = start_msg->data;
-        //bStartSwitchState_ = false;
-        subStartHasBeenCalled = true;
-
-}
-
-void PidManager::killCallBack(const std_msgs::Bool::ConstPtr& kill_msg){
-        bKillSwitchState_ = kill_msg->data;
-//  ROS_INFO("kill_msg->data = %d", kill_msg->data);
-        subKillHasBeenCalled = true;
-}
-
-void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
-//  imu_ = *imu_msg;
-//ROS_INFO("boop");
-        plantYaw_ = imu_msg->orientation.z;
-//  ROS_INFO("recieved value%f", plantYaw_);
-        subImuHasBeenCalled = true;
-
-}
-
+#include <auv_mission_control/PidManager.hpp>
 
 
 PidManager::PidManager(){
+        AUV_INFO("Constructor");
 }
 
 
@@ -104,6 +65,44 @@ PidManager::~PidManager(){
 
 }
 
+/*
+   void visionPlant_callback(const auv_mission_control::axes::ConstPtr& vision){
+   plant_surge_vision = vision->surge;
+   plant_sway_vision = vision->sway;
+   plant_heave_vision = vision->heave;
+   plant_yaw_vision = vision->yaw;
+   }
+ */
+
+void PidManager::depthCallBack(const std_msgs::Float64::ConstPtr& depth_msg){
+        depth_ = depth_msg->data;
+        subDepthHasBeenCalled = true;
+        //AUV_INFO("depth_ %f", depth_);
+}
+
+
+void PidManager::startCallBack(const std_msgs::Bool::ConstPtr& start_msg){
+        bStartSwitchState_ = start_msg->data;
+        //bStartSwitchState_ = false;
+        subStartHasBeenCalled = true;
+
+}
+
+void PidManager::killCallBack(const std_msgs::Bool::ConstPtr& kill_msg){
+        bKillSwitchState_ = kill_msg->data;
+//  ROS_INFO("kill_msg->data = %d", kill_msg->data);
+        subKillHasBeenCalled = true;
+}
+
+void PidManager::imuCallBack(const sensor_msgs::Imu::ConstPtr& imu_msg){
+//  imu_ = *imu_msg;
+//ROS_INFO("boop");
+        plantYaw_ = imu_msg->orientation.z;
+//  ROS_INFO("recieved value%f", plantYaw_);
+        subImuHasBeenCalled = true;
+
+}
+
 void PidManager::setSetpoint(int axis, int input_type, double value){
         if (axis == AXIS_SURGE) {
                 std_msgs::Float64 msgSetpointSurge;
@@ -113,6 +112,11 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
                         paramSurge.kD = 1;
                         paramSurge.kI = 1;
                         //same deal
+                } else if (input_type == INPUT_IMU_POS) {
+                        paramSurge.kP = 1;
+                        paramSurge.kD = 1;
+                        paramSurge.kI = 1;
+
                 }
 
 
@@ -143,6 +147,11 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
                         paramSway.kD = 1;
                         paramSway.kI = 1;
                         //same deal
+                } else if (input_type == INPUT_IMU_POS) {
+                        paramSurge.kP = 1;
+                        paramSurge.kD = 1;
+                        paramSurge.kI = 1;
+
                 }
 
 

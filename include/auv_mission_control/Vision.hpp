@@ -4,25 +4,26 @@
 #define COLOR_RED 0
 #define COLOR_GREEN 1
 
+#include <memory>
+
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
 #include <ros/ros.h>
 
-#include <auv_mission_control/Task.h>
-#include <auv_mission_control/Camera.h>
+#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/Camera.hpp>
 
 
 
 
-class TaskVision : public Task {
+class Vision : public Task {
 public:
-        TaskVision();
-        TaskVision(Camera* cam);
-        ~TaskVision();
+        Vision();
+        Vision(std::shared_ptr<Camera> cam);
+        ~Vision();
 
         std::string getTag(){
-                return std::string("[Task Vision]");
+                return std::string("[Vision]");
         }
 
         void findBuoy(int color);
@@ -38,7 +39,7 @@ public:
 
 private:
 
-        Camera* cam_;
+        std::shared_ptr<Camera> cam_;
         cv::Scalar sRedMin = cv::Scalar(0, 0, 123);
         cv::Scalar sRedMax = cv::Scalar(68, 152, 239);
 

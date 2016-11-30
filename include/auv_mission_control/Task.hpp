@@ -5,6 +5,8 @@
 #include <cstdarg>
 #include <ros/ros.h>
 
+//#include <auv_mission_control/Macho.hpp>
+
 #define SUB_SUCCEEDED 0
 #define SUB_TIMEOUT 1
 #define SUB_KILL 2
@@ -39,7 +41,6 @@ protected:
         }
 
 };
-
 
 
 

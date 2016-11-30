@@ -1,17 +1,8 @@
-#include "auv_mission_control/Timer.h"
+#include <auv_mission_control/Timer.hpp>
 
-Timer::Timer(){
-
-}
-
-Timer::~Timer(){
-
-}
-
-void Timer::start(){
-        startTime = ros::Time::now().toSec();
-}
-
-double Timer::getTime(){
-        return ros::Time::now().toSec() - startTime;
+template<class T>
+void Timer::Timer<T>::init(double waitTime, int i){
+        Timer<T>::box().waitTime_ = waitTime;
+        Timer<T>::box().startTime_ = ros::Time::now().toSec();
+        Timer<T>::box().isStateMachineSet = true;
 }

@@ -1,4 +1,4 @@
-#include <auv_mission_control/StateMachine.h>
+#include <auv_mission_control/StateMachine.hpp>
 
 Timer mainTimer;
 bool timerStarted = false;
@@ -19,7 +19,7 @@ int main(int argc, char **argv){
 
         PidManager pm(&nh);
         Camera cam;
-        TaskVision vision(&cam);
+        Vision vision(&cam);
         Task task;
         TaskBuoy buoy(&pm, &vision);
         task.AUV_INFO("shit");
