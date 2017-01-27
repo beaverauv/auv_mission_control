@@ -202,6 +202,7 @@ add_library(state_machine
   src/StateMachine.cpp
   src/Macho.cpp
   src/PidManager.cpp
+  src/Multilateration.cpp
   src/Camera.cpp
   src/Vision.cpp
   src/tasks/Task.cpp
