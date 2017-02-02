@@ -1,4 +1,3 @@
-#include <auv_mission_control/Multilateration.hpp>
 #include <auv_mission_control/StateMachine.hpp>
 #include <auv_mission_control/Timer.hpp>
 
@@ -8,9 +7,6 @@ int main(int argc, char *argv[]) {
                                      ros::console::levels::Debug)) {
     ros::console::notifyLoggerLevelsChanged();
   }
-  Multilateration m;
-  m.findAllIntersections();
-  m.printAllIntersections();
 
   auto statemachine = std::make_shared<StateMachine>();
   statemachine->setPointer(statemachine);

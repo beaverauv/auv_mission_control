@@ -52,7 +52,8 @@ public:
 
     struct Box {
       Box()
-          : statemachine_(0), pm_(std::make_shared<PidManager>(&nh_)),
+          : nh_(std::make_shared<ros::NodeHandle>()), statemachine_(0),
+            pm_(std::make_shared<PidManager>(nh_)),
             cam_(std::make_shared<Camera>()),
             vision_(std::make_shared<Vision>(cam_)),
             test_(std::make_shared<TaskTest>(pm_, vision_)),
@@ -62,8 +63,8 @@ public:
 
       {}
 
+      std::shared_ptr<ros::NodeHandle> nh_;
       std::shared_ptr<StateMachine> statemachine_;
-      ros::NodeHandle nh_;
       std::shared_ptr<PidManager> pm_;
       std::shared_ptr<Camera> cam_;
       std::shared_ptr<Vision> vision_;
