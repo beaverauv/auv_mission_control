@@ -26,7 +26,7 @@ int StateMachine::execute() {
 
   ros::Rate stateRate(20);
 
-  while (ros::ok) {
+  while (ros::ok()) {
     ros::spinOnce();
     stateRate.sleep();
     if (checkEventQueue()) {

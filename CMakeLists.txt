@@ -16,16 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(OpenCV 2.4.11)
 
-add_message_files(
-   FILES
-   axes.msg
- )
-
- generate_messages(
-   DEPENDENCIES
-   std_msgs
- )
-
 
 catkin_package()
 
@@ -40,7 +30,7 @@ ${OpenCV_INCLUDE_DIRS}
 )
 
 
-add_library(state_machine
+add_executable(state_machine_node
   src/StateMachine.cpp
   src/Macho.cpp
   src/PidManager.cpp
@@ -53,16 +43,8 @@ add_library(state_machine
   src/tasks/TaskMarker.cpp
 )
 
-target_link_libraries(state_machine ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})
-add_dependencies(state_machine
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
-)
-
-add_executable(state_machine_cont src/StateMachine.cpp)
-
-target_link_libraries(state_machine_cont ${catkin_LIBRARIES} state_machine  ${OpenCV_LIBRARIES})
-add_dependencies(state_machine_cont
+target_link_libraries(state_machine_node ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})
+add_dependencies(state_machine_node
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )

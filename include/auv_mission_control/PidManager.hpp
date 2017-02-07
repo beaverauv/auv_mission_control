@@ -15,8 +15,6 @@
 #include <std_msgs/String.h>
 
 #include <auv_mission_control/Task.hpp>
-#include <auv_mission_control/axes.h>
-#include <auv_motor_control/pid_enable.h>
 
 // Axis definitions
 #define AXIS_SURGE 0
