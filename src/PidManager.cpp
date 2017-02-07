@@ -26,30 +26,30 @@ PidManager::PidManager(std::shared_ptr<ros::NodeHandle> nh) : nh_(nh) {
   subKill = nh_->subscribe("/kill", 1, &PidManager::killCallBack, this);
 
   // setpoint publishers
-  pubSetpointSurge = nh_->advertise<std_msgs::Float64>("setpoint_surge", 10);
-  pubSetpointSway = nh_->advertise<std_msgs::Float64>("setpoint_sway", 10);
-  pubSetpointHeave = nh_->advertise<std_msgs::Float64>("setpoint_heave", 10);
-  pubSetpointRoll = nh_->advertise<std_msgs::Float64>("setpoint_roll", 10);
-  pubSetpointPitch = nh_->advertise<std_msgs::Float64>("setpoint_pitch", 10);
-  pubSetpointYaw = nh_->advertise<std_msgs::Float64>("setpoint_yaw", 10);
+  pubSetpointSurge = nh_->advertise<std_msgs::Float64>("surge/setpoint", 1);
+  pubSetpointSway = nh_->advertise<std_msgs::Float64>("sway/setpoint", 1);
+  pubSetpointHeave = nh_->advertise<std_msgs::Float64>("heave/setpoint", 1);
+  pubSetpointRoll = nh_->advertise<std_msgs::Float64>("roll/setpoint", 1);
+  pubSetpointPitch = nh_->advertise<std_msgs::Float64>("pitch/setpoint", 1);
+  pubSetpointYaw = nh_->advertise<std_msgs::Float64>("yaw/setpoint", 1);
 
   // plant state publishers
-  pubStateSurge = nh_->advertise<std_msgs::Float64>("state_surge", 10);
-  pubStateSway = nh_->advertise<std_msgs::Float64>("state_sway", 10);
-  pubStateHeave = nh_->advertise<std_msgs::Float64>("state_heave", 10);
-  pubStateRoll = nh_->advertise<std_msgs::Float64>("state_roll", 10);
-  pubStatePitch = nh_->advertise<std_msgs::Float64>("state_pitch", 10);
-  pubStateYaw = nh_->advertise<std_msgs::Float64>("state_yaw", 10);
+  pubStateSurge = nh_->advertise<std_msgs::Float64>("surge/state", 1);
+  pubStateSway = nh_->advertise<std_msgs::Float64>("sway/state", 1);
+  pubStateHeave = nh_->advertise<std_msgs::Float64>("heave/state", 1);
+  pubStateRoll = nh_->advertise<std_msgs::Float64>("roll/state", 1);
+  pubStatePitch = nh_->advertise<std_msgs::Float64>("pitch/state", 1);
+  pubStateYaw = nh_->advertise<std_msgs::Float64>("yaw/state", 1);
 
-  pubEffortSurge = nh_->advertise<std_msgs::Float64>("controlEffort_surge", 10);
-  pubEffortSway = nh_->advertise<std_msgs::Float64>("controlEffort_sway", 10);
-  pubEffortHeave = nh_->advertise<std_msgs::Float64>("controlEffort_heave", 10);
-  pubEffortYaw = nh_->advertise<std_msgs::Float64>("controlEffort_yaw", 10);
+  pubEffortSurge = nh_->advertise<std_msgs::Float64>("surge/control_effort", 1);
+  pubEffortSway = nh_->advertise<std_msgs::Float64>("sway/control_effort", 1);
+  pubEffortHeave = nh_->advertise<std_msgs::Float64>("heave/control_effort", 1);
+  pubEffortYaw = nh_->advertise<std_msgs::Float64>("yaw/control_effort", 1);
 
-  pubEnableSurge = nh_->advertise<std_msgs::Bool>("setPidEnabled_surge", 10);
-  pubEnableSway = nh_->advertise<std_msgs::Bool>("setPidEnabled_sway", 10);
-  pubEnableHeave = nh_->advertise<std_msgs::Bool>("setPidEnabled_heave", 10);
-  pubEnableYaw = nh_->advertise<std_msgs::Bool>("setPidEnabled_yaw", 10);
+  pubEnableSurge = nh_->advertise<std_msgs::Bool>("surge/enable", 1);
+  pubEnableSway = nh_->advertise<std_msgs::Bool>("sway/enable", 1);
+  pubEnableHeave = nh_->advertise<std_msgs::Bool>("heave/enable", 1);
+  pubEnableYaw = nh_->advertise<std_msgs::Bool>("yaw/enable", 1);
 
   this->setSetpoint(AXIS_SURGE, INPUT_IMU_POS, 0.0);
   this->setSetpoint(AXIS_SWAY, INPUT_IMU_POS, 0.0);
@@ -382,7 +382,7 @@ void PidManager::updateParams(int axis) {
     double_param.value = paramSurge.Ki_scale;
     conf.doubles.push_back(double_param);
 
-    ros::service::call("/surge_pid/set_parameters", srv_req, srv_resp);
+    ros::service::call("/surge/set_parameters", srv_req, srv_resp);
 
   }
 
@@ -413,7 +413,7 @@ void PidManager::updateParams(int axis) {
 
     srv_req.config = conf;
 
-    ros::service::call("/sway_pid/set_parameters", srv_req, srv_resp);
+    ros::service::call("/sway/set_parameters", srv_req, srv_resp);
 
   }
 
@@ -444,7 +444,7 @@ void PidManager::updateParams(int axis) {
 
     srv_req.config = conf;
 
-    ros::service::call("/heave_pid/set_parameters", srv_req, srv_resp);
+    ros::service::call("/heave/set_parameters", srv_req, srv_resp);
 
   }
 
@@ -475,6 +475,6 @@ void PidManager::updateParams(int axis) {
 
     srv_req.config = conf;
 
-    ros::service::call("/yaw_pid/set_parameters", srv_req, srv_resp);
+    ros::service::call("/yaw/set_parameters", srv_req, srv_resp);
   }
 }

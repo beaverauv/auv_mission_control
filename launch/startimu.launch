@@ -5,97 +5,13 @@
     <param name="baud" value="57600"/>
   </node>
 
-  <node pkg="auv_mission_control" type="state_machine_cont" name="$(anon state_machine_cont)" output="screen">
-  </node>
-  <node pkg="auv_motor_control" type="motor_controller" name="$(anon motor_control)" />
-
-  <node name="Surge_PId" pkg="pid" type="controller" output="screen" >
-      <param name="rate" value="20" />
-    <param name="upper_limit" value="100" />
-    <param name="lower_limit" value="-100" />
-    <param name="windup_limit" value="10" />
-    <param name="cutoff_frequency" value="20" />
-    <param name="diagnostic_period" value="0.25" />
-    <param name="topic_from_controller" value="controlEffort_surge" />
-    <param name="topic_from_plant" value="state_surge " />
-    <param name="setpoint_topic" value="setpoint_surge" />
-    <param name="topic_pid_enable" value="surge_pid_enable" />
-
+  <node pkg="auv_mission_control" type="state_machine_node" name="$(anon state_machine_node)" output="screen">
   </node>
 
-  <node name="sway_pid" pkg="pid" type="controller" output="screen" >
-    <param name="rate" value="20" />
-    <param name="upper_limit" value="100" />
-    <param name="lower_limit" value="-100" />
-    <param name="windup_limit" value="10" />
-    <param name="cutoff_frequency" value="20" />
-    <param name="diagnostic_period" value="0.25" />
-    <param name="topic_from_controller" value="controlEffort_sway" />
-    <param name="topic_from_plant" value="state_sway " />
-    <param name="setpoint_topic" value="setpoint_sway" />
-    <param name="topic_pid_enable" value="sway_pid_enable" />
+  <include file="$(find auv_thruster_control)/launch/thruster_control_pid.launch" />
 
-  </node>
 
-  <node name="heave_pid" pkg="pid" type="controller" output="screen" >
-    <param name="rate" value="20" />
-    <param name="upper_limit" value="100" />
-    <param name="lower_limit" value="-100" />
-    <param name="windup_limit" value="10" />
-    <param name="cutoff_frequency" value="20" />
-    <param name="diagnostic_period" value="0.25" />
-    <param name="topic_from_controller" value="controlEffort_heave" />
-    <param name="topic_from_plant" value="state_heave " />
-    <param name="setpoint_topic" value="setpoint_heave" />
-    <param name="topic_pid_enable" value="heave_pid_enable" />
-
-  </node>
-
-  <node name="yaw_pid" pkg="pid" type="controller" output="screen" >
-    <param name="rate" value="20" />
-    <param name="upper_limit" value="100" />
-    <param name="lower_limit" value="-100" />
-    <param name="windup_limit" value="10" />
-    <param name="cutoff_frequency" value="20" />
-    <param name="diagnostic_period" value="0.25" />
-    <param name="topic_from_controller" value="controlEffort_yaw" />
-    <param name="topic_from_plant" value="state_yaw " />
-    <param name="setpoint_topic" value="setpoint_yaw" />
-    <param name="topic_pid_enable" value="surge_pid_yaw" />
-
-  </node>
-
-    <arg name="imu" default="imu"/>
-
-    <arg name="port" default="/dev/ttyUSB0" />
-    <arg name="frame_id" default="$(arg imu)"/>
-    <arg name="baudrate" default="921600"/>
-    <arg name="imu_rate" default="100"/>
-
-    <!-- Sync out settings -->
-    <!-- to disable this just set it to < 0 -->
-    <arg name="sync_rate" default="20"/>
-    <arg name="sync_pulse_width_us" default="1000"/>
-
-    <arg name="binary_output" default="true"/>
-
-    <!-- Ros Topic settings -->
-    <arg name="enable_mag" default="true"/>
-    <arg name="enable_pres" default="true"/>
-    <arg name="enable_temp" default="true"/>
-
-    <node pkg="imu_vn_100" name="$(arg imu)" type="imu_vn_100_cont_node" output="screen">
-        <param name="port" type="string" value="$(arg port)"/>
-        <param name="baudrate" type="int" value="$(arg baudrate)"/>
-        <param name="frame_id" type="string" value="$(arg frame_id)"/>
-        <param name="imu_rate" type="int" value="$(arg imu_rate)"/>
-        <param name="binary_output" type="bool" value="$(arg binary_output)"/>
-        <param name="enable_mag" type="bool" value="$(arg enable_mag)"/>
-        <param name="enable_pres" type="bool" value="$(arg enable_pres)"/>
-        <param name="enable_temp" type="bool" value="$(arg enable_temp)"/>
-        <param name="sync_rate" type="int" value="$(arg sync_rate)"/>
-        <param name="sync_pulse_width_us" type="int" value="$(arg sync_pulse_width_us)"/>
-    </node>
+  <include file="$(find imu_vn_100)/launch/imu.launch" />
 
 
 </launch>
