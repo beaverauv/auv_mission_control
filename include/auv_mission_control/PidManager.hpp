@@ -14,6 +14,7 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 
+#include <auv_mission_control/Axis.hpp>
 #include <auv_mission_control/Task.hpp>
 
 // Axis definitions
@@ -31,117 +32,69 @@
 #define INPUT_IMU_POS 2
 #define INPUT_IMU_VEL 3
 #define INPUT_DEPTH 4
-#define IMU_YAW 5
+// #define IMU_YAW 5
 
-class PidParam {
-public:
-  double kP;
-  double kD;
-  double kI;
-  double Kp_scale;
-  double Kd_scale;
-  double Ki_scale;
-};
+enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 
 class PidManager : public Task {
-
-private:
-  // ros::NodeHandle nh_;
-  std::shared_ptr<ros::NodeHandle> nh_;
-
-  ros::Subscriber subDepth;
-  bool subDepthHasBeenCalled = false;
-  ros::Subscriber subStart;
-  bool subStartHasBeenCalled = false;
-  ros::Subscriber subImu;
-  //  bool subImuHasBeenCalled = false;
-  ros::Subscriber subKill;
-  bool subKillHasBeenCalled = false;
-
-  ros::Publisher pubSetpointSurge;
-  ros::Publisher pubSetpointSway;
-  ros::Publisher pubSetpointHeave;
-  ros::Publisher pubSetpointRoll;
-  ros::Publisher pubSetpointPitch;
-  ros::Publisher pubSetpointYaw;
-
-  // plant state publishers
-  ros::Publisher pubStateSurge;
-  ros::Publisher pubStateSway;
-  ros::Publisher pubStateHeave;
-  ros::Publisher pubStateRoll;
-  ros::Publisher pubStatePitch;
-  ros::Publisher pubStateYaw;
-
-  // enable publishers
-  ros::Publisher pubEnableSurge;
-  ros::Publisher pubEnableSway;
-  ros::Publisher pubEnableHeave;
-  ros::Publisher pubEnableYaw;
-
-  ros::Publisher pubEffortSurge;
-  ros::Publisher pubEffortSway;
-  ros::Publisher pubEffortHeave;
-  ros::Publisher pubEffortYaw;
-
-  ros::Publisher pubControlEffort;
-
-  bool bStartSwitchState_ = false;
-  bool bTimoutSwitchState_ = false;
-  ;
-
-  int rosInfoCounter = 0;
-
-  PidParam paramSurge;
-  PidParam paramSway;
-  PidParam paramHeave;
-  PidParam paramYaw;
-
-  int testCount = 0;
-
-  double depth_;
-  bool bKillSwitchState_;
-  double plantSurge_;
-  double plantSway_;
-  double plantHeave_;
-  double plantRoll_;
-  double plantPitch_;
-  double plantYaw_;
-  sensor_msgs::Imu imu_;
-  bool subImuHasBeenCalled;
-  double yawInitValue;
-
 public:
   PidManager();
-  PidManager(std::shared_ptr<ros::NodeHandle> nh);
-
   ~PidManager();
 
   std::string getTag() { return std::string("[PidManager]"); }
 
-  void taskDelay(int seconds);
-  void updateParams(int axis);
+  ros::NodeHandle nh_;
 
-  void setControlEffort(
-      int axis,
-      int speed); // manually set controlEffort, must disable PID first
-  void setSetpoint(int axis, int input_type, double value);
-  void setPlantState(int axis, double plantValue);
-  void setZero(int sensor);
-  void setPidEnabled(int axis, bool enabled);
+  Axis *getAxis(AXIS axis);
 
-  void getPlantState(int axis);
-  double getDepth();
-  bool getStart();
-  bool getKill();
-  bool getTimeout();
+  void setControlEffort(AXIS axis, double speed);
 
-  void depthCallBack(const std_msgs::Float64::ConstPtr &depth_msg);
-  void startCallBack(const std_msgs::Bool::ConstPtr &start_msg);
-  void killCallBack(const std_msgs::Bool::ConstPtr &kill_msg);
-  void imuCallBack(const sensor_msgs::Imu::ConstPtr &imu_msg);
+  void setSetpoint(AXIS axis, INPUT input, double setpoint_value);
+
+  void setPlantState(AXIS axis, double plant_value);
+
+  void setZero(AXIS axis);
+
+  void setEnabled(AXIS axis, bool enabled);
+
+  double getPlantState(AXIS axis);
+
+  double getLimitedPlantState(AXIS axis);
 
   double getYaw();
+
+  double getDepth();
+
+  bool getStart();
+
+  bool getKill();
+
+  // bool getTimeout();
+
+  void callbackImu(const sensor_msgs::Imu::ConstPtr &imu_msg);
+
+  void callbackDepth(const std_msgs::Float64::ConstPtr &msg_depth);
+
+  void callbackStartSwitch(const std_msgs::Bool::ConstPtr &msg_start_switch);
+
+  void callbackKillSwitch(const std_msgs::Bool::ConstPtr &msg_kill_switch);
+
+private:
+  ros::Subscriber sub_imu_;
+  ros::Subscriber sub_depth_;
+  ros::Subscriber sub_start_switch_;
+  ros::Subscriber sub_kill_switch_;
+
+  double depth_;
+
+  bool is_sub_imu_called_ = false;
+  bool is_sub_depth_called_ = false;
+
+  bool start_switch_ = false;
+  bool kill_switch_ = false;
+
+  Axis surge_, sway_, heave_;
+  Axis roll_, pitch_, yaw_;
 };
 
 #endif

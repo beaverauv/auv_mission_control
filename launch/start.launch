@@ -1,7 +1,8 @@
 <launch>
 
+  <rosparam file="$(find auv_mission_control)/cfg/pid.yaml" />
 
-  <node pkg="auv_mission_control" type="state_machine_cont" name="$(anon state_machine_cont)" output="screen">
+  <node pkg="auv_mission_control" type="state_machine_node" name="$(anon state_machine_cont)" output="screen">
   </node>
 
 

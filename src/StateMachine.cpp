@@ -7,16 +7,40 @@ int main(int argc, char *argv[]) {
                                      ros::console::levels::Debug)) {
     ros::console::notifyLoggerLevelsChanged();
   }
-
   auto statemachine = std::make_shared<StateMachine>();
   statemachine->setPointer(statemachine);
   statemachine->queueState<StateMachine::Test>();
+  PidManager test;
+
+  test.getAxis(AXIS::SURGE)->printName();
+  test.getAxis(AXIS::SURGE)->printPids();
+  test.getAxis(AXIS::SWAY)->printName();
+  test.getAxis(AXIS::SWAY)->printPids();
+  test.getAxis(AXIS::HEAVE)->printName();
+  test.getAxis(AXIS::HEAVE)->printPids();
+  test.getAxis(AXIS::ROLL)->printName();
+  test.getAxis(AXIS::ROLL)->printPids();
+  test.getAxis(AXIS::PITCH)->printName();
+  test.getAxis(AXIS::PITCH)->printPids();
+  test.getAxis(AXIS::YAW)->printName();
+  test.getAxis(AXIS::YAW)->printPids();
+
+  test.getAxis(AXIS::YAW)->plant_state_current_ = 100;
+  test.setZero(AXIS::YAW);
+  test.getAxis(AXIS::YAW)->plant_state_current_ = 300;
+  ROS_INFO("yaw zero: %f", test.getYaw());
+
+  // std::vector<double> my_double_list;
+  // node_priv.getParam("heave/input_cam_front", my_double_list);
+  // for (unsigned i = 0; i < my_double_list.size(); i++) {
+  //   ROS_INFO("num: %f", my_double_list[i]);
+  // }
   statemachine->execute();
 }
 
 StateMachine::StateMachine() {
   AUV_INFO("Init");
-  state_->setPointer(this);
+  // state_->setPointer(this);
 }
 
 StateMachine::~StateMachine() {}
