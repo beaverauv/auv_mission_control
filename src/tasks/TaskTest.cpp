@@ -25,7 +25,6 @@ int TaskTest::execute() {
   if (checkEventQueue()) {
     state_test_->run();
   }
-  ROS_INFO("here");
 }
 
 void TaskTest::Init::run() {

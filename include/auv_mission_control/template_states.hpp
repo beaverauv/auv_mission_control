@@ -101,13 +101,14 @@ template <class T> TSUBSTATE(Move, T) {
       if (box().axis_.size() != box().values_.size()) {
         ROS_ERROR("[Template State] State received mismatched parameters");
 
-        SUPER::TOP::box().self_->queueEnable();
-
-        if (box().isAliasSet)
+        if (box().isAliasSet) {
+          SUPER::TOP::box().statemachine_->queueEnable();
           SUPER::TOP::box().statemachine_->template queueStateAlias(
               box().alias_);
-        else
+        } else {
+          TOP::box().self_->queueEnable();
           TOP::setState(SUPER::alias());
+        }
         return;
       }
 
@@ -142,8 +143,10 @@ template <class T> TSUBSTATE(Move, T) {
       if (box().isAliasSet) {
         SUPER::TOP::box().statemachine_->queueEnable();
         SUPER::TOP::box().statemachine_->template queueStateAlias(box().alias_);
-      } else
+      } else {
+        TOP::box().self_->queueEnable();
         TOP::setState(SUPER::alias());
+      }
       return;
     }
   }
