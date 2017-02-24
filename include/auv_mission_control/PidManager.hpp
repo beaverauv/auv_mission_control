@@ -34,8 +34,6 @@
 #define INPUT_DEPTH 4
 // #define IMU_YAW 5
 
-enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
-
 class PidManager : public Task {
 public:
   PidManager();
@@ -57,9 +55,13 @@ public:
 
   void setEnabled(AXIS axis, bool enabled);
 
+  void updatePlantState(AXIS axis);
+
   double getPlantState(AXIS axis);
 
   double getLimitedPlantState(AXIS axis);
+
+  double getSetpoint(AXIS axis);
 
   double getYaw();
 
@@ -68,6 +70,18 @@ public:
   bool getStart();
 
   bool getKill();
+
+  void ensureDepth();
+
+  void ensureYaw();
+
+  void startEnsuringDepth();
+
+  void startEnsuringYaw();
+
+  void stopEnsuringDepth();
+
+  void stopEnsuringYaw();
 
   // bool getTimeout();
 
@@ -85,7 +99,11 @@ private:
   ros::Subscriber sub_start_switch_;
   ros::Subscriber sub_kill_switch_;
 
-  double depth_;
+  double position_heave_, velocity_surge_, velocity_sway_;
+  double position_roll_, position_pitch_, position_yaw_;
+
+  bool should_ensure_depth_;
+  bool should_ensure_yaw_;
 
   bool is_sub_imu_called_ = false;
   bool is_sub_depth_called_ = false;

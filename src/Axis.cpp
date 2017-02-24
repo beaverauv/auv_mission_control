@@ -4,8 +4,10 @@ Axis::Axis() {}
 
 Axis::Axis(std::string axis_name) : axis_name_(axis_name) {
   pub_setpoint_ = nh_.advertise<std_msgs::Float64>(axis_name_ + "/setpoint", 1);
-  pub_plant_state_ = nh_.advertise<std_msgs::Float64>(axis_name_ + "/state", 1);
-  pub_effort_ = nh_.advertise<std_msgs::Float64>(axis_name_ + "/effort", 1);
+  pub_plant_state_ =
+      nh_.advertise<std_msgs::Float64>(axis_name_ + "/plant_state", 1);
+  pub_effort_ =
+      nh_.advertise<std_msgs::Float64>(axis_name_ + "/control_effort", 1);
   pub_enabled_ = nh_.advertise<std_msgs::Bool>(axis_name_ + "/enable", 1);
 }
 Axis::~Axis() {}
@@ -108,6 +110,7 @@ void Axis::setControlEffort(double speed) {
 }
 
 void Axis::setSetpoint(INPUT input, double setpoint) {
+  setpoint_current_ = setpoint;
   updateParams(*getPid(input));
   msg_setpoint_.data = setpoint;
   pub_setpoint_.publish(msg_setpoint_);
@@ -141,3 +144,5 @@ double Axis::getLimitedPlantState() {
 
   return delta;
 }
+
+double Axis::getSetpoint() { return setpoint_current_; }

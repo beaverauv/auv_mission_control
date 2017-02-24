@@ -15,7 +15,7 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 
-enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_VEL, DEPTH };
+#include <auv_mission_control/Task.hpp>
 
 class PidParam {
 public:
@@ -69,9 +69,13 @@ public:
 
   double getLimitedPlantState();
 
+  double getSetpoint();
+
   double plant_state_zero_ = 0;
   double plant_state_current_ = 0;
   double plant_state_limit_ = 0;
+
+  double setpoint_current_ = 0;
 
 private:
   std::string axis_name_;

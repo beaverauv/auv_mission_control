@@ -7,7 +7,8 @@
 #include <auv_mission_control/Camera.hpp>
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/PidManager.hpp>
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/TTask.hpp>
+// #include <auv_mission_control/Task.hpp>
 #include <auv_mission_control/TaskBuoy.hpp>
 #include <auv_mission_control/TaskGate.hpp>
 #include <auv_mission_control/TaskMarker.hpp>
@@ -23,47 +24,23 @@ public:
 
   int execute();
 
-  void setPointer(std::shared_ptr<StateMachine> statemachine) {
-    state_->setPointer(statemachine);
-  }
-
-  template <class S> void queueState() {
-    eventqueue_.push_back(Macho::Event(&StateMachine::Top::setStateLocal<S>));
-  }
-
-  void queueState(Macho::Alias alias) {
-    eventqueue_.push_back(
-        Macho::Event(&StateMachine::Top::setStateLocal, alias));
-  }
-
-  int checkEventQueue() {
-    if (eventqueue_.empty())
-      return 1;
-    for (EventQueue::iterator it = eventqueue_.begin(); it != eventqueue_.end();
-         ++it)
-      state_.dispatch(*it);
-
-    eventqueue_.clear();
-    return 0;
-  }
-
   TOPSTATE(Top) {
+
     std::string getTag() { return std::string("[State]"); }
 
     struct Box {
       Box()
-          : nh_(std::make_shared<ros::NodeHandle>()), statemachine_(0),
+          : nh_(std::make_shared<ros::NodeHandle>()),
             pm_(std::make_shared<PidManager>()),
             cam_(std::make_shared<Camera>()),
             vision_(std::make_shared<Vision>(cam_)),
             test_(std::make_shared<TaskTest>(pm_, vision_)),
             gate_(std::make_shared<TaskGate>(pm_, vision_)),
             buoy_(std::make_shared<TaskBuoy>(pm_, vision_)),
-            marker_(std::make_shared<TaskMarker>(pm_, vision_))
-
-      {}
+            marker_(std::make_shared<TaskMarker>(pm_, vision_)) {}
 
       std::shared_ptr<ros::NodeHandle> nh_;
+      std::shared_ptr<StateMachine> self_;
       std::shared_ptr<StateMachine> statemachine_;
       std::shared_ptr<PidManager> pm_;
       std::shared_ptr<Camera> cam_;
@@ -74,21 +51,13 @@ public:
       std::shared_ptr<TaskMarker> marker_;
     };
 
-    STATE(Top)
+    STATE(Top);
+
+    createMachineFunctions();
 
     virtual void run() {}
 
-    void setPointer(std::shared_ptr<StateMachine> statemachine) {
-      box().statemachine_ = statemachine;
-    }
-
-    void setPointer(StateMachine * statemachine) {
-      // box().statemachine_ = statemachine;
-    }
-
-    template <class S> void setStateLocal() { setState<S>(); }
-
-    void setStateLocal(Macho::Alias alias) { setState(alias); }
+    void setPointer(std::shared_ptr<StateMachine> statemachine);
 
   private:
     // special actions
@@ -106,11 +75,6 @@ public:
   // A substate
   SUBSTATE(Init, Top) {
     // State variables
-    struct Box {
-      Box() : data(0) {}
-      int data;
-    };
-
     STATE(Init)
 
     // Event handler
@@ -130,6 +94,15 @@ public:
     void entry() { AUV_DEBUG("Kill::entry"); }
   };
 
+  SUBSTATE(Nowhere, Top){
+
+    STATE(Nowhere)
+
+        void run(){}
+
+    private : void entry(){}
+  };
+
   SUBSTATE(Test, Top) {
 
     STATE(Test)
@@ -139,7 +112,7 @@ public:
   private:
     void init() {
       AUV_DEBUG("Test::entry");
-      Top::box().test_->prepare(Top::box().statemachine_);
+      Top::box().test_->prepare(Top::box().self_);
     }
   };
 
@@ -152,7 +125,7 @@ public:
   private:
     void entry() {
       AUV_DEBUG("Gate::entry");
-      Top::box().gate_->prepare(Top::box().statemachine_);
+      Top::box().gate_->prepare(Top::box().self_);
     }
   };
 
@@ -165,7 +138,7 @@ public:
   private:
     void entry() {
       AUV_DEBUG("Buoy::entry");
-      Top::box().buoy_->prepare(Top::box().statemachine_);
+      Top::box().buoy_->prepare(Top::box().self_);
     }
   };
 
@@ -178,14 +151,13 @@ public:
   private:
     void entry() {
       AUV_DEBUG("Marker::entry");
-      Top::box().marker_->prepare(Top::box().statemachine_);
+      Top::box().marker_->prepare(Top::box().self_);
     }
   };
 
-  typedef std::vector<Macho::IEvent<StateMachine::Top> *> EventQueue;
-  EventQueue eventqueue_;
-
   Macho::Machine<StateMachine::Top> state_;
+
+  createQueue(StateMachine, state_)
 };
 
 #endif

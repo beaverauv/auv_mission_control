@@ -56,27 +56,25 @@ private:
     // TOPSTATE(Top) {
     // Top state variables (visible to all substates)
     struct Box {
-      Box() : pm_(0), vision_(0), statemachine_(0) {}
+      Box() : pm_(0), vision_(0), statemachine_(0), self_(0) {}
       std::shared_ptr<StateMachine> statemachine_;
       std::shared_ptr<PidManager> pm_;
       std::shared_ptr<Vision> vision_;
+      std::shared_ptr<TaskTest> self_;
+
       // template<class S>
       // Macho::IEvent<S> * event_;
     };
 
-    STATE(Top)
+    STATE(Top);
+
+    createMachineFunctions();
 
     virtual void run() {}
 
     void initialize() { setState<Init>(); }
 
-    void setPointer(std::shared_ptr<PidManager> pm) { box().pm_ = pm; }
-
-    void setPointer(std::shared_ptr<Vision> vision) { box().vision_ = vision; }
-
-    void setPointer(std::shared_ptr<StateMachine> statemachine) {
-      box().statemachine_ = statemachine;
-    }
+    createPointerFunctions(TaskTest);
 
     virtual void here() { AUV_INFO("TOP HERE"); }
 
@@ -95,9 +93,16 @@ private:
   private:
     void entry() { AUV_DEBUG("Init::entry"); }
 
-    void init() {
-      // Top::box().alias_ = alias;
-    }
+    void init() {}
+  };
+
+  SUBSTATE(Nowhere, Top){
+
+    STATE(Nowhere)
+
+        void run(){}
+
+    private : void entry(){}
   };
 
   SUBSTATE(Whatever, Top) {
@@ -116,7 +121,9 @@ private:
     void init() { AUV_DEBUG("Whatever init"); }
   };
 
-  Macho::Machine<TaskTest::Top> stateTest_;
+  Macho::Machine<TaskTest::Top> state_test_;
+
+  createQueue(TaskTest, state_test_);
 };
 
 #endif

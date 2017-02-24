@@ -1,6 +1,6 @@
-#include <auv_mission_control/StateMachine.hpp>
+// #include <auv_mission_control/StateMachine.hpp>
 #include <auv_mission_control/TaskTest.hpp>
-#include <auv_mission_control/Timer.hpp>
+#include <auv_mission_control/template_states.hpp>
 
 TaskTest::TaskTest() {}
 
@@ -9,31 +9,47 @@ TaskTest::TaskTest(std::shared_ptr<PidManager> pm,
   AUV_DEBUG("[Pointers] [PM]: %x", pm.get());
   AUV_DEBUG("[Pointers] [VISION]: %x", vision.get());
 
-  stateTest_->setPointer(pm);
-  stateTest_->setPointer(vision);
+  state_test_->setPointer(pm);
+  state_test_->setPointer(vision);
+  state_test_->setPointer(std::shared_ptr<TaskTest>(this));
 }
 
 TaskTest::~TaskTest() {}
 
 void TaskTest::prepare(std::shared_ptr<StateMachine> statemachine) {
-  stateTest_->setPointer(statemachine);
-  stateTest_->initialize();
+  state_test_->setPointer(statemachine);
+  state_test_->initialize();
 }
 
-int TaskTest::execute() { stateTest_->run(); }
+int TaskTest::execute() {
+  if (checkEventQueue()) {
+    state_test_->run();
+  }
+  ROS_INFO("here");
+}
 
 void TaskTest::Init::run() {
   AUV_INFO("Init::run");
   AUV_DEBUG("Waiting for 3 seconds");
   // setState<Timer::Timer<Whatever>>(3.0, Macho::Event(&Top::here));
-  // setState<Timer::Timer<Init> >(3.0, Top::box().statemachine_);
+  // setState<Timer::Timer<Init> >(3.0, Top::box().self_);
   // setState<Timer::Timer<Init> >(3.0, StateMachine::Test::alias());
 
   // setState<Timer::Timer<Whatever>>(3.0, Macho::State<Whatever>(),
   //                                  Macho::Event(&TaskTest::Whatever::here));
-  setState<Timer::Timer<Whatever>>(3.0);
+  Top::box().self_->queueEnable();
+
+  Top::box().self_->queueState<Move<Nowhere>>(
+      AxisVec{AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, ValuesVec{6.0, 5.0, 45.0},
+      3.0);
+
+  Top::box().self_->queueState<Move<Whatever>>(
+      AxisVec{AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, ValuesVec{14.0, 6.0, 46.0},
+      3.0);
+
+  // Top::box().self_->queueState<Timer<Whatever>>(3.0);
 }
 
 void TaskTest::Whatever::run() {
-  Top::box().statemachine_->queueState<StateMachine::Marker>();
+  setState<Timer<Whatever>>(1.0, StateMachine::Marker::alias());
 }
