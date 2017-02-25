@@ -68,11 +68,13 @@ void StateMachine::Init::run() {
   //                      ValuesVec{10.0, 5.0, 45.0}, 3.0);
   Top::box().self_->queueEnable();
 
-  Top::box().self_->queueState<Move<Nowhere>>(
-      {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {10.0, 5.0, 45.0}, 3.0);
+  // Top::box().self_->queueState<Timer<Nowhere>>(10.0);
+  //
+  // Top::box().self_->queueState<Move<Nowhere>>(
+  //     {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {10.0, 5.0, 45.0}, 3.0);
 
   Top::box().self_->queueState<Move<Test>>({AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
-                                           {11.0, 6.0, 46.0}, 3.0);
+                                           {11.0, 6.0, 46.0}, 400.0);
 
   // std::vector<INPUT> in1 = {INPUT::IMU_POS};
   // std::vector<double> in2 = {10.0};
