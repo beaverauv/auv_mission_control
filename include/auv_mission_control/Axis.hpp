@@ -92,11 +92,6 @@ private:
 
   std_msgs::Bool msg_enabled_;
 
-  dynamic_reconfigure::ReconfigureRequest srv_req;
-  dynamic_reconfigure::ReconfigureResponse srv_resp;
-  dynamic_reconfigure::DoubleParameter double_param;
-  dynamic_reconfigure::Config conf;
-
   PidParam pid_cam_front_, pid_cam_bottom_, pid_imu_pos_, pid_imu_vel_,
       pid_depth_;
 };

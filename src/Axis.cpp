@@ -76,6 +76,11 @@ void Axis::loadParam(INPUT input, std::vector<double> values) {
 }
 
 void Axis::updateParams(PidParam pid) {
+  dynamic_reconfigure::ReconfigureRequest srv_req;
+  dynamic_reconfigure::ReconfigureResponse srv_resp;
+  dynamic_reconfigure::DoubleParameter double_param;
+  dynamic_reconfigure::Config conf;
+
   double_param.name = "Kp";
   double_param.value = pid.kP;
   conf.doubles.push_back(double_param);
