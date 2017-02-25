@@ -106,10 +106,10 @@ template <class T> TSUBSTATE(Move, T) {
           SUPER::TOP::box().statemachine_->queueEnable();
           SUPER::TOP::box().statemachine_->template queueStateAlias(
               box().alias_);
-          TOP::setState(SUPER::alias());
+          // TOP::box().self_->template queueStateAlias(TOP::alias());
         } else {
           TOP::box().self_->queueEnable();
-          TOP::setState(SUPER::alias());
+          TOP::box().self_->template queueStateAlias(SUPER::alias());
         }
         return;
       }
@@ -145,7 +145,7 @@ template <class T> TSUBSTATE(Move, T) {
       if (box().isAliasSet) {
         SUPER::TOP::box().statemachine_->queueEnable();
         SUPER::TOP::box().statemachine_->template queueStateAlias(box().alias_);
-        TOP::setState(SUPER::alias());
+        // TOP::box().self_->template queueStateAlias(TOP::alias());
       } else {
         TOP::box().self_->queueEnable();
         TOP::setState(SUPER::alias());

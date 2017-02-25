@@ -102,10 +102,8 @@ private:
 
     void run();
 
-    void here() { AUV_INFO("WHATEVER HERE"); }
-
   private:
-    void entry() { AUV_DEBUG("Init::entry"); }
+    void entry() { AUV_DEBUG("Whatever::entry"); }
 
     void init() { AUV_DEBUG("Whatever init"); }
   };
