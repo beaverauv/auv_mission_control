@@ -55,13 +55,7 @@ private:
 
     // TOPSTATE(Top) {
     // Top state variables (visible to all substates)
-    struct Box {
-      Box() : pm_(0), vision_(0), statemachine_(0) {}
-      std::shared_ptr<StateMachine> statemachine_;
-      std::shared_ptr<TaskBuoy> self_;
-      std::shared_ptr<PidManager> pm_;
-      std::shared_ptr<Vision> vision_;
-    };
+    createStateBox(TaskBuoy);
 
     STATE(Top);
 

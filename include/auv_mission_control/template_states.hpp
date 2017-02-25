@@ -73,9 +73,6 @@ private:
   }
 };
 
-typedef std::vector<AXIS> AxisVec;
-typedef std::vector<double> ValuesVec;
-
 template <class T> TSUBSTATE(Move, T) {
   struct Box {
     Box()
@@ -90,8 +87,8 @@ template <class T> TSUBSTATE(Move, T) {
     Macho::Alias alias_;
     bool isAliasSet;
 
-    AxisVec axis_;
-    ValuesVec values_;
+    std::vector<AXIS> axis_;
+    std::vector<double> values_;
   };
   TSTATE(Move)
   inline void run() {
@@ -152,7 +149,8 @@ template <class T> TSUBSTATE(Move, T) {
   }
 
 private:
-  inline void init(AxisVec axis, ValuesVec values, double waitTime) {
+  inline void init(std::vector<AXIS> axis, std::vector<double> values,
+                   double waitTime) {
 
     box().axis_ = axis;
     box().values_ = values;
@@ -165,8 +163,8 @@ private:
     }
   }
 
-  inline void init(AxisVec axis, ValuesVec values, double waitTime,
-                   Macho::Alias alias) {
+  inline void init(std::vector<AXIS> axis, std::vector<double> values,
+                   double waitTime, Macho::Alias alias) {
     box().axis_ = axis;
     box().values_ = values;
 

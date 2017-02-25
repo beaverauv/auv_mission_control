@@ -42,15 +42,7 @@ private:
 
     // TOPSTATE(Top) {
     // Top state variables (visible to all substates)
-    struct Box {
-      Box() : pm_(0), vision_(0), statemachine_(0) {}
-      std::shared_ptr<StateMachine> statemachine_;
-      std::shared_ptr<TaskMarker> self_;
-      std::shared_ptr<PidManager> pm_;
-      std::shared_ptr<Vision> vision_;
-      // template<class S>
-      // Macho::IEvent<S> * event_;
-    };
+    createStateBox(TaskMarker);
 
     STATE(Top);
 
