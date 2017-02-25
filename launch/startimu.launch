@@ -5,6 +5,8 @@
     <param name="baud" value="57600"/>
   </node>
 
+  <rosparam file="$(find auv_mission_control)/cfg/pid.yaml" />
+
   <node pkg="auv_mission_control" type="state_machine_node" name="$(anon state_machine_node)" output="screen">
   </node>
 

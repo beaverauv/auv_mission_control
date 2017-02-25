@@ -52,5 +52,5 @@ void TaskTest::Init::run() {
 }
 
 void TaskTest::Whatever::run() {
-  setState<Timer<Init>>(1.0, StateMachine::Marker::alias());
+  setState<Timer<Init>>(0.0, StateMachine::Marker::alias());
 }
