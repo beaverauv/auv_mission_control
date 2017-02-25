@@ -53,8 +53,6 @@ private:
   TOPSTATE(Top) {
     std::string getTag() { return std::string("[StateTest]"); }
 
-    // TOPSTATE(Top) {
-    // Top state variables (visible to all substates)
     createStateBox(TaskTest);
 
     STATE(Top);

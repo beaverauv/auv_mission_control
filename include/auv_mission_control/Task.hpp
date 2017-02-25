@@ -32,11 +32,23 @@ public:                                                                        \
     eventqueue_.push_back(Macho::Event(&T::Top::setMachineState<S>));          \
   }                                                                            \
                                                                                \
+  template <class S> void queueState(double wait_time) {                       \
+    eventqueue_.push_back(                                                     \
+        Macho::Event(&T::Top::setMachineState<S>, wait_time));                 \
+  }                                                                            \
+                                                                               \
   template <class S>                                                           \
   void queueState(std::vector<AXIS> axis, std::vector<double> values,          \
                   double wait_time) {                                          \
     eventqueue_.push_back(                                                     \
         Macho::Event(&T::Top::setMachineState<S>, axis, values, wait_time));   \
+  }                                                                            \
+                                                                               \
+  template <class S>                                                           \
+  void queueState(std::vector<AXIS> axis, std::vector<double> values,          \
+                  double wait_time, Macho::Alias alias) {                      \
+    eventqueue_.push_back(Macho::Event(&T::Top::setMachineState<S>, axis,      \
+                                       values, wait_time, alias));             \
   }                                                                            \
                                                                                \
   void queueStateAlias(Macho::Alias alias) {                                   \
@@ -66,10 +78,20 @@ public:                                                                        \
 #define createMachineFunctions()                                               \
   template <class S> void setMachineState() { setState<S>(); }                 \
                                                                                \
+  template <class S> void setMachineState(double wait_time) {                  \
+    setState<S>(wait_time);                                                    \
+  }                                                                            \
+                                                                               \
   template <class S>                                                           \
   void setMachineState(std::vector<AXIS> axis, std::vector<double> values,     \
                        double wait_time) {                                     \
     setState<S>(axis, values, wait_time);                                      \
+  }                                                                            \
+                                                                               \
+  template <class S>                                                           \
+  void setMachineState(std::vector<AXIS> axis, std::vector<double> values,     \
+                       double wait_time, Macho::Alias alias) {                 \
+    setState<S>(axis, values, wait_time, alias);                               \
   }                                                                            \
                                                                                \
   void setMachineStateAlias(Macho::Alias alias) { setState(alias); }

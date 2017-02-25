@@ -46,11 +46,15 @@ template <class T> TSUBSTATE(Timer, T) {
         LINK::dispatch(box().event_);
       }
       if (box().isAliasSet) {
-        SUPER::TOP::box().self_->template queueStateAlias(box().alias_);
-        return;
+        SUPER::TOP::box().statemachine_->queueEnable();
+        SUPER::TOP::box().statemachine_->template queueStateAlias(box().alias_);
+        TOP::setState(SUPER::alias());
+      } else {
+        TOP::box().self_->queueEnable();
+        TOP::setState(SUPER::alias());
       }
-      TOP::setState(SUPER::alias());
     }
+    return;
   }
 
 private:
@@ -90,7 +94,7 @@ template <class T> TSUBSTATE(Move, T) {
     std::vector<AXIS> axis_;
     std::vector<double> values_;
   };
-  TSTATE(Move)
+  TSTATE(Move);
   inline void run() {
     if (!box().is_first_run_) {
       box().is_first_run_ = true;
@@ -102,6 +106,7 @@ template <class T> TSUBSTATE(Move, T) {
           SUPER::TOP::box().statemachine_->queueEnable();
           SUPER::TOP::box().statemachine_->template queueStateAlias(
               box().alias_);
+          TOP::setState(SUPER::alias());
         } else {
           TOP::box().self_->queueEnable();
           TOP::setState(SUPER::alias());
@@ -140,6 +145,7 @@ template <class T> TSUBSTATE(Move, T) {
       if (box().isAliasSet) {
         SUPER::TOP::box().statemachine_->queueEnable();
         SUPER::TOP::box().statemachine_->template queueStateAlias(box().alias_);
+        TOP::setState(SUPER::alias());
       } else {
         TOP::box().self_->queueEnable();
         TOP::setState(SUPER::alias());
@@ -150,29 +156,30 @@ template <class T> TSUBSTATE(Move, T) {
 
 private:
   inline void init(std::vector<AXIS> axis, std::vector<double> values,
-                   double waitTime) {
+                   double wait_time) {
 
     box().axis_ = axis;
     box().values_ = values;
-    // INPUT inputs[2] = {ts...};
-    box().wait_time_ = waitTime;
-    box().start_time_ = ros::Time::now().toSec();
 
+    box().wait_time_ = wait_time;
+    box().start_time_ = ros::Time::now().toSec();
+    ROS_INFO("Move State");
     for (unsigned i : util::lang::indices(box().axis_)) {
       ROS_INFO("Axis %d: %f", (int)box().axis_.at(i), box().values_.at(i));
     }
   }
 
   inline void init(std::vector<AXIS> axis, std::vector<double> values,
-                   double waitTime, Macho::Alias alias) {
+                   double wait_time, Macho::Alias alias) {
     box().axis_ = axis;
     box().values_ = values;
 
-    box().wait_time_ = waitTime;
+    box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
     box().alias_ = alias;
     box().isAliasSet = true;
 
+    ROS_INFO("Move State");
     for (unsigned i : util::lang::indices(box().axis_)) {
       ROS_INFO("Axis %d: %f", (int)box().axis_.at(i), box().values_.at(i));
     }

@@ -41,12 +41,16 @@ void TaskTest::Init::run() {
   Top::box().self_->queueState<Move<Nowhere>>(
       {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {6.0, 5.0, 45.0}, 3.0);
 
-  Top::box().self_->queueState<Move<Whatever>>(
+  // Top::box().self_->queueState<Move<Nowhere>>(
+  //     {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {14.0, 6.0, 46.0}, 3.0,
+  //     StateMachine::Marker::alias());
+  //
+  Top::box().self_->queueState<Move<Nowhere>>(
       {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {14.0, 6.0, 46.0}, 3.0);
 
-  // Top::box().self_->queueState<Timer<Whatever>>(3.0);
+  Top::box().self_->queueState<Timer<Whatever>>(3.0);
 }
 
 void TaskTest::Whatever::run() {
-  setState<Timer<Whatever>>(1.0, StateMachine::Marker::alias());
+  setState<Timer<Top>>(1.0, StateMachine::Marker::alias());
 }
