@@ -67,9 +67,11 @@ public:
 
   double getDepth();
 
-  bool getStart();
+  bool isStarted();
 
-  bool getKill();
+  bool isKilled();
+
+  bool isImuCalled();
 
   void ensureDepth();
 

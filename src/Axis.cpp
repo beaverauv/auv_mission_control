@@ -123,8 +123,12 @@ void Axis::setSetpoint(INPUT input, double setpoint) {
 
 void Axis::setPlantState(double plant_value) {
   msg_plant_state_.data = plant_value;
-  plant_state_current_ = plant_value;
+  // plant_state_current_ = plant_value;
   pub_plant_state_.publish(msg_plant_state_);
+}
+
+void Axis::setPlantStateVal(double plant_value) {
+  plant_state_current_ = plant_value;
 }
 
 void Axis::setEnabled(bool enabled) {

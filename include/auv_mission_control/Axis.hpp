@@ -59,6 +59,8 @@ public:
 
   void setPlantState(double plant_value);
 
+  void setPlantStateVal(double plant_value);
+
   void setEnabled(bool enabled);
 
   void setZero();

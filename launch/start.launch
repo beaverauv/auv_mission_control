@@ -6,4 +6,6 @@
   </node>
 
 
+  <include file="$(find auv_thruster_control)/launch/thruster_control_pid.launch" />
+
 </launch>

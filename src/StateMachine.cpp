@@ -30,6 +30,12 @@ int StateMachine::execute() {
   state_->box().pm_->startEnsuringDepth();
   state_->box().pm_->startEnsuringYaw();
 
+  while (!state_->box().pm_->isImuCalled() && ros::ok()) {
+    ros::spinOnce();
+    state_->box().pm_->updatePlantState(AXIS::YAW);
+    state_->box().pm_->setZero(AXIS::YAW);
+  }
+
   while (ros::ok()) {
     ros::spinOnce();
 
@@ -73,7 +79,7 @@ void StateMachine::Init::run() {
   // Top::box().self_->queueState<Move<Nowhere>>(
   //     {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {10.0, 5.0, 45.0}, 3.0);
 
-  // Top::box().self_->queueState<Move<Test>>({AXIS::HEAVE, AXIS::SURGE},
+  // Top::box().self_->queueState<Move<Test>>({AXIS::YAW, AXIS::SURGE},
   //                                          {6.0, 10.0}, 400.0);
 
   Top::box().self_->queueState<Move<Test>>({AXIS::SURGE}, {10.0}, 400.0);

@@ -115,9 +115,11 @@ double PidManager::getDepth() {
   return is_sub_depth_called_ ? position_heave_ : 0;
 }
 
-bool PidManager::getStart() { return start_switch_; }
+bool PidManager::isStarted() { return start_switch_; }
 
-bool PidManager::getKill() { return kill_switch_; }
+bool PidManager::isKilled() { return kill_switch_; }
+
+bool PidManager::isImuCalled() { return is_sub_imu_called_; }
 
 void PidManager::ensureDepth() {
   if (should_ensure_depth_)
@@ -137,10 +139,8 @@ void PidManager::stopEnsuringDepth() { should_ensure_depth_ = false; }
 
 void PidManager::stopEnsuringYaw() { should_ensure_yaw_ = false; }
 
-// bool PidManager::getTimeout() { re}
-
 void PidManager::callbackImu(const sensor_msgs::Imu::ConstPtr &msg_imu) {
-  yaw_.plant_state_current_ = msg_imu->orientation.z;
+  yaw_.setPlantStateVal(msg_imu->orientation.z);
   velocity_surge_ = msg_imu->linear_acceleration.x;
   velocity_sway_ = msg_imu->linear_acceleration.y;
 
