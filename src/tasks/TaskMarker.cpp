@@ -6,8 +6,6 @@ TaskMarker::TaskMarker() {}
 
 TaskMarker::TaskMarker(std::shared_ptr<PidManager> pm,
                        std::shared_ptr<Vision> vision) {
-  AUV_DEBUG("[Pointers] [PM]: %x", pm.get());
-  AUV_DEBUG("[Pointers] [VISION]: %x", vision.get());
   state_marker_->setPointer(pm);
   state_marker_->setPointer(vision);
   state_marker_->setPointer(std::shared_ptr<TaskMarker>(this));

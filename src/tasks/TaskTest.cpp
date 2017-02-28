@@ -6,9 +6,6 @@ TaskTest::TaskTest() {}
 
 TaskTest::TaskTest(std::shared_ptr<PidManager> pm,
                    std::shared_ptr<Vision> vision) {
-  AUV_DEBUG("[Pointers] [PM]: %x", pm.get());
-  AUV_DEBUG("[Pointers] [VISION]: %x", vision.get());
-
   state_test_->setPointer(pm);
   state_test_->setPointer(vision);
   state_test_->setPointer(std::shared_ptr<TaskTest>(this));

@@ -192,7 +192,7 @@
 //		 - Introduction of persistent boxes
 //		 - Speed and size optimizations
 //		 - Machine instance can be accessed in event handlers with
-//method
+// method
 //"machine"
 //
 //	  0.9 (released 2006-01-15):
@@ -209,9 +209,9 @@
 //		 - Initial release
 //
 
+#include <auv_mission_control/Task.hpp>
 #include <cassert>
 #include <new>
-// #include <auv_mission_control/Task.hpp>
 
 class TestAccess;
 
@@ -235,6 +235,7 @@ class TestAccess;
 // Use this macro in your class definition to give it state functionality
 // (mandatory). If you have a state box declare it BEFORE macro invocation!
 #define STATE(S)                                                               \
+                                                                               \
 public:                                                                        \
   typedef S SELF;                                                              \
   typedef S ANCHOR; /* Anchor is the first non-template state in the           \
@@ -248,7 +249,12 @@ public:                                                                        \
   static const char *_state_name() { return #S; }                              \
   /* Get to your Box with this method: */                                      \
   Box &box() { return *static_cast<Box *>(_box()); }                           \
-  friend class ::_VS8_Bug_101615;
+  friend class ::_VS8_Bug_101615;                                              \
+                                                                               \
+  std::string getTag() {                                                       \
+    return Top::box().self_->getTaskTag() + std::string("[State]") +           \
+           std::string("[") + std::string(#S) + std::string("]");              \
+  }
 
 // Use this macro in your template class definition to give it state
 // functionality

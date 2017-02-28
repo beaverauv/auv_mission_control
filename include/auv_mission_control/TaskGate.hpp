@@ -25,7 +25,7 @@ public:
   TaskGate(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
   ~TaskGate();
 
-  std::string getTag() { return std::string("[Task Gate]"); }
+  std::string getTaskTag() { return std::string("[Task Gate]"); }
 
   int execute();
   void prepare(std::shared_ptr<StateMachine> statemachine);
@@ -64,7 +64,7 @@ private:
   double plantState_surge;
 
   TOPSTATE(Top) {
-    std::string getTag() { return std::string("[StateGate]"); }
+    // std::string getTag() { return std::string("[StateGate]"); }
 
     // TOPSTATE(Top) {
     // Top state variables (visible to all substates)

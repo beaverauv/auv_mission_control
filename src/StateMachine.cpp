@@ -15,8 +15,6 @@ int main(int argc, char *argv[]) {
 }
 
 StateMachine::StateMachine() {
-  AUV_INFO("Init");
-
   state_->setPointer(std::shared_ptr<StateMachine>(this));
 }
 
@@ -27,14 +25,16 @@ int StateMachine::execute() {
 
   ros::Rate state_rate(20);
 
-  state_->box().pm_->startEnsuringDepth();
-  state_->box().pm_->startEnsuringYaw();
+  AUV_INFO("Waiting for IMU data...");
 
   while (!state_->box().pm_->isImuCalled() && ros::ok()) {
     ros::spinOnce();
     state_->box().pm_->updatePlantState(AXIS::YAW);
     state_->box().pm_->setZero(AXIS::YAW);
   }
+
+  state_->box().pm_->startEnsuringDepth();
+  state_->box().pm_->startEnsuringYaw();
 
   while (ros::ok()) {
     ros::spinOnce();
@@ -57,7 +57,6 @@ void StateMachine::Top::setPointer(std::shared_ptr<StateMachine> statemachine) {
 }
 
 void StateMachine::Init::run() {
-  AUV_INFO("%x", Top::box().self_.get());
   AUV_DEBUG("Init::run");
   AUV_DEBUG("Waiting for 3 seconds");
   // setState<Timer::Timer>(3.0, Buoy::alias);

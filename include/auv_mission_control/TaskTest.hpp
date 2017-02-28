@@ -18,7 +18,8 @@ public:
   TaskTest(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
   ~TaskTest();
 
-  std::string getTag() { return std::string("[Task Test]"); }
+  std::string getTaskTag() { return std::string("[Task Test]"); }
+
   int execute();
   void prepare(std::shared_ptr<StateMachine> statemachine);
 
@@ -51,7 +52,7 @@ private:
   int ramRedCounter = 0;
 
   TOPSTATE(Top) {
-    std::string getTag() { return std::string("[StateTest]"); }
+    // std::string getTag() { return std::string("[StateTest]"); }
 
     createStateBox(TaskTest);
 

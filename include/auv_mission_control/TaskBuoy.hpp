@@ -18,7 +18,8 @@ public:
   TaskBuoy(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
   ~TaskBuoy();
 
-  std::string getTag() { return std::string("[Task Buoy]"); }
+  std::string getTaskTag() { return std::string("[Task Buoy]"); }
+
   int execute();
   void prepare(std::shared_ptr<StateMachine> statemachine);
 
@@ -51,7 +52,7 @@ private:
   int ramRedCounter = 0;
 
   TOPSTATE(Top) {
-    std::string getTag() { return std::string("[StateBuoy]"); }
+    // std::string getTag() { return std::string("[StateBuoy]"); }
 
     // TOPSTATE(Top) {
     // Top state variables (visible to all substates)

@@ -1,7 +1,6 @@
 #include <auv_mission_control/Camera.hpp>
 
 Camera::Camera() {
-  AUV_INFO("Constructor");
   capFront.open(0);
 
   if (!capFront.isOpened()) {

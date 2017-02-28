@@ -20,13 +20,11 @@ public:
   StateMachine();
   ~StateMachine();
 
-  std::string getTag() { return std::string("[State Machine]"); }
+  std::string getTaskTag() { return std::string("[State Machine]"); }
 
   int execute();
 
   TOPSTATE(Top) {
-
-    std::string getTag() { return std::string("[State]"); }
 
     struct Box {
       Box()
@@ -61,15 +59,8 @@ public:
 
   private:
     // special actions
-    void entry() { AUV_DEBUG("Top::entry"); }
-    void init() {
-      AUV_DEBUG("Initalize");
-      AUV_DEBUG("[Pointers] [PM]: %x", box().pm_.get());
-      AUV_DEBUG("[Pointers] [CAM]: %x", box().cam_.get());
-      AUV_DEBUG("[Pointers] [VISION]: %x", box().vision_.get());
-      AUV_DEBUG("[Pointers] [GATE]: %x", box().gate_.get());
-      AUV_DEBUG("[Pointers] [BUOY]: %x", box().buoy_.get());
-    }
+    void entry() { AUV_DEBUG("Top entry"); }
+    void init() { AUV_INFO("Top Init"); }
   };
 
   // A substate

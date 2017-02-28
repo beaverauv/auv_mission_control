@@ -20,7 +20,7 @@ public:
   TaskMarker(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
   ~TaskMarker();
 
-  std::string getTag() { return std::string("[Task Marker]"); }
+  std::string getTaskTag() { return std::string("[Task Marker]"); }
 
   int execute();
   void prepare(std::shared_ptr<StateMachine> statemachine);
@@ -38,7 +38,7 @@ private:
   int counter_depth = 0;
 
   TOPSTATE(Top) {
-    std::string getTag() { return std::string("[StateMarker]"); }
+    // std::string getTag() { return std::string("[StateMarker]"); }
 
     // TOPSTATE(Top) {
     // Top state variables (visible to all substates)

@@ -73,7 +73,8 @@ public:                                                                        \
     }                                                                          \
                                                                                \
     return 1;                                                                  \
-  }
+  }                                                                            \
+  std::string getTag() { return getTaskTag(); }
 
 #define createMachineFunctions()                                               \
   template <class S> void setMachineState() { setState<S>(); }                 \

@@ -5,8 +5,6 @@ TaskBuoy::TaskBuoy() {}
 
 TaskBuoy::TaskBuoy(std::shared_ptr<PidManager> pm,
                    std::shared_ptr<Vision> vision) {
-  AUV_DEBUG("[Pointers] [PM]: %x", pm.get());
-  AUV_DEBUG("[Pointers] [VISION]: %x", vision.get());
   state_buoy_->setPointer(pm);
   state_buoy_->setPointer(vision);
   state_buoy_->setPointer(std::shared_ptr<TaskBuoy>(this));
