@@ -52,7 +52,6 @@ private:
   int ramRedCounter = 0;
 
   TOPSTATE(Top) {
-    // std::string getTag() { return std::string("[StateTest]"); }
 
     createStateBox(TaskTest);
 
@@ -65,48 +64,27 @@ private:
     void initialize() { setState<Init>(); }
 
     createPointerFunctions(TaskTest);
-
-    virtual void here() { AUV_INFO("TOP HERE"); }
-
-  private:
-    void entry() { AUV_DEBUG("Top::entry"); }
   };
 
   SUBSTATE(Init, Top) {
-    // State variables
 
-    STATE(Init)
-    // Event handler
+    STATE(Init);
+
     void run();
-    void here() { AUV_INFO("HERE"); }
-
-  private:
-    void entry() { AUV_DEBUG("Init::entry"); }
-
-    void init() {}
   };
 
-  SUBSTATE(Nowhere, Top){
+  SUBSTATE(Nowhere, Top) {
 
-    STATE(Nowhere)
+    STATE(Nowhere);
 
-        void run(){}
-
-    private : void entry(){}
+    void run() {}
   };
 
   SUBSTATE(Whatever, Top) {
-    // State variables
 
-    STATE(Whatever)
-    // Event handler
+    STATE(Whatever);
 
     void run();
-
-  private:
-    void entry() { AUV_DEBUG("Whatever::entry"); }
-
-    void init() { AUV_DEBUG("Whatever init"); }
   };
 
   Macho::Machine<TaskTest::Top> state_test_;

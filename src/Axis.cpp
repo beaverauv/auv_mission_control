@@ -20,7 +20,7 @@ PidParam *Axis::getPid(INPUT input) {
     return &pid_cam_bottom_;
   case INPUT::IMU_POS:
     return &pid_imu_pos_;
-  case INPUT::IMU_VEL:
+  case INPUT::IMU_ACCEL:
     return &pid_imu_vel_;
   case INPUT::DEPTH:
     return &pid_depth_;
@@ -58,8 +58,8 @@ void Axis::loadParams() {
   nh_.getParam(axis_name_ + "/input_imu_pos", values);
   loadParam(INPUT::IMU_POS, values);
 
-  nh_.getParam(axis_name_ + "/input_imu_vel", values);
-  loadParam(INPUT::IMU_VEL, values);
+  nh_.getParam(axis_name_ + "/input_imu_accel", values);
+  loadParam(INPUT::IMU_ACCEL, values);
 
   nh_.getParam(axis_name_ + "/input_depth", values);
   loadParam(INPUT::DEPTH, values);

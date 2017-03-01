@@ -19,8 +19,4 @@ void TaskBuoy::prepare(std::shared_ptr<StateMachine> statemachine) {
 
 int TaskBuoy::execute() { state_buoy_->run(); }
 
-void TaskBuoy::Init::run() {
-  AUV_DEBUG("Init::run");
-  AUV_DEBUG("Waiting for 3 seconds");
-  setState<Timer<Init>>(3.0);
-}
+void TaskBuoy::Init::run() { setState<Timer<Init>>(3.0); }

@@ -20,7 +20,7 @@ public:
   TaskMarker(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
   ~TaskMarker();
 
-  std::string getTaskTag() { return std::string("[Task Marker]"); }
+  std::string getTaskTag() { return std::string("[Task Mark]"); }
 
   int execute();
   void prepare(std::shared_ptr<StateMachine> statemachine);
@@ -38,10 +38,7 @@ private:
   int counter_depth = 0;
 
   TOPSTATE(Top) {
-    // std::string getTag() { return std::string("[StateMarker]"); }
 
-    // TOPSTATE(Top) {
-    // Top state variables (visible to all substates)
     createStateBox(TaskMarker);
 
     STATE(Top);
@@ -53,20 +50,13 @@ private:
     void initialize() { setState<Init>(); }
 
     createPointerFunctions(TaskMarker);
-
-  private:
-    void entry() { AUV_DEBUG("Top::entry"); }
   };
 
   SUBSTATE(Init, Top) {
-    // State variables
 
     STATE(Init);
-    // Event handler
-    void run();
 
-  private:
-    void entry() { AUV_DEBUG("Init::entry"); }
+    void run();
   };
 
   Macho::Machine<TaskMarker::Top> state_marker_;

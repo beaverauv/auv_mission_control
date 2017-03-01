@@ -67,20 +67,13 @@ private:
     void initialize() { setState<Init>(); }
 
     createPointerFunctions(TaskBuoy);
-
-  private:
-    void entry() { AUV_DEBUG("Top::entry"); }
   };
 
   SUBSTATE(Init, Top) {
-    // State variables
 
     STATE(Init);
-    // Event handler
-    void run();
 
-  private:
-    void entry() { AUV_DEBUG("Init::entry"); }
+    void run();
   };
 
   Macho::Machine<TaskBuoy::Top> state_buoy_;

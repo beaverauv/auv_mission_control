@@ -20,7 +20,7 @@ public:
   StateMachine();
   ~StateMachine();
 
-  std::string getTaskTag() { return std::string("[State Machine]"); }
+  std::string getTaskTag() { return std::string("[Task Main]"); }
 
   int execute();
 
@@ -56,92 +56,77 @@ public:
     virtual void run() {}
 
     void setPointer(std::shared_ptr<StateMachine> statemachine);
-
-  private:
-    // special actions
-    void entry() { AUV_DEBUG("Top entry"); }
-    void init() { AUV_INFO("Top Init"); }
   };
 
-  // A substate
   SUBSTATE(Init, Top) {
-    // State variables
-    STATE(Init)
 
-    // Event handler
+    STATE(Init);
+
     void run();
-
-  private:
-    void entry() { AUV_DEBUG("Init::entry"); }
   };
 
   SUBSTATE(Kill, Top) {
 
-    STATE(Kill)
+    STATE(Kill);
 
     void run();
-
-  private:
-    void entry() { AUV_DEBUG("Kill::entry"); }
   };
 
-  SUBSTATE(Nowhere, Top){
+  SUBSTATE(Nowhere, Top) {
 
-    STATE(Nowhere)
+    STATE(Nowhere);
 
-        void run(){}
-
-    private : void entry(){}
+    void run() {}
   };
 
   SUBSTATE(Test, Top) {
 
-    STATE(Test)
+    STATE(Test);
 
     void run();
 
   private:
     void init() {
-      AUV_DEBUG("Test::entry");
+      AUV_DEBUG("init");
       Top::box().test_->prepare(Top::box().self_);
     }
   };
 
   SUBSTATE(Gate, Top) {
 
-    STATE(Gate)
+    STATE(Gate);
 
     void run();
 
   private:
-    void entry() {
-      AUV_DEBUG("Gate::entry");
+    void init() {
+      AUV_DEBUG("init");
       Top::box().gate_->prepare(Top::box().self_);
     }
   };
 
   SUBSTATE(Buoy, Top) {
 
-    STATE(Buoy)
+    STATE(Buoy);
 
     void run();
 
   private:
-    void entry() {
-      AUV_DEBUG("Buoy::entry");
+    void init() {
+      AUV_DEBUG("init");
       Top::box().buoy_->prepare(Top::box().self_);
     }
   };
 
   SUBSTATE(Marker, Top) {
 
-    STATE(Marker)
+    STATE(Marker);
 
     void run();
 
   private:
-    void entry() {
-      AUV_DEBUG("Marker::entry");
+    void init() {
+      AUV_DEBUG("init");
       Top::box().marker_->prepare(Top::box().self_);
     }
   };

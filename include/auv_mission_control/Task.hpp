@@ -9,7 +9,7 @@
 
 class StateMachine;
 
-enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_VEL, DEPTH };
+enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 
 #define SUB_SUCCEEDED 0

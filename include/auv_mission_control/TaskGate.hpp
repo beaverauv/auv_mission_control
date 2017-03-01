@@ -64,10 +64,7 @@ private:
   double plantState_surge;
 
   TOPSTATE(Top) {
-    // std::string getTag() { return std::string("[StateGate]"); }
 
-    // TOPSTATE(Top) {
-    // Top state variables (visible to all substates)
     createStateBox(TaskGate);
 
     STATE(Top);
@@ -79,20 +76,13 @@ private:
     void initialize() { setState<Init>(); }
 
     createPointerFunctions(TaskGate);
-
-  private:
-    void entry() { AUV_DEBUG("Top::entry"); }
   };
 
   SUBSTATE(Init, Top) {
-    // State variables
 
     STATE(Init)
-    // Event handler
-    void run();
 
-  private:
-    void entry() { AUV_DEBUG("Init::entry"); }
+    void run();
   };
 
   Macho::Machine<TaskGate::Top> state_gate_;

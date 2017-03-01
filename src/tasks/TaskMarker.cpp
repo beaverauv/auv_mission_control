@@ -20,8 +20,4 @@ void TaskMarker::prepare(std::shared_ptr<StateMachine> statemachine) {
 
 int TaskMarker::execute() { state_marker_->run(); }
 
-void TaskMarker::Init::run() {
-  AUV_DEBUG("Init::run");
-  AUV_DEBUG("Waiting for 3 seconds");
-  setState<Timer<Init>>(3.0);
-}
+void TaskMarker::Init::run() { setState<Timer<Init>>(3.0); }

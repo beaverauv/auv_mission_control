@@ -4,7 +4,7 @@
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "state_machine");
   if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
-                                     ros::console::levels::Debug)) {
+                                     ros::console::levels::Info)) {
     ros::console::notifyLoggerLevelsChanged();
   }
   auto statemachine = std::make_shared<StateMachine>();
@@ -57,8 +57,6 @@ void StateMachine::Top::setPointer(std::shared_ptr<StateMachine> statemachine) {
 }
 
 void StateMachine::Init::run() {
-  AUV_DEBUG("Init::run");
-  AUV_DEBUG("Waiting for 3 seconds");
   // setState<Timer::Timer>(3.0, Buoy::alias);
   // AUV_DEBUG("StateMachine::Init::run: ID %d", Macho::State<Top>()._KeyData)
   // Macho::IEvent<StateMachine::Top> *event =
@@ -81,7 +79,7 @@ void StateMachine::Init::run() {
   // Top::box().self_->queueState<Move<Test>>({AXIS::YAW, AXIS::SURGE},
   //                                          {6.0, 10.0}, 400.0);
 
-  Top::box().self_->queueState<Move<Test>>({AXIS::SURGE}, {10.0}, 400.0);
+  Top::box().self_->queueState<Move<Test>>({AXIS::SURGE}, {26.0}, 10.0);
 
   // std::vector<INPUT> in1 = {INPUT::IMU_POS};
   // std::vector<double> in2 = {10.0};

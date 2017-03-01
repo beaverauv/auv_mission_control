@@ -30,6 +30,7 @@ template <class T> TSUBSTATE(Timer, T) {
     Box()
         : wait_time_(0), start_time_(0), event_(0), isEventSet(false),
           alias_(TOP::alias()), isAliasSet(false) {}
+
     double wait_time_;
     double start_time_;
 
@@ -39,12 +40,13 @@ template <class T> TSUBSTATE(Timer, T) {
     Macho::Alias alias_;
     bool isAliasSet;
   };
-  TSTATE(Timer)
+  TSTATE(Timer);
   inline void run() {
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
       if (box().isEventSet) {
         LINK::dispatch(box().event_);
       }
+      printstate();
       if (box().isAliasSet) {
         SUPER::TOP::box().statemachine_->queueEnable();
         SUPER::TOP::box().statemachine_->template queueStateAlias(box().alias_);
@@ -56,24 +58,43 @@ template <class T> TSUBSTATE(Timer, T) {
     }
     return;
   }
+  inline bool isAliasNamed(std::string state) {
+    return !state.compare(SUPER::alias().name());
+  }
+  inline void printstate() {
+    if (box().isAliasSet) {
+      Task::AUV_INFO("Switching to Task %s", box().alias_.name());
+    } else {
+      if ((isAliasNamed("Nowhere") || isAliasNamed("Test")) ||
+          (isAliasNamed("Whatever") || isAliasNamed("Init")))
+        return;
+      Task::AUV_INFO("Switching to State %s", SUPER::alias().name());
+    }
+  }
 
 private:
-  inline void init(double waitTime) {
-    box().wait_time_ = waitTime;
+  inline void init(double wait_time) {
+    box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
+    Task::AUV_INFO("Switched to Timer State");
+    Task::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
   }
-  inline void init(double waitTime, Macho::IEvent<typename T::Top> *event) {
-    box().wait_time_ = waitTime;
+  inline void init(double wait_time, Macho::IEvent<typename T::Top> *event) {
+    box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
     box().isEventSet = true;
     box().event_ = event;
+    Task::AUV_INFO("Switched to Timer State");
+    Task::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
   }
   // void init(double waitTime, int i);
-  inline void init(double waitTime, Macho::Alias alias) {
-    box().wait_time_ = waitTime;
+  inline void init(double wait_time, Macho::Alias alias) {
+    box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
     box().alias_ = alias;
     box().isAliasSet = true;
+    Task::AUV_INFO("Switched to Timer State");
+    Task::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
   }
 };
 
@@ -100,13 +121,13 @@ template <class T> TSUBSTATE(Move, T) {
       box().is_first_run_ = true;
 
       if (box().axis_.size() != box().values_.size()) {
-        ROS_ERROR("[Template State] State received mismatched parameters");
-
+        Task::AUV_ERROR(
+            "[Template State] State received mismatched parameters");
+        printstate();
         if (box().isAliasSet) {
           SUPER::TOP::box().statemachine_->queueEnable();
           SUPER::TOP::box().statemachine_->template queueStateAlias(
               box().alias_);
-          // TOP::box().self_->template queueStateAlias(TOP::alias());
         } else {
           TOP::box().self_->queueEnable();
           TOP::box().self_->template queueStateAlias(SUPER::alias());
@@ -119,7 +140,7 @@ template <class T> TSUBSTATE(Move, T) {
         switch (box().axis_.at(i)) {
         case AXIS::SURGE:
         case AXIS::SWAY:
-          input = INPUT::IMU_VEL;
+          input = INPUT::IMU_ACCEL;
           break;
         case AXIS::ROLL:
         case AXIS::PITCH:
@@ -141,16 +162,35 @@ template <class T> TSUBSTATE(Move, T) {
     }
 
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
-
+      printstate();
       if (box().isAliasSet) {
         SUPER::TOP::box().statemachine_->queueEnable();
         SUPER::TOP::box().statemachine_->template queueStateAlias(box().alias_);
-        // TOP::box().self_->template queueStateAlias(TOP::alias());
       } else {
         TOP::box().self_->queueEnable();
         TOP::setState(SUPER::alias());
       }
       return;
+    }
+  }
+  inline bool isAliasNamed(std::string state) {
+    return !state.compare(SUPER::alias().name());
+  }
+  inline void printstate() {
+    if (box().isAliasSet) {
+      Task::AUV_INFO("Switching to Task %s", box().alias_.name());
+    } else {
+      if ((isAliasNamed("Nowhere") || isAliasNamed("Test")) ||
+          (isAliasNamed("Whatever") || isAliasNamed("Init")))
+        return;
+      Task::AUV_INFO("Switching to State %s", SUPER::alias().name());
+    }
+  }
+  inline void printaxis() {
+    for (unsigned i : util::lang::indices(box().axis_)) {
+      SUPER::AUV_INFO("Axis %s: %.1f",
+                      TOP::box().pm_->getAxisName(box().axis_.at(i)).c_str(),
+                      box().values_.at(i));
     }
   }
 
@@ -163,10 +203,9 @@ private:
 
     box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
-    ROS_INFO("Move State");
-    for (unsigned i : util::lang::indices(box().axis_)) {
-      ROS_INFO("Axis %d: %f", (int)box().axis_.at(i), box().values_.at(i));
-    }
+    Task::AUV_INFO("Switched to Move State");
+    Task::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
+    printaxis();
   }
 
   inline void init(std::vector<AXIS> axis, std::vector<double> values,
@@ -178,11 +217,9 @@ private:
     box().start_time_ = ros::Time::now().toSec();
     box().alias_ = alias;
     box().isAliasSet = true;
-
-    ROS_INFO("Move State");
-    for (unsigned i : util::lang::indices(box().axis_)) {
-      ROS_INFO("Axis %d: %f", (int)box().axis_.at(i), box().values_.at(i));
-    }
+    Task::AUV_INFO("Switched to Move State");
+    Task::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
+    printaxis();
   }
 };
 

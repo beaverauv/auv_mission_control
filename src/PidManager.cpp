@@ -47,6 +47,23 @@ Axis *PidManager::getAxis(AXIS axis) {
   }
 }
 
+std::string PidManager::getAxisName(AXIS axis) {
+  switch (axis) {
+  case AXIS::SURGE:
+    return std::string("Surge");
+  case AXIS::SWAY:
+    return std::string("Sway");
+  case AXIS::HEAVE:
+    return std::string("Heave");
+  case AXIS::ROLL:
+    return std::string("Roll");
+  case AXIS::PITCH:
+    return std::string("Pitch");
+  case AXIS::YAW:
+    return std::string("Yaw");
+  }
+}
+
 // void PidManager::updateParams(AXIS axis) {
 //    getAxis(axis)->updateParams();
 // }

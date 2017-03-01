@@ -25,8 +25,6 @@ int TaskTest::execute() {
 }
 
 void TaskTest::Init::run() {
-  AUV_INFO("Init::run");
-  AUV_DEBUG("Waiting for 3 seconds");
   // setState<Timer::Timer<Whatever>>(3.0, Macho::Event(&Top::here));
   // setState<Timer::Timer<Init> >(3.0, Top::box().self_);
   // setState<Timer::Timer<Init> >(3.0, StateMachine::Test::alias());

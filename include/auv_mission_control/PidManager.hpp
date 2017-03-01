@@ -30,7 +30,7 @@
 #define INPUT_CAM_FRONT 0
 #define INPUT_CAM_BTM 1
 #define INPUT_IMU_POS 2
-#define INPUT_IMU_VEL 3
+#define INPUT_IMU_ACCEL 3
 #define INPUT_DEPTH 4
 // #define IMU_YAW 5
 
@@ -44,6 +44,8 @@ public:
   ros::NodeHandle nh_;
 
   Axis *getAxis(AXIS axis);
+
+  std::string getAxisName(AXIS axis);
 
   void setControlEffort(AXIS axis, double speed);
 
