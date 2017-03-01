@@ -140,8 +140,11 @@ template <class T> TSUBSTATE(Move, T) {
         switch (box().axis_.at(i)) {
         case AXIS::SURGE:
         case AXIS::SWAY:
-          input = INPUT::IMU_ACCEL;
-          break;
+          SUPER::TOP::box().pm_->setEnabled(box().axis_.at(i), false);
+          SUPER::TOP::box().pm_->setControlEffort(box().axis_.at(i),
+                                                  box().values_.at(i));
+
+          return;
         case AXIS::ROLL:
         case AXIS::PITCH:
         case AXIS::YAW:
