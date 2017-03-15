@@ -253,8 +253,8 @@ template <class T> TSUBSTATE(MoveTest, T) {
             "[Template State] State received mismatched parameters");
         printstate();
         if (box().isAliasSet) {
-          SUPER::TOP::box().pc_->sm_->queueEnable();
-          SUPER::TOP::box().pc_->sm_->template queueStateAlias(box().alias_);
+          SUPER::TOP::box().ph_->sm_->queueEnable();
+          SUPER::TOP::box().ph_->sm_->template queueStateAlias(box().alias_);
         } else {
           TOP::box().self_->queueEnable();
           TOP::box().self_->template queueStateAlias(SUPER::alias());
@@ -267,8 +267,8 @@ template <class T> TSUBSTATE(MoveTest, T) {
         switch (box().axis_.at(i)) {
         case AXIS::SURGE:
         case AXIS::SWAY:
-          SUPER::TOP::box().pc_->pm_->setEnabled(box().axis_.at(i), false);
-          SUPER::TOP::box().pc_->pm_->setControlEffort(box().axis_.at(i),
+          SUPER::TOP::box().ph_->pm_->setEnabled(box().axis_.at(i), false);
+          SUPER::TOP::box().ph_->pm_->setControlEffort(box().axis_.at(i),
                                                        box().values_.at(i));
 
           break;
@@ -281,21 +281,21 @@ template <class T> TSUBSTATE(MoveTest, T) {
           input = INPUT::DEPTH;
           break;
         }
-        SUPER::TOP::box().pc_->pm_->setEnabled(box().axis_.at(i), true);
-        SUPER::TOP::box().pc_->pm_->setSetpoint(box().axis_.at(i), input,
+        SUPER::TOP::box().ph_->pm_->setEnabled(box().axis_.at(i), true);
+        SUPER::TOP::box().ph_->pm_->setSetpoint(box().axis_.at(i), input,
                                                 box().values_.at(i));
       }
     }
 
     for (auto axis : box().axis_) {
-      SUPER::TOP::box().pc_->pm_->updatePlantState(axis);
+      SUPER::TOP::box().ph_->pm_->updatePlantState(axis);
     }
 
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
       printstate();
       if (box().isAliasSet) {
-        SUPER::TOP::box().pc_->sm_->queueEnable();
-        SUPER::TOP::box().pc_->sm_->template queueStateAlias(box().alias_);
+        SUPER::TOP::box().ph_->sm_->queueEnable();
+        SUPER::TOP::box().ph_->sm_->template queueStateAlias(box().alias_);
       } else {
         TOP::box().self_->queueEnable();
         TOP::setState(SUPER::alias());
@@ -320,7 +320,7 @@ template <class T> TSUBSTATE(MoveTest, T) {
     for (unsigned i : util::lang::indices(box().axis_)) {
       SUPER::AUV_INFO(
           "Axis %s: %.1f",
-          TOP::box().pc_->pm_->getAxisName(box().axis_.at(i)).c_str(),
+          TOP::box().ph_->pm_->getAxisName(box().axis_.at(i)).c_str(),
           box().values_.at(i));
     }
   }

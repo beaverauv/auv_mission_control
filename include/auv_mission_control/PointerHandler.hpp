@@ -12,10 +12,10 @@
 #include <auv_mission_control/TaskTest.hpp>
 #include <auv_mission_control/Vision.hpp>
 
-class PointerController : public Task {
+class PointerHandler : public Task {
 public:
-  PointerController() {}
-  ~PointerController() {}
+  PointerHandler() {}
+  ~PointerHandler() {}
 
   std::string getTag() { return std::string("[Pointer Holder]"); }
 

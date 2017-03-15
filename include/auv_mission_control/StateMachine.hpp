@@ -28,7 +28,7 @@ public:
 
     struct Box {
       Box() {}
-      std::shared_ptr<PointerController> pc_;
+      std::shared_ptr<PointerHandler> ph_;
       std::shared_ptr<StateMachine> self_;
     };
 
@@ -67,7 +67,7 @@ public:
     void run();
 
   private:
-    void init() { Top::box().pc_->test_->prepare(Top::box().self_); }
+    void init() { Top::box().ph_->test_->prepare(Top::box().self_); }
   };
 
   SUBSTATE(Gate, Top) {
@@ -77,7 +77,7 @@ public:
     void run();
 
   private:
-    void init() { Top::box().pc_->gate_->prepare(Top::box().self_); }
+    void init() { Top::box().ph_->gate_->prepare(Top::box().self_); }
   };
 
   SUBSTATE(Buoy, Top) {
@@ -87,7 +87,7 @@ public:
     void run();
 
   private:
-    void init() { Top::box().pc_->buoy_->prepare(Top::box().self_); }
+    void init() { Top::box().ph_->buoy_->prepare(Top::box().self_); }
   };
 
   SUBSTATE(Marker, Top) {
@@ -97,10 +97,10 @@ public:
     void run();
 
   private:
-    void init() { Top::box().pc_->marker_->prepare(Top::box().self_); }
+    void init() { Top::box().ph_->marker_->prepare(Top::box().self_); }
   };
 
-  std::shared_ptr<PointerController> pc_;
+  std::shared_ptr<PointerHandler> ph_;
 
   Macho::Machine<StateMachine::Top> state_;
 

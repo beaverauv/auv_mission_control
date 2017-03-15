@@ -14,20 +14,20 @@ int main(int argc, char *argv[]) {
   statemachine->execute();
 }
 
-StateMachine::StateMachine() : pc_(std::make_shared<PointerController>()) {
+StateMachine::StateMachine() : ph_(std::make_shared<PointerHandler>()) {
   state_->box().self_ = std::shared_ptr<StateMachine>(this);
 
-  pc_->sm_ = std::shared_ptr<StateMachine>(this);
-  pc_->mission_ = std::make_shared<Mission>();
-  pc_->pm_ = std::make_shared<PidManager>();
-  pc_->cam_ = std::make_shared<Camera>();
-  pc_->vision_ = std::make_shared<Vision>(pc_->cam_);
-  pc_->test_ = std::make_shared<TaskTest>(pc_->pm_, pc_->vision_);
-  pc_->gate_ = std::make_shared<TaskGate>(pc_->pm_, pc_->vision_);
-  pc_->buoy_ = std::make_shared<TaskBuoy>(pc_->pm_, pc_->vision_);
-  pc_->marker_ = std::make_shared<TaskMarker>(pc_->pm_, pc_->vision_);
+  ph_->sm_ = std::shared_ptr<StateMachine>(this);
+  ph_->mission_ = std::make_shared<Mission>();
+  ph_->pm_ = std::make_shared<PidManager>();
+  ph_->cam_ = std::make_shared<Camera>();
+  ph_->vision_ = std::make_shared<Vision>(ph_->cam_);
+  ph_->test_ = std::make_shared<TaskTest>(ph_->pm_, ph_->vision_);
+  ph_->gate_ = std::make_shared<TaskGate>(ph_->pm_, ph_->vision_);
+  ph_->buoy_ = std::make_shared<TaskBuoy>(ph_->pm_, ph_->vision_);
+  ph_->marker_ = std::make_shared<TaskMarker>(ph_->pm_, ph_->vision_);
 
-  state_->box().pc_ = pc_;
+  state_->box().ph_ = ph_;
 }
 
 StateMachine::~StateMachine() {}
@@ -39,23 +39,23 @@ int StateMachine::execute() {
 
   AUV_INFO("Waiting for IMU data...");
 
-  while (!pc_->pm_->isImuCalled() && ros::ok()) {
+  while (!ph_->pm_->isImuCalled() && ros::ok()) {
     ros::spinOnce();
-    pc_->pm_->updatePlantState(AXIS::YAW);
-    pc_->pm_->setZero(AXIS::YAW);
+    ph_->pm_->updatePlantState(AXIS::YAW);
+    ph_->pm_->setZero(AXIS::YAW);
   }
 
-  pc_->pm_->startEnsuringDepth();
-  pc_->pm_->startEnsuringYaw();
+  ph_->pm_->startEnsuringDepth();
+  ph_->pm_->startEnsuringYaw();
 
   while (ros::ok()) {
     ros::spinOnce();
 
     state_rate.sleep();
 
-    pc_->pm_->ensureDepth();
+    ph_->pm_->ensureDepth();
 
-    pc_->pm_->ensureYaw();
+    ph_->pm_->ensureYaw();
 
     if (checkEventQueue()) {
       state_->run();
@@ -97,13 +97,13 @@ void StateMachine::Init::run() {
   // setState<Move<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
 }
 
-void StateMachine::Test::run() { Top::box().pc_->test_->execute(); }
+void StateMachine::Test::run() { Top::box().ph_->test_->execute(); }
 
-void StateMachine::Gate::run() { Top::box().pc_->gate_->execute(); }
+void StateMachine::Gate::run() { Top::box().ph_->gate_->execute(); }
 
-void StateMachine::Buoy::run() { Top::box().pc_->buoy_->execute(); }
+void StateMachine::Buoy::run() { Top::box().ph_->buoy_->execute(); }
 
-void StateMachine::Marker::run() { Top::box().pc_->marker_->execute(); }
+void StateMachine::Marker::run() { Top::box().ph_->marker_->execute(); }
 
 void StateMachine::Kill::run() {
   // AUV_ERROR("Kill::run");
