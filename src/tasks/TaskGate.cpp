@@ -20,4 +20,4 @@ void TaskGate::prepare(std::shared_ptr<StateMachine> statemachine) {
 
 int TaskGate::execute() { state_gate_->run(); } // execute
 
-void TaskGate::Init::run() { setState<Timer<Init>>(3.0); }
+void TaskGate::Init::run() { setState<TimerOld<Init>>(3.0); }

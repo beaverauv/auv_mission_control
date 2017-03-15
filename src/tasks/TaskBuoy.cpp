@@ -19,4 +19,4 @@ void TaskBuoy::prepare(std::shared_ptr<StateMachine> statemachine) {
 
 int TaskBuoy::execute() { state_buoy_->run(); }
 
-void TaskBuoy::Init::run() { setState<Timer<Init>>(3.0); }
+void TaskBuoy::Init::run() { setState<TimerOld<Init>>(3.0); }

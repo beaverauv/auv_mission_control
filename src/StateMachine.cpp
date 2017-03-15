@@ -14,20 +14,18 @@ int main(int argc, char *argv[]) {
   statemachine->execute();
 }
 
-StateMachine::StateMachine() : ph_(std::make_shared<PointerHandler>()) {
-  state_->box().self_ = std::shared_ptr<StateMachine>(this);
-
+StateMachine::StateMachine()
+    : ph_(std::make_shared<PointerHandler>()),
+      state_(Macho::State<Top>(this, ph_)) {
   ph_->sm_ = std::shared_ptr<StateMachine>(this);
   ph_->mission_ = std::make_shared<Mission>();
   ph_->pm_ = std::make_shared<PidManager>();
   ph_->cam_ = std::make_shared<Camera>();
   ph_->vision_ = std::make_shared<Vision>(ph_->cam_);
-  ph_->test_ = std::make_shared<TaskTest>(ph_->pm_, ph_->vision_);
+  ph_->test_ = std::make_shared<TaskTest>(ph_);
   ph_->gate_ = std::make_shared<TaskGate>(ph_->pm_, ph_->vision_);
   ph_->buoy_ = std::make_shared<TaskBuoy>(ph_->pm_, ph_->vision_);
   ph_->marker_ = std::make_shared<TaskMarker>(ph_->pm_, ph_->vision_);
-
-  state_->box().ph_ = ph_;
 }
 
 StateMachine::~StateMachine() {}
@@ -63,30 +61,36 @@ int StateMachine::execute() {
   }
 }
 
+void StateMachine::Top::init(StateMachine *self,
+                             std::shared_ptr<PointerHandler> ph) {
+  box().self_ = std::shared_ptr<StateMachine>(self);
+  box().ph_ = ph;
+}
+
 void StateMachine::Init::run() {
   // setState<Timer::Timer>(3.0, Buoy::alias);
   // AUV_DEBUG("StateMachine::Init::run: ID %d", Macho::State<Top>()._KeyData)
   // Macho::IEvent<StateMachine::Top> *event =
   //     Macho::Event(&StateMachine::Top::whatever);
   // setState<Timer::Timer>
-  // setState<Timer<Init>>(3.0);
-  // setState<Move<Init>>({INPUT::IMU_POS}, {10.0}, 3.0);
+  // setState<TimerOld<Init>>(3.0);
+  // setState<MoveOld<Init>>({INPUT::IMU_POS}, {10.0}, 3.0);
 
-  // setState<Move<Test>>(std::initializer_list<INPUT>{INPUT::IMU_POS},
+  // setState<MoveOld<Test>>(std::initializer_list<INPUT>{INPUT::IMU_POS},
   //  std::initializer_list<double>{10.0}, 3.0);
-  // setState<Move<Test>>(AxisVec{AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
+  // setState<MoveOld<Test>>(AxisVec{AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
   //                      ValuesVec{10.0, 5.0, 45.0}, 3.0);
   Top::box().self_->queueEnable();
 
-  // Top::box().self_->queueState<Timer<Nowhere>>(10.0);
+  // Top::box().self_->queueState<TimerOld<Nowhere>>(10.0);
   //
-  // Top::box().self_->queueState<Move<Nowhere>>(
+  // Top::box().self_->queueState<MoveOld<Nowhere>>(
   //     {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {10.0, 5.0, 45.0}, 3.0);
 
-  // Top::box().self_->queueState<Move<Test>>({AXIS::YAW, AXIS::SURGE},
+  // Top::box().self_->queueState<MoveOld<Test>>({AXIS::YAW, AXIS::SURGE},
   //                                          {6.0, 10.0}, 400.0);
 
-  Top::box().self_->queueState<MoveTest<Test>>({AXIS::SURGE}, {26.0}, 10.0);
+  Top::box().self_->queueState<Move<Test>>({AXIS::SURGE}, {26.0}, 10.0);
 
   // std::vector<INPUT> in1 = {INPUT::IMU_POS};
   // std::vector<double> in2 = {10.0};
@@ -94,7 +98,7 @@ void StateMachine::Init::run() {
   // foo<char, int> f2;
   // bar(f1, f2, 9);
 
-  // setState<Move<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
+  // setState<MoveOld<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
 }
 
 void StateMachine::Test::run() { Top::box().ph_->test_->execute(); }

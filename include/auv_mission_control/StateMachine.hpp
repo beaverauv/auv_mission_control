@@ -37,6 +37,9 @@ public:
     createMachineFunctions();
 
     virtual void run() {}
+
+  private:
+    void init(StateMachine * self, std::shared_ptr<PointerHandler> ph);
   };
 
   SUBSTATE(Init, Top) {
@@ -65,9 +68,6 @@ public:
     STATE(Test);
 
     void run();
-
-  private:
-    void init() { Top::box().ph_->test_->prepare(Top::box().self_); }
   };
 
   SUBSTATE(Gate, Top) {
@@ -102,7 +102,7 @@ public:
 
   std::shared_ptr<PointerHandler> ph_;
 
-  Macho::Machine<StateMachine::Top> state_;
+  Macho::Machine<Top> state_;
 
   createQueue(StateMachine, state_)
 };
