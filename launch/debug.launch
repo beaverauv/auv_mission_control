@@ -1,0 +1,12 @@
+<launch>
+
+  <rosparam file="$(find auv_mission_control)/cfg/pid.yaml" />
+
+  <node pkg="auv_mission_control" type="state_machine_node" name="$(anon state_machine_cont)" 
+  output="screen" launch-prefix="valgrind">
+  </node>
+
+
+  <include file="$(find auv_thruster_control)/launch/thruster_control_pid.launch" />
+
+</launch>
