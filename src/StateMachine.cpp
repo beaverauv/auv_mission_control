@@ -4,7 +4,7 @@
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "state_machine");
   if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
-                                     ros::console::levels::Info)) {
+                                     ros::console::levels::Debug)) {
     ros::console::notifyLoggerLevelsChanged();
   }
   auto statemachine = std::make_shared<StateMachine>();
@@ -14,8 +14,20 @@ int main(int argc, char *argv[]) {
   statemachine->execute();
 }
 
-StateMachine::StateMachine() {
-  state_->setPointer(std::shared_ptr<StateMachine>(this));
+StateMachine::StateMachine() : pc_(std::make_shared<PointerController>()) {
+  state_->box().self_ = std::shared_ptr<StateMachine>(this);
+
+  pc_->sm_ = std::shared_ptr<StateMachine>(this);
+  pc_->mission_ = std::make_shared<Mission>();
+  pc_->pm_ = std::make_shared<PidManager>();
+  pc_->cam_ = std::make_shared<Camera>();
+  pc_->vision_ = std::make_shared<Vision>(pc_->cam_);
+  pc_->test_ = std::make_shared<TaskTest>(pc_->pm_, pc_->vision_);
+  pc_->gate_ = std::make_shared<TaskGate>(pc_->pm_, pc_->vision_);
+  pc_->buoy_ = std::make_shared<TaskBuoy>(pc_->pm_, pc_->vision_);
+  pc_->marker_ = std::make_shared<TaskMarker>(pc_->pm_, pc_->vision_);
+
+  state_->box().pc_ = pc_;
 }
 
 StateMachine::~StateMachine() {}
@@ -27,33 +39,28 @@ int StateMachine::execute() {
 
   AUV_INFO("Waiting for IMU data...");
 
-  while (!state_->box().pm_->isImuCalled() && ros::ok()) {
+  while (!pc_->pm_->isImuCalled() && ros::ok()) {
     ros::spinOnce();
-    state_->box().pm_->updatePlantState(AXIS::YAW);
-    state_->box().pm_->setZero(AXIS::YAW);
+    pc_->pm_->updatePlantState(AXIS::YAW);
+    pc_->pm_->setZero(AXIS::YAW);
   }
 
-  state_->box().pm_->startEnsuringDepth();
-  state_->box().pm_->startEnsuringYaw();
+  pc_->pm_->startEnsuringDepth();
+  pc_->pm_->startEnsuringYaw();
 
   while (ros::ok()) {
     ros::spinOnce();
 
     state_rate.sleep();
 
-    state_->box().pm_->ensureDepth();
+    pc_->pm_->ensureDepth();
 
-    state_->box().pm_->ensureYaw();
+    pc_->pm_->ensureYaw();
 
     if (checkEventQueue()) {
       state_->run();
     }
   }
-}
-
-void StateMachine::Top::setPointer(std::shared_ptr<StateMachine> statemachine) {
-  box().self_ = statemachine;
-  box().statemachine_ = statemachine;
 }
 
 void StateMachine::Init::run() {
@@ -79,7 +86,7 @@ void StateMachine::Init::run() {
   // Top::box().self_->queueState<Move<Test>>({AXIS::YAW, AXIS::SURGE},
   //                                          {6.0, 10.0}, 400.0);
 
-  Top::box().self_->queueState<Move<Test>>({AXIS::SURGE}, {26.0}, 10.0);
+  Top::box().self_->queueState<MoveTest<Test>>({AXIS::SURGE}, {26.0}, 10.0);
 
   // std::vector<INPUT> in1 = {INPUT::IMU_POS};
   // std::vector<double> in2 = {10.0};
@@ -90,13 +97,13 @@ void StateMachine::Init::run() {
   // setState<Move<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
 }
 
-void StateMachine::Test::run() { Top::box().test_->execute(); }
+void StateMachine::Test::run() { Top::box().pc_->test_->execute(); }
 
-void StateMachine::Gate::run() { Top::box().gate_->execute(); }
+void StateMachine::Gate::run() { Top::box().pc_->gate_->execute(); }
 
-void StateMachine::Buoy::run() { Top::box().buoy_->execute(); }
+void StateMachine::Buoy::run() { Top::box().pc_->buoy_->execute(); }
 
-void StateMachine::Marker::run() { Top::box().marker_->execute(); }
+void StateMachine::Marker::run() { Top::box().pc_->marker_->execute(); }
 
 void StateMachine::Kill::run() {
   // AUV_ERROR("Kill::run");

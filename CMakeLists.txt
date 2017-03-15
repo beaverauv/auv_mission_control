@@ -4,6 +4,8 @@ project(auv_mission_control)
 
 
 add_definitions("-std=c++14")
+add_definitions("-g")
+
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -32,6 +34,7 @@ ${OpenCV_INCLUDE_DIRS}
 
 add_executable(state_machine_node
   src/StateMachine.cpp
+  src/Mission.cpp
   src/Macho.cpp
   src/Axis.cpp
   src/PidManager.cpp

@@ -7,8 +7,8 @@
 #include <auv_mission_control/Camera.hpp>
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/PidManager.hpp>
-#include <auv_mission_control/TTask.hpp>
-// #include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/PointerHandler.hpp>
+#include <auv_mission_control/Task.hpp>
 #include <auv_mission_control/TaskBuoy.hpp>
 #include <auv_mission_control/TaskGate.hpp>
 #include <auv_mission_control/TaskMarker.hpp>
@@ -27,26 +27,9 @@ public:
   TOPSTATE(Top) {
 
     struct Box {
-      Box()
-          : nh_(std::make_shared<ros::NodeHandle>()),
-            pm_(std::make_shared<PidManager>()),
-            cam_(std::make_shared<Camera>()),
-            vision_(std::make_shared<Vision>(cam_)),
-            test_(std::make_shared<TaskTest>(pm_, vision_)),
-            gate_(std::make_shared<TaskGate>(pm_, vision_)),
-            buoy_(std::make_shared<TaskBuoy>(pm_, vision_)),
-            marker_(std::make_shared<TaskMarker>(pm_, vision_)) {}
-
-      std::shared_ptr<ros::NodeHandle> nh_;
+      Box() {}
+      std::shared_ptr<PointerController> pc_;
       std::shared_ptr<StateMachine> self_;
-      std::shared_ptr<StateMachine> statemachine_;
-      std::shared_ptr<PidManager> pm_;
-      std::shared_ptr<Camera> cam_;
-      std::shared_ptr<Vision> vision_;
-      std::shared_ptr<TaskTest> test_;
-      std::shared_ptr<TaskGate> gate_;
-      std::shared_ptr<TaskBuoy> buoy_;
-      std::shared_ptr<TaskMarker> marker_;
     };
 
     STATE(Top);
@@ -54,8 +37,6 @@ public:
     createMachineFunctions();
 
     virtual void run() {}
-
-    void setPointer(std::shared_ptr<StateMachine> statemachine);
   };
 
   SUBSTATE(Init, Top) {
@@ -86,10 +67,7 @@ public:
     void run();
 
   private:
-    void init() {
-      AUV_DEBUG("init");
-      Top::box().test_->prepare(Top::box().self_);
-    }
+    void init() { Top::box().pc_->test_->prepare(Top::box().self_); }
   };
 
   SUBSTATE(Gate, Top) {
@@ -99,10 +77,7 @@ public:
     void run();
 
   private:
-    void init() {
-      AUV_DEBUG("init");
-      Top::box().gate_->prepare(Top::box().self_);
-    }
+    void init() { Top::box().pc_->gate_->prepare(Top::box().self_); }
   };
 
   SUBSTATE(Buoy, Top) {
@@ -112,24 +87,20 @@ public:
     void run();
 
   private:
-    void init() {
-      AUV_DEBUG("init");
-      Top::box().buoy_->prepare(Top::box().self_);
-    }
+    void init() { Top::box().pc_->buoy_->prepare(Top::box().self_); }
   };
 
   SUBSTATE(Marker, Top) {
 
-    STATE(Marker);
+    STATE(Marker)
 
     void run();
 
   private:
-    void init() {
-      AUV_DEBUG("init");
-      Top::box().marker_->prepare(Top::box().self_);
-    }
+    void init() { Top::box().pc_->marker_->prepare(Top::box().self_); }
   };
+
+  std::shared_ptr<PointerController> pc_;
 
   Macho::Machine<StateMachine::Top> state_;
 

@@ -15,7 +15,10 @@ class StateMachine;
 class TaskTest : public Task {
 public:
   TaskTest();
+  TaskTest(std::shared_ptr<StateMachine> sm, std::shared_ptr<PidManager> pm,
+           std::shared_ptr<Vision> vision);
   TaskTest(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
+
   ~TaskTest();
 
   std::string getTaskTag() { return std::string("[Task Test]"); }

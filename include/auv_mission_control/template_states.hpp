@@ -144,7 +144,7 @@ template <class T> TSUBSTATE(Move, T) {
           SUPER::TOP::box().pm_->setControlEffort(box().axis_.at(i),
                                                   box().values_.at(i));
 
-          return;
+          break;
         case AXIS::ROLL:
         case AXIS::PITCH:
         case AXIS::YAW:
@@ -194,6 +194,134 @@ template <class T> TSUBSTATE(Move, T) {
       SUPER::AUV_INFO("Axis %s: %.1f",
                       TOP::box().pm_->getAxisName(box().axis_.at(i)).c_str(),
                       box().values_.at(i));
+    }
+  }
+
+private:
+  inline void init(std::vector<AXIS> axis, std::vector<double> values,
+                   double wait_time) {
+
+    box().axis_ = axis;
+    box().values_ = values;
+
+    box().wait_time_ = wait_time;
+    box().start_time_ = ros::Time::now().toSec();
+    Task::AUV_INFO("Switched to Move State");
+    Task::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
+    printaxis();
+  }
+
+  inline void init(std::vector<AXIS> axis, std::vector<double> values,
+                   double wait_time, Macho::Alias alias) {
+    box().axis_ = axis;
+    box().values_ = values;
+
+    box().wait_time_ = wait_time;
+    box().start_time_ = ros::Time::now().toSec();
+    box().alias_ = alias;
+    box().isAliasSet = true;
+    Task::AUV_INFO("Switched to Move State");
+    Task::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
+    printaxis();
+  }
+};
+
+template <class T> TSUBSTATE(MoveTest, T) {
+  struct Box {
+    Box()
+        : is_first_run_(false), wait_time_(0), start_time_(0),
+          alias_(TOP::alias()), isAliasSet(false) {}
+
+    bool is_first_run_;
+
+    double wait_time_;
+    double start_time_;
+
+    Macho::Alias alias_;
+    bool isAliasSet;
+
+    std::vector<AXIS> axis_;
+    std::vector<double> values_;
+  };
+  TSTATE(MoveTest);
+  inline void run() {
+    if (!box().is_first_run_) {
+      box().is_first_run_ = true;
+
+      if (box().axis_.size() != box().values_.size()) {
+        Task::AUV_ERROR(
+            "[Template State] State received mismatched parameters");
+        printstate();
+        if (box().isAliasSet) {
+          SUPER::TOP::box().pc_->sm_->queueEnable();
+          SUPER::TOP::box().pc_->sm_->template queueStateAlias(box().alias_);
+        } else {
+          TOP::box().self_->queueEnable();
+          TOP::box().self_->template queueStateAlias(SUPER::alias());
+        }
+        return;
+      }
+
+      for (unsigned i : util::lang::indices(box().axis_)) {
+        INPUT input;
+        switch (box().axis_.at(i)) {
+        case AXIS::SURGE:
+        case AXIS::SWAY:
+          SUPER::TOP::box().pc_->pm_->setEnabled(box().axis_.at(i), false);
+          SUPER::TOP::box().pc_->pm_->setControlEffort(box().axis_.at(i),
+                                                       box().values_.at(i));
+
+          break;
+        case AXIS::ROLL:
+        case AXIS::PITCH:
+        case AXIS::YAW:
+          input = INPUT::IMU_POS;
+          break;
+        case AXIS::HEAVE:
+          input = INPUT::DEPTH;
+          break;
+        }
+        SUPER::TOP::box().pc_->pm_->setEnabled(box().axis_.at(i), true);
+        SUPER::TOP::box().pc_->pm_->setSetpoint(box().axis_.at(i), input,
+                                                box().values_.at(i));
+      }
+    }
+
+    for (auto axis : box().axis_) {
+      SUPER::TOP::box().pc_->pm_->updatePlantState(axis);
+    }
+
+    if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
+      printstate();
+      if (box().isAliasSet) {
+        SUPER::TOP::box().pc_->sm_->queueEnable();
+        SUPER::TOP::box().pc_->sm_->template queueStateAlias(box().alias_);
+      } else {
+        TOP::box().self_->queueEnable();
+        TOP::setState(SUPER::alias());
+      }
+      return;
+    }
+  }
+  inline bool isAliasNamed(std::string state) {
+    return !state.compare(SUPER::alias().name());
+  }
+  inline void printstate() {
+    if (box().isAliasSet) {
+      Task::AUV_INFO("Switching to Task %s", box().alias_.name());
+    } else {
+      if ((isAliasNamed("Nowhere") || isAliasNamed("Test")) ||
+          (isAliasNamed("Whatever") || isAliasNamed("Init")))
+        return;
+      Task::AUV_INFO("Switching to State %s", SUPER::alias().name());
+    }
+  }
+  inline void printaxis() {
+    for (unsigned i : util::lang::indices(box().axis_)) {
+      SUPER::AUV_INFO(
+          "Axis %s: %.1f",
+          TOP::box().pc_->pm_->getAxisName(box().axis_.at(i)).c_str(),
+          box().values_.at(i));
     }
   }
 

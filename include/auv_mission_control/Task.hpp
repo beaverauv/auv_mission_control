@@ -76,6 +76,66 @@ public:                                                                        \
   }                                                                            \
   std::string getTag() { return getTaskTag(); }
 
+#define createQueueTest(T, state)                                              \
+public:                                                                        \
+  typedef std::vector<Macho::IEvent<typename T::Top> *> EventQueue;            \
+  EventQueue eventqueue_;                                                      \
+                                                                               \
+  bool eventqueue_should_switch_ = false;                                      \
+  bool eventqueue_last_empty_ = false;                                         \
+                                                                               \
+  void queueEnable() { eventqueue_should_switch_ = true; }                     \
+                                                                               \
+  void queueDisable() { eventqueue_should_switch_ = false; }                   \
+                                                                               \
+  template <class S> void queueState() {                                       \
+    eventqueue_.push_back(Macho::Event(&T::Top::setMachineState<S>));          \
+  }                                                                            \
+                                                                               \
+  template <class S> void queueState(double wait_time) {                       \
+    eventqueue_.push_back(                                                     \
+        Macho::Event(&T::Top::setMachineState<S>, wait_time));                 \
+  }                                                                            \
+                                                                               \
+  template <class S>                                                           \
+  void queueState(std::vector<AXIS> axis, std::vector<double> values,          \
+                  double wait_time) {                                          \
+    eventqueue_.push_back(                                                     \
+        Macho::Event(&T::Top::setMachineState<S>, axis, values, wait_time));   \
+  }                                                                            \
+                                                                               \
+  template <class S>                                                           \
+  void queueState(std::vector<AXIS> axis, std::vector<double> values,          \
+                  double wait_time, Macho::Alias alias) {                      \
+    eventqueue_.push_back(Macho::Event(&T::Top::setMachineState<S>, axis,      \
+                                       values, wait_time, alias));             \
+  }                                                                            \
+                                                                               \
+  void queueStateAlias(Macho::Alias alias) {                                   \
+    eventqueue_.push_back(Macho::Event(&T::Top::setMachineStateAlias, alias)); \
+  }                                                                            \
+                                                                               \
+  int checkEventQueue() {                                                      \
+    if (eventqueue_.empty()) {                                                 \
+      eventqueue_last_empty_ = true;                                           \
+      eventqueue_should_switch_ = false;                                       \
+      return 1;                                                                \
+    }                                                                          \
+                                                                               \
+    if (eventqueue_last_empty_ || eventqueue_should_switch_) {                 \
+      state->dispatch(eventqueue_.at(0));                                      \
+                                                                               \
+      eventqueue_.erase(eventqueue_.begin());                                  \
+      if (eventqueue_last_empty_)                                              \
+        eventqueue_should_switch_ = false;                                     \
+      eventqueue_last_empty_ = false;                                          \
+      return 0;                                                                \
+    }                                                                          \
+                                                                               \
+    return 1;                                                                  \
+  }                                                                            \
+  std::string getTag() { return getTaskTag(); }
+
 #define createMachineFunctions()                                               \
   template <class S> void setMachineState() { setState<S>(); }                 \
                                                                                \
