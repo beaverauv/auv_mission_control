@@ -1,34 +1,26 @@
 #ifndef TASKGATE_H
 #define TASKGATE_H
 
-#include <cmath>
-#include <iostream>
-#include <memory>
-#include <unistd.h>
-
-#include <auv_mission_control/Macho.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-
-// #include <auv_mission_control/Timer.hpp>
-#include <auv_mission_control/Camera.hpp>
-#include <auv_mission_control/PidManager.hpp>
 #include <auv_mission_control/Task.hpp>
-#include <auv_mission_control/Vision.hpp>
-//#include <auv_mission_control/StateMachine.hpp>
-
-class StateMachine;
 
 class TaskGate : public Task {
 public:
-  TaskGate();
-  TaskGate(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
-  ~TaskGate();
+  createTaskTag(TaskGate);
 
-  std::string getTaskTag() { return std::string("[Task Gate]"); }
+  createTopState(TaskGate);
 
-  int execute();
-  void prepare(std::shared_ptr<StateMachine> statemachine);
+  createState(Init);
+
+  createNullState(Nowhere);
+
+  SUBSTATE(Whatever, Top) {
+
+    STATE(Whatever);
+
+    void run();
+  };
+
+  createTaskFunctions(TaskGate);
 
 private:
   // variables go here;
@@ -62,32 +54,6 @@ private:
   double setpoint_heave;
   double setpoint_surge;
   double plantState_surge;
-
-  TOPSTATE(Top) {
-
-    createStateBox(TaskGate);
-
-    STATE(Top);
-
-    createMachineFunctions();
-
-    virtual void run() {}
-
-    void initialize() { setState<Init>(); }
-
-    createPointerFunctions(TaskGate);
-  };
-
-  SUBSTATE(Init, Top) {
-
-    STATE(Init)
-
-    void run();
-  };
-
-  Macho::Machine<TaskGate::Top> state_gate_;
-
-  createQueue(TaskGate, state_gate_);
 };
 
 #endif

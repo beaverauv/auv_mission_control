@@ -1,7 +1,7 @@
 #include <auv_mission_control/Camera.hpp>
 
 Camera::Camera() {
-  capFront.open(0);
+  // capFront.open(0);
 
   if (!capFront.isOpened()) {
     AUV_ERROR("Unable to open Front Camera");
@@ -10,7 +10,7 @@ Camera::Camera() {
     isFrontOpened = true;
   }
 
-  capBottom.open(1);
+  // capBottom.open(1);
   if (!capBottom.isOpened()) {
     AUV_ERROR("Unable to open bottom Camera");
   } else {

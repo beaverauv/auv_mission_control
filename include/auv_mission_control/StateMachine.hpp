@@ -4,31 +4,25 @@
 #include <memory>
 #include <vector>
 
-#include <auv_mission_control/Camera.hpp>
 #include <auv_mission_control/Macho.hpp>
-#include <auv_mission_control/PidManager.hpp>
 #include <auv_mission_control/PointerHandler.hpp>
-#include <auv_mission_control/Task.hpp>
-#include <auv_mission_control/TaskBuoy.hpp>
-#include <auv_mission_control/TaskGate.hpp>
-#include <auv_mission_control/TaskMarker.hpp>
-#include <auv_mission_control/TaskTest.hpp>
-#include <auv_mission_control/Vision.hpp>
 
 class StateMachine : public Task {
 public:
   StateMachine();
   ~StateMachine();
 
-  std::string getTaskTag() { return std::string("[Task Main]"); }
+  createTaskTag(TaskMain);
 
   int execute();
+
+  virtual StateMachine &self(void) { return *this; }
+  virtual PointerHandler &ph(void) { return *ph_; }
 
   TOPSTATE(Top) {
 
     struct Box {
       Box() {}
-      std::shared_ptr<PointerHandler> ph_;
       std::shared_ptr<StateMachine> self_;
     };
 
@@ -38,73 +32,30 @@ public:
 
     virtual void run() {}
 
-  private:
-    void init(StateMachine * self, std::shared_ptr<PointerHandler> ph);
-  };
-
-  SUBSTATE(Init, Top) {
-
-    STATE(Init);
-
-    void run();
-  };
-
-  SUBSTATE(Kill, Top) {
-
-    STATE(Kill);
-
-    void run();
-  };
-
-  SUBSTATE(Nowhere, Top) {
-
-    STATE(Nowhere);
-
-    void run() {}
-  };
-
-  SUBSTATE(Test, Top) {
-
-    STATE(Test);
-
-    void run();
-  };
-
-  SUBSTATE(Gate, Top) {
-
-    STATE(Gate);
-
-    void run();
+    StateMachine &self(void) { return *box().self_; }
+    PointerHandler &ph(void) { return *self().ph_; }
 
   private:
-    void init() { Top::box().ph_->gate_->prepare(Top::box().self_); }
+    void init(StateMachine * self);
   };
 
-  SUBSTATE(Buoy, Top) {
+  createState(Init);
 
-    STATE(Buoy);
+  createState(Kill);
 
-    void run();
+  createNullState(Nowhere);
 
-  private:
-    void init() { Top::box().ph_->buoy_->prepare(Top::box().self_); }
-  };
+  createState(Test);
 
-  SUBSTATE(Marker, Top) {
+  createState(Example);
 
-    STATE(Marker)
+  createState(Gate);
 
-    void run();
+  createState(Buoy);
 
-  private:
-    void init() { Top::box().ph_->marker_->prepare(Top::box().self_); }
-  };
+  createState(Marker);
 
-  std::shared_ptr<PointerHandler> ph_;
-
-  Macho::Machine<Top> state_;
-
-  createQueue(StateMachine, state_)
+  createTaskFunctions(StateMachine)
 };
 
 #endif

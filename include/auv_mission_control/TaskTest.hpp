@@ -1,34 +1,26 @@
 #ifndef TaskTest_H
 #define TaskTest_H
 
-#include <auv_mission_control/Camera.hpp>
-#include <auv_mission_control/Macho.hpp>
-#include <auv_mission_control/PidManager.hpp>
-// #include <auv_mission_control/PointerHandler.hpp>
 #include <auv_mission_control/Task.hpp>
-#include <auv_mission_control/Vision.hpp>
-#include <memory>
-#include <unistd.h>
-//#include <auv_mission_control/StateMachine.hpp>
-
-class StateMachine;
-class PointerHandler;
 
 class TaskTest : public Task {
 public:
-  TaskTest(std::shared_ptr<PointerHandler> ph);
+  TaskTest(std::shared_ptr<PointerHandler> ph)
+      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
 
   ~TaskTest() {}
 
-  std::string getTaskTag() { return std::string("[Task Test]"); }
-
   int execute();
+
+  virtual TaskTest &self(void) { return *this; }
+  virtual PointerHandler &ph(void) { return *ph_; }
+
+  createTaskTag(TaskTest);
 
   TOPSTATE(Top) {
 
     struct Box {
       Box() {}
-      std::shared_ptr<PointerHandler> ph_;
       std::shared_ptr<TaskTest> self_;
     };
 
@@ -38,23 +30,18 @@ public:
 
     virtual void run() { setState<Init>(); }
 
+    TaskTest &self() { return *box().self_; }
+    PointerHandler &ph() { return *self().ph_; }
+
   private:
-    void init(TaskTest * self, std::shared_ptr<PointerHandler> ph);
+    void init(TaskTest * self, std::shared_ptr<PointerHandler> ph) {
+      box().self_ = std::shared_ptr<TaskTest>(self);
+    }
   };
 
-  SUBSTATE(Init, Top) {
+  createState(Init);
 
-    STATE(Init);
-
-    void run();
-  };
-
-  SUBSTATE(Nowhere, Top) {
-
-    STATE(Nowhere);
-
-    void run() {}
-  };
+  createNullState(Nowhere);
 
   SUBSTATE(Whatever, Top) {
 
@@ -65,9 +52,9 @@ public:
 
   std::shared_ptr<PointerHandler> ph_;
 
-  Macho::Machine<Top> state_test_;
+  Macho::Machine<Top> sm_;
 
-  createQueue(TaskTest, state_test_);
+  createQueue(TaskTest, sm_);
 };
 
 #endif

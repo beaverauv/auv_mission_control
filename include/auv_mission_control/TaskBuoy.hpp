@@ -1,27 +1,26 @@
 #ifndef TaskBuoy_H
 #define TaskBuoy_H
 
-#include <memory>
-#include <unistd.h>
-
-#include <auv_mission_control/Camera.hpp>
-#include <auv_mission_control/Macho.hpp>
-#include <auv_mission_control/PidManager.hpp>
 #include <auv_mission_control/Task.hpp>
-#include <auv_mission_control/Vision.hpp>
-
-class StateMachine;
 
 class TaskBuoy : public Task {
 public:
-  TaskBuoy();
-  TaskBuoy(std::shared_ptr<PidManager> pm, std::shared_ptr<Vision> vision);
-  ~TaskBuoy();
+  createTaskTag(TaskBuoy);
 
-  std::string getTaskTag() { return std::string("[Task Buoy]"); }
+  createTopState(TaskBuoy);
 
-  int execute();
-  void prepare(std::shared_ptr<StateMachine> statemachine);
+  createState(Init);
+
+  createNullState(Nowhere);
+
+  SUBSTATE(Whatever, Top) {
+
+    STATE(Whatever);
+
+    void run();
+  };
+
+  createTaskFunctions(TaskBuoy);
 
 private:
   // variables go here
@@ -50,35 +49,6 @@ private:
 
   // Timer ramRed;
   int ramRedCounter = 0;
-
-  TOPSTATE(Top) {
-    // std::string getTag() { return std::string("[StateBuoy]"); }
-
-    // TOPSTATE(Top) {
-    // Top state variables (visible to all substates)
-    createStateBox(TaskBuoy);
-
-    STATE(Top);
-
-    createMachineFunctions();
-
-    virtual void run() {}
-
-    void initialize() { setState<Init>(); }
-
-    createPointerFunctions(TaskBuoy);
-  };
-
-  SUBSTATE(Init, Top) {
-
-    STATE(Init);
-
-    void run();
-  };
-
-  Macho::Machine<TaskBuoy::Top> state_buoy_;
-
-  createQueue(TaskBuoy, state_buoy_);
 };
 
 #endif

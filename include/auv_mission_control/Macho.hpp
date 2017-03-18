@@ -43,25 +43,14 @@ public:                                                                        \
   Box &box() { return *static_cast<Box *>(_box()); }                           \
   friend class ::_VS8_Bug_101615;                                              \
                                                                                \
-  std::string getTag() {                                                       \
-    return Top::box().self_->getTaskTag() + std::string("[State ") +           \
-           std::string(#S) + std::string("]");                                 \
+  virtual std::string getStateTag() {                                          \
+    return std::string("[State ") + std::string(#S) + std::string("]");        \
   }                                                                            \
                                                                                \
-private:                                                                       \
-  virtual void entry() {                                                       \
-    if (!std::string("Nowhere").compare(std::string(#S)))                      \
-      return;                                                                  \
-    AUV_DEBUG("entry");                                                        \
-  }                                                                            \
-  virtual void exit() {                                                        \
-    if (!std::string("Nowhere").compare(std::string(#S)))                      \
-      return;                                                                  \
+  std::string getTag() { return TOP::box().self_->getTag(); }                  \
                                                                                \
-    AUV_DEBUG("exit");                                                         \
-  }                                                                            \
-                                                                               \
-public:                                                                        \
+public:
+
 // Use this macro in your template class definition to give it state
 // functionality
 // (mandatory). If you have a state box declare it BEFORE macro invocation!
@@ -115,10 +104,68 @@ public:                                                                        \
   }                                                                            \
   void setState(const class Alias &state) { LINK::setState(state); }           \
                                                                                \
-  std::string getTag() {                                                       \
-    return TOP::box().self_->getTaskTag() + std::string("[State ") +           \
-           std::string(#S) + std::string("]");                                 \
+  virtual std::string getStateTag() {                                          \
+    return std::string("[State ") + std::string(#S) + std::string("]");        \
   }                                                                            \
+                                                                               \
+  std::string getTag() { return TOP::box().self_->getTag(); }
+
+#define TSTATE_TEST(S)                                                         \
+  typedef S SELF;                                                              \
+  typedef typename S::SUPER SUPER;                                             \
+  typedef typename S::TOP TOP;                                                 \
+  typedef typename S::ANCHOR                                                   \
+      ANCHOR; /* Anchor is the first non-template state in the inheritance     \
+                 chain */                                                      \
+  typedef ::Macho::Link<S, SUPER> LINK;                                        \
+  S(::Macho::_StateInstance &instance) : LINK(instance) {}                     \
+  ~S() {}                                                                      \
+  static const char *_state_name() { return #S; }                              \
+  typename S::Box &box() {                                                     \
+    return *static_cast<typename S::Box *>(this->_box());                      \
+  }                                                                            \
+  friend class ::_VS8_Bug_101615;                                              \
+  using LINK::dispatch;                                                        \
+  using LINK::machine;                                                         \
+  /* must have these methods to quieten gcc */                                 \
+  template <class U> void setState() { LINK::template setState<U>(); }         \
+  template <class U, class P1> void setState(const P1 &p1) {                   \
+    LINK::template setState<U, P1>(p1);                                        \
+  }                                                                            \
+  template <class U, class P1, class P2>                                       \
+  void setState(const P1 &p1, const P2 &p2) {                                  \
+    LINK::template setState<U, P1, P2>(p1, p2);                                \
+  }                                                                            \
+  template <class U, class P1, class P2, class P3>                             \
+  void setState(const P1 &p1, const P2 &p2, const P3 &p3) {                    \
+    LINK::template setState<U, P1, P2>(p1, p2, p3);                            \
+  }                                                                            \
+  template <class U, class P1, class P2, class P3, class P4>                   \
+  void setState(const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4) {      \
+    LINK::template setState<U, P1, P2>(p1, p2, p3, p4);                        \
+  }                                                                            \
+  template <class U, class P1, class P2, class P3, class P4, class P5>         \
+  void setState(const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4,        \
+                const P5 &p5) {                                                \
+    LINK::template setState<U, P1, P2>(p1, p2, p3, p4, p5);                    \
+  }                                                                            \
+  template <class U, class P1, class P2, class P3, class P4, class P5,         \
+            class P6>                                                          \
+  void setState(const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4,        \
+                const P5 &p5, const P6 &p6) {                                  \
+    LINK::template setState<U, P1, P2>(p1, p2, p3, p4, p5, p6);                \
+  }                                                                            \
+  template <class U> void setStateHistory() {                                  \
+    LINK::template setStateHistory<U>();                                       \
+  }                                                                            \
+  void setState(const class Alias &state) { LINK::setState(state); }           \
+                                                                               \
+  virtual std::string getStateTag() {                                          \
+    return std::string("[State ") + std::string(#S) + std::string("]");        \
+  }                                                                            \
+                                                                               \
+  std::string getTag() { return TOP::box().self_->getTag(getStateTag()); }
+
 //                                                                                \
 // private:                                                                       \
 //   virtual void entry() {                                                       \

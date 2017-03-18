@@ -42,6 +42,7 @@ add_executable(state_machine_node
   src/Vision.cpp
   src/tasks/Task.cpp
   src/tasks/TaskTest.cpp
+  src/tasks/TaskExample.cpp
   src/tasks/TaskGate.cpp
   src/tasks/TaskBuoy.cpp
   src/tasks/TaskMarker.cpp
