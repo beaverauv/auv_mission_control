@@ -13,9 +13,9 @@ public:
 
   createNullState(Nowhere);
 
-  SUBSTATE(Whatever, Top) {
+  AUV_SUBSTATE(Whatever, Top) {
 
-    STATE(Whatever);
+    AUV_STATE(Whatever);
 
     void run();
   };

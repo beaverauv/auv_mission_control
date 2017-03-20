@@ -19,14 +19,14 @@ public:
   virtual StateMachine &self(void) { return *this; }
   virtual PointerHandler &ph(void) { return *ph_; }
 
-  TOPSTATE(Top) {
+  AUV_TOPSTATE(Top) {
 
     struct Box {
       Box() {}
       std::shared_ptr<StateMachine> self_;
     };
 
-    STATE(Top);
+    AUV_STATE(Top);
 
     createMachineFunctions();
 

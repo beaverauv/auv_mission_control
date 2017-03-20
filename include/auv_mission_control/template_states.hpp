@@ -40,7 +40,7 @@ template <class T> TSUBSTATE(Timer, T) {
     Macho::Alias alias_;
     bool isAliasSet;
   };
-  TSTATE_TEST(Timer);
+  AUV_TSTATE(Timer);
   inline void run() {
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
       if (box().isEventSet) {
@@ -115,7 +115,7 @@ template <class T> TSUBSTATE(Move, T) {
     std::vector<AXIS> axis_;
     std::vector<double> values_;
   };
-  TSTATE_TEST(Move);
+  AUV_TSTATE(Move);
   inline void run() {
     if (!box().is_first_run_) {
       box().is_first_run_ = true;

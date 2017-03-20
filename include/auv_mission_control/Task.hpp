@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include <auv_mission_control/Macho.hpp>
+#include <boost/type_index.hpp>
 
 class StateMachine;
 class PointerHandler;
@@ -18,6 +19,32 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 #define SUB_KILL 2
 
 #define MAXWIDTH 7
+
+// #define AUV_BOX(Class)                                                         \
+//   struct Box {                                                                 \
+//     Box() {}                                                                   \
+//     std::shared_ptr<decltype(*this)> self_;                                    \
+//   };
+
+#define AUV_TOPSTATE(Top) TOPSTATE(Top), Task
+
+#define AUV_SUBSTATE(STATE, SUPERSTATE) SUBSTATE(STATE, SUPERSTATE)
+
+#define AUV_STATE(S)                                                           \
+  STATE(S);                                                                    \
+  virtual std::string getStateTag() {                                          \
+    return std::string("[State ") + std::string(#S) + std::string("]");        \
+  }                                                                            \
+                                                                               \
+  std::string getTag() { return TOP::box().self_->getTag(); }
+
+#define AUV_TSTATE(S)                                                          \
+  TSTATE(S);                                                                   \
+  virtual std::string getStateTag() {                                          \
+    return std::string("[State ") + std::string(#S) + std::string("]");        \
+  }                                                                            \
+                                                                               \
+  std::string getTag() { return TOP::box().self_->getTag(getStateTag()); }
 
 #define createTaskTag(Class)                                                   \
   std::string getTag() {                                                       \
@@ -64,14 +91,14 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
   virtual Class &self(void) { return *this; }                                  \
   virtual PointerHandler &ph(void) { return *ph_; }                            \
                                                                                \
-  TOPSTATE(Top) {                                                              \
+  AUV_TOPSTATE(Top) {                                                          \
                                                                                \
     struct Box {                                                               \
       Box() {}                                                                 \
       std::shared_ptr<Class> self_;                                            \
     };                                                                         \
                                                                                \
-    STATE(Top);                                                                \
+    AUV_STATE(Top);                                                            \
                                                                                \
     createMachineFunctions();                                                  \
                                                                                \
@@ -87,17 +114,17 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
   };
 
 #define createState(State)                                                     \
-  SUBSTATE(State, Top) {                                                       \
+  AUV_SUBSTATE(State, Top) {                                                   \
                                                                                \
-    STATE(State);                                                              \
+    AUV_STATE(State);                                                          \
                                                                                \
     void run();                                                                \
   };
 
 #define createNullState(State)                                                 \
-  SUBSTATE(State, Top) {                                                       \
+  AUV_SUBSTATE(State, Top) {                                                   \
                                                                                \
-    STATE(State);                                                              \
+    AUV_STATE(State);                                                          \
                                                                                \
     void run() {}                                                              \
   };

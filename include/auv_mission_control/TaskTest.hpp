@@ -17,14 +17,14 @@ public:
 
   createTaskTag(TaskTest);
 
-  TOPSTATE(Top) {
+  AUV_TOPSTATE(Top) {
 
     struct Box {
       Box() {}
       std::shared_ptr<TaskTest> self_;
     };
 
-    STATE(Top);
+    AUV_STATE(Top);
 
     createMachineFunctions();
 
@@ -43,9 +43,9 @@ public:
 
   createNullState(Nowhere);
 
-  SUBSTATE(Whatever, Top) {
+  AUV_SUBSTATE(Whatever, Top) {
 
-    STATE(Whatever);
+    AUV_STATE(Whatever);
 
     void run();
   };
