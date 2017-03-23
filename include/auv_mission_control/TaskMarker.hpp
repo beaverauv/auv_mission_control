@@ -5,6 +5,11 @@
 
 class TaskMarker : public Task {
 public:
+  TaskMarker(std::shared_ptr<PointerHandler> ph)
+      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+
+  ~TaskMarker() {}
+
   createTaskTag(TaskMarker);
 
   createTopState(TaskMarker);

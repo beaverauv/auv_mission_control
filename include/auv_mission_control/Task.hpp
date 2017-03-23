@@ -81,11 +81,6 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 
 #define createTopState(Class)                                                  \
                                                                                \
-  Class(std::shared_ptr<PointerHandler> ph)                                    \
-      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}                          \
-                                                                               \
-  ~Class() {}                                                                  \
-                                                                               \
   int execute();                                                               \
                                                                                \
   virtual Class &self(void) { return *this; }                                  \

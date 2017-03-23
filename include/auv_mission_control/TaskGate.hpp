@@ -5,6 +5,11 @@
 
 class TaskGate : public Task {
 public:
+  TaskGate(std::shared_ptr<PointerHandler> ph)
+      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+
+  ~TaskGate() {}
+
   createTaskTag(TaskGate);
 
   createTopState(TaskGate);

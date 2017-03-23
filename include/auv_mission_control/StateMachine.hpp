@@ -9,8 +9,10 @@
 
 class StateMachine : public Task {
 public:
-  StateMachine();
-  ~StateMachine();
+  StateMachine(std::shared_ptr<PointerHandler> ph)
+      : ph_(ph), sm_(Macho::State<Top>(this)) {}
+
+  ~StateMachine() {}
 
   createTaskTag(TaskMain);
 

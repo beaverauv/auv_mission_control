@@ -29,6 +29,17 @@ public:
   std::shared_ptr<TaskGate> gate_;
   std::shared_ptr<TaskBuoy> buoy_;
   std::shared_ptr<TaskMarker> marker_;
+
+  // StateMachine &sm() { return *sm_; }
+  // Mission &mission() { return *mission_; }
+  // PidManager &pm() { return *pm_; }
+  // Camera &cam() { return *cam_; }
+  // Vision &vision() { return *vision_; }
+  // TaskTest &test() { return *test_; }
+  // TaskExample &example() { return *example_; }
+  // TaskGate &gate() { return *gate_; }
+  // TaskBuoy &buoy() { return *buoy_; }
+  // TaskMarker &marker() { return *marker_; }
 };
 
 #endif

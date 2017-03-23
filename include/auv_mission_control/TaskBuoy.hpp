@@ -5,6 +5,11 @@
 
 class TaskBuoy : public Task {
 public:
+  TaskBuoy(std::shared_ptr<PointerHandler> ph)
+      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+
+  ~TaskBuoy() {}
+
   createTaskTag(TaskBuoy);
 
   createTopState(TaskBuoy);

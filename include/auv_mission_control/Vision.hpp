@@ -15,11 +15,12 @@
 
 class Vision : public Task {
 public:
-  Vision();
-  Vision(std::shared_ptr<Camera> cam);
-  ~Vision();
+  Vision(std::shared_ptr<PointerHandler> ph) : ph_(ph) {}
+  ~Vision() {}
 
   std::string getTag() { return std::string("[Vision]"); }
+
+  virtual PointerHandler &ph(void) { return *ph_; }
 
   void findBuoy(int color);
   double getBuoyArea();
@@ -33,7 +34,7 @@ public:
   double getMarkerAngle();
 
 private:
-  std::shared_ptr<Camera> cam_;
+  std::shared_ptr<PointerHandler> ph_;
   cv::Scalar sRedMin = cv::Scalar(0, 0, 123);
   cv::Scalar sRedMax = cv::Scalar(68, 152, 239);
 

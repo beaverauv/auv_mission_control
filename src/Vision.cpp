@@ -1,19 +1,14 @@
+#include <auv_mission_control/PointerHandler.hpp>
 #include <auv_mission_control/Vision.hpp>
 
-Vision::Vision() {}
-
-Vision::Vision(std::shared_ptr<Camera> cam) : cam_(cam) {}
-
-Vision::~Vision() {}
-
 void Vision::findBuoy(int color) {
-  cam_->updateFrames();
-  imgOrigFront = cam_->getFront();
+  ph().cam_->updateFrames();
+  imgOrigFront = ph().cam_->getFront();
 
   cv::cvtColor(imgOrigFront, imgHlsFront, CV_BGR2HLS);
 
   if (color == COLOR_RED) {
-    ROS_INFO("COLOR IS RED");
+    AUV_INFO("COLOR IS RED");
     cv::inRange(imgHlsFront, sRedMin, sRedMax, imgThreshFront);
   } else if (color == COLOR_GREEN) {
     cv::inRange(imgHlsFront, sGreenMin, sGreenMax, imgThreshFront);
@@ -52,10 +47,10 @@ double Vision::getBuoyCoordX() { return buoyCoordCorrectedX; }
 double Vision::getBuoyCoordY() { return buoyCoordCorrectedY; }
 
 void Vision::findMarker() {
-  ROS_INFO("FIND MARKER CALLED");
-  cam_->updateFrames();
-  imgOrigBottom = cam_->getBottom();
-  ROS_INFO("GOT IMAGES");
+  AUV_INFO("FIND MARKER CALLED");
+  ph().cam_->updateFrames();
+  imgOrigBottom = ph().cam_->getBottom();
+  AUV_INFO("GOT IMAGES");
   cv::cvtColor(imgOrigBottom, imgHlsBottom, CV_BGR2HLS);
 
   cv::inRange(imgHlsBottom, sRedMin, sRedMax, imgThreshBottom);
@@ -74,7 +69,7 @@ void Vision::findMarker() {
              cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
   cv::dilate(imgThreshBottom, imgThreshBottom,
              cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
-  ROS_INFO("THRESHOLDING DONE");
+  AUV_INFO("THRESHOLDING DONE");
 
   momentsMarker = cv::moments(imgThreshBottom);
 
@@ -86,11 +81,11 @@ void Vision::findMarker() {
   // here for if we need it
   markerCoordCorrectedX = markerCoordX;
   markerCoordCorrectedY = markerCoordY;
-  ROS_INFO("MOMENTSx");
+  AUV_INFO("MOMENTSx");
 
   cv::findContours(imgContoursBottom, contours, hierarchy, CV_RETR_TREE,
                    CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
-  ROS_INFO("found contours");
+  AUV_INFO("found contours");
   numLargeContours = 0;
   largestArea = 0;
   largestContourIndex = 0;
@@ -108,15 +103,15 @@ void Vision::findMarker() {
       largestContourIndex = i;
     }
   }
-  ROS_INFO("went through contours");
+  AUV_INFO("went through contours");
 
   if (numLargeContours >= 1) {
-    ROS_INFO("here");
+    AUV_INFO("here");
     double count = contours[largestContourIndex].size();
     if (count > 5)
       markerRect = cv::fitEllipse(contours[largestContourIndex]);
 
-    ROS_INFO("but not here");
+    AUV_INFO("but not here");
 
     // cv::Point2f rect_points[4];
 
@@ -129,9 +124,9 @@ void Vision::findMarker() {
     averagedAngle = (currentAngle * .1) + (averagedAngle * .9);
 
   } else {
-    ROS_INFO("No Contours greater than 6");
+    AUV_INFO("No Contours greater than 6");
   }
-  ROS_INFO("calculated angle");
+  AUV_INFO("calculated angle");
 }
 
 double Vision::getMarkerArea() { return markerArea; }

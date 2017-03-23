@@ -7,28 +7,24 @@ int main(int argc, char *argv[]) {
                                      ros::console::levels::Debug)) {
     ros::console::notifyLoggerLevelsChanged();
   }
-  auto statemachine = std::make_shared<StateMachine>();
-  statemachine->queueEnable();
-  statemachine->queueState<StateMachine::Init>();
+  auto ph = std::make_shared<PointerHandler>();
 
-  statemachine->execute();
+  ph->sm_ = std::make_shared<StateMachine>(ph);
+  ph->mission_ = std::make_shared<Mission>(ph);
+  ph->pm_ = std::make_shared<PidManager>();
+  ph->cam_ = std::make_shared<Camera>();
+  ph->vision_ = std::make_shared<Vision>(ph);
+  ph->test_ = std::make_shared<TaskTest>(ph);
+  ph->example_ = std::make_shared<TaskExample>(ph);
+  ph->gate_ = std::make_shared<TaskGate>(ph);
+  ph->buoy_ = std::make_shared<TaskBuoy>(ph);
+  ph->marker_ = std::make_shared<TaskMarker>(ph);
+
+  ph->sm_->queueEnable();
+  ph->sm_->queueState<StateMachine::Init>();
+
+  ph->sm_->execute();
 }
-
-StateMachine::StateMachine()
-    : ph_(std::make_shared<PointerHandler>()), sm_(Macho::State<Top>(this)) {
-  ph().sm_ = std::shared_ptr<StateMachine>(this);
-  ph().mission_ = std::make_shared<Mission>();
-  ph().pm_ = std::make_shared<PidManager>();
-  ph().cam_ = std::make_shared<Camera>();
-  ph().vision_ = std::make_shared<Vision>(ph().cam_);
-  ph().test_ = std::make_shared<TaskTest>(ph_);
-  ph().example_ = std::make_shared<TaskExample>(ph_);
-  ph().gate_ = std::make_shared<TaskGate>(ph_);
-  ph().buoy_ = std::make_shared<TaskBuoy>(ph_);
-  ph().marker_ = std::make_shared<TaskMarker>(ph_);
-}
-
-StateMachine::~StateMachine() {}
 
 int StateMachine::execute() {
   AUV_INFO("Execute");
