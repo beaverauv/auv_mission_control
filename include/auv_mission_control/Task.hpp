@@ -11,20 +11,15 @@
 class StateMachine;
 class PointerHandler;
 
-enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
+enum class MISSION { FULL, GATE_ONLY };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
+enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 
 #define SUB_SUCCEEDED 0
 #define SUB_TIMEOUT 1
 #define SUB_KILL 2
 
 #define MAXWIDTH 7
-
-// #define AUV_BOX(Class)                                                         \
-//   struct Box {                                                                 \
-//     Box() {}                                                                   \
-//     std::shared_ptr<decltype(*this)> self_;                                    \
-//   };
 
 #define AUV_TOPSTATE(Top) TOPSTATE(Top), Task
 
@@ -46,7 +41,7 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
                                                                                \
   std::string getTag() { return TOP::box().self_->getTag(getStateTag()); }
 
-#define createTaskTag(Class)                                                   \
+#define AUV_LOG_TAG(Class)                                                     \
   std::string getTag() {                                                       \
     std::stringstream ss;                                                      \
     std::string task =                                                         \
@@ -79,7 +74,7 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
                                                                                \
   createQueue(T, sm_);
 
-#define createTopState(Class)                                                  \
+#define AUV_CREATE_TOP_STATE(Class)                                                  \
                                                                                \
   int execute();                                                               \
                                                                                \
@@ -108,7 +103,7 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
     }                                                                          \
   };
 
-#define createState(State)                                                     \
+#define AUV_CREATE_STATE(State)                                                     \
   AUV_SUBSTATE(State, Top) {                                                   \
                                                                                \
     AUV_STATE(State);                                                          \
@@ -116,7 +111,15 @@ enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
     void run();                                                                \
   };
 
-#define createNullState(State)                                                 \
+#define AUV_CREATE_EMPTY_STATE(State)                                                 \
+  AUV_SUBSTATE(State, Top) {                                                   \
+                                                                               \
+    AUV_STATE(State);                                                          \
+                                                                               \
+    void run() {}                                                              \
+  };
+
+#define createTaskState(State)                                                 \
   AUV_SUBSTATE(State, Top) {                                                   \
                                                                                \
     AUV_STATE(State);                                                          \

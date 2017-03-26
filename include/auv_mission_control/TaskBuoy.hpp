@@ -10,13 +10,13 @@ public:
 
   ~TaskBuoy() {}
 
-  createTaskTag(TaskBuoy);
+  AUV_LOG_TAG(TaskBuoy);
 
-  createTopState(TaskBuoy);
+  AUV_CREATE_TOP_STATE(TaskBuoy);
 
-  createState(Init);
+  AUV_CREATE_STATE(Init);
 
-  createNullState(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Nowhere);
 
   SUBSTATE(Whatever, Top) {
 

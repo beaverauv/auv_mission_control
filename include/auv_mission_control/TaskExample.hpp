@@ -10,13 +10,13 @@ public:
 
   ~TaskExample() {}
 
-  createTopState(TaskExample);
+  AUV_CREATE_TOP_STATE(TaskExample);
 
-  createTaskTag(TaskExampl);
+  AUV_LOG_TAG(TaskExampl);
 
-  createState(Init);
+  AUV_CREATE_STATE(Init);
 
-  createNullState(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Nowhere);
 
   AUV_SUBSTATE(Whatever, Top) {
 

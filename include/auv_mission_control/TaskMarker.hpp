@@ -10,13 +10,13 @@ public:
 
   ~TaskMarker() {}
 
-  createTaskTag(TaskMarker);
+  AUV_LOG_TAG(TaskMarker);
 
-  createTopState(TaskMarker);
+  AUV_CREATE_TOP_STATE(TaskMarker);
 
-  createState(Init);
+  AUV_CREATE_STATE(Init);
 
-  createNullState(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Nowhere);
 
   SUBSTATE(Whatever, Top) {
 

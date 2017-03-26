@@ -15,7 +15,7 @@ public:
   virtual TaskTest &self(void) { return *this; }
   virtual PointerHandler &ph(void) { return *ph_; }
 
-  createTaskTag(TaskTest);
+  AUV_LOG_TAG(TaskTest);
 
   AUV_TOPSTATE(Top) {
 
@@ -39,9 +39,9 @@ public:
     }
   };
 
-  createState(Init);
+  AUV_CREATE_STATE(Init);
 
-  createNullState(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Nowhere);
 
   AUV_SUBSTATE(Whatever, Top) {
 

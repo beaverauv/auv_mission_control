@@ -10,13 +10,13 @@ public:
 
   ~TaskGate() {}
 
-  createTaskTag(TaskGate);
+  AUV_LOG_TAG(TaskGate);
 
-  createTopState(TaskGate);
+  AUV_CREATE_TOP_STATE(TaskGate);
 
-  createState(Init);
+  AUV_CREATE_STATE(Init);
 
-  createNullState(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Nowhere);
 
   SUBSTATE(Whatever, Top) {
 

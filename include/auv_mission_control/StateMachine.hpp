@@ -14,7 +14,7 @@ public:
 
   ~StateMachine() {}
 
-  createTaskTag(TaskMain);
+  AUV_LOG_TAG(TaskMain);
 
   int execute();
 
@@ -41,21 +41,21 @@ public:
     void init(StateMachine * self);
   };
 
-  createState(Init);
+  AUV_CREATE_STATE(Init);
 
-  createState(Kill);
+  AUV_CREATE_STATE(Kill);
 
-  createNullState(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Nowhere);
 
-  createState(Test);
+  AUV_CREATE_STATE(Test);
 
-  createState(Example);
+  AUV_CREATE_STATE(Example);
 
-  createState(Gate);
+  AUV_CREATE_STATE(Gate);
 
-  createState(Buoy);
+  AUV_CREATE_STATE(Buoy);
 
-  createState(Marker);
+  AUV_CREATE_STATE(Marker);
 
   createTaskFunctions(StateMachine)
 };
