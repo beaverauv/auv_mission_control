@@ -127,10 +127,10 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
     void run() {}                                                              \
   };
 
-class Task {
+class TaskBase {
 public:
-  Task();
-  ~Task();
+  TaskBase();
+  ~TaskBase();
 
   void AUV_FATAL(const char *format, ...);
   void AUV_FATAL(std::string string, ...);
