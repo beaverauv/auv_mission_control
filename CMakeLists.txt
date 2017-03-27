@@ -40,12 +40,12 @@ add_executable(state_machine_node
   src/PidManager.cpp
   src/Camera.cpp
   src/Vision.cpp
-  src/tasks/Task.cpp
-  src/tasks/TaskTest.cpp
-  src/tasks/TaskExample.cpp
-  src/tasks/TaskGate.cpp
-  src/tasks/TaskBuoy.cpp
-  src/tasks/TaskMarker.cpp
+  src/task/Task.cpp
+  src/task/TaskTest.cpp
+  src/task/TaskExample.cpp
+  src/task/TaskGate.cpp
+  src/task/TaskBuoy.cpp
+  src/task/TaskMarker.cpp
 )
 
 target_link_libraries(state_machine_node ${catkin_LIBRARIES}  ${OpenCV_LIBRARIES})

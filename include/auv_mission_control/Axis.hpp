@@ -15,7 +15,7 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class PidParam {
 public:

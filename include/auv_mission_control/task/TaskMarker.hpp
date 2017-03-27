@@ -1,7 +1,7 @@
 #ifndef TASKMARKER_H
 #define TASKMARKER_H
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class TaskMarker : public Task {
 public:
@@ -25,7 +25,7 @@ public:
     void run();
   };
 
-  createTaskFunctions(TaskMarker);
+  AUV_CREATE_FUNCTIONS(TaskMarker);
 
 private:
   // variables go here;

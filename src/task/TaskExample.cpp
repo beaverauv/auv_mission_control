@@ -1,4 +1,4 @@
-#include <auv_mission_control/TaskExample.hpp>
+#include <auv_mission_control/task/TaskExample.hpp>
 #include <auv_mission_control/template_states.hpp>
 
 int TaskExample::execute() {

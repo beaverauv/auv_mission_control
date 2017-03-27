@@ -1,7 +1,7 @@
 #ifndef TASKGATE_H
 #define TASKGATE_H
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class TaskGate : public Task {
 public:
@@ -25,7 +25,7 @@ public:
     void run();
   };
 
-  createTaskFunctions(TaskGate);
+  AUV_CREATE_FUNCTIONS(TaskGate);
 
 private:
   // variables go here;

@@ -30,7 +30,7 @@ public:
 
     AUV_STATE(Top);
 
-    createMachineFunctions();
+    AUV_MACHINE_FUNCTIONS();
 
     virtual void run() {}
 
@@ -57,7 +57,7 @@ public:
 
   AUV_CREATE_STATE(Marker);
 
-  createTaskFunctions(StateMachine)
+  AUV_CREATE_FUNCTIONS(StateMachine)
 };
 
 #endif

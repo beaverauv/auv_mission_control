@@ -1,11 +1,11 @@
 // #include <auv_mission_control/StateMachine.hpp>
-#include <auv_mission_control/TaskGate.hpp>
+#include <auv_mission_control/task/TaskMarker.hpp>
 #include <auv_mission_control/template_states.hpp>
 
-int TaskGate::execute() {
+int TaskMarker::execute() {
   if (checkEventQueue()) {
     sm_->run();
   }
 }
 
-void TaskGate::Init::run() { setState<Timer<Init>>(3.0); }
+void TaskMarker::Init::run() { setState<Timer<Init>>(3.0); }

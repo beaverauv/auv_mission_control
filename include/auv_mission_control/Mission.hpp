@@ -1,7 +1,7 @@
 #ifndef MISSION_H_
 #define MISSION_H_
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class Mission : public Task {
 public:

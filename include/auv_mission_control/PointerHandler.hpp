@@ -5,12 +5,12 @@
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/Mission.hpp>
 #include <auv_mission_control/PidManager.hpp>
-#include <auv_mission_control/Task.hpp>
-#include <auv_mission_control/TaskBuoy.hpp>
-#include <auv_mission_control/TaskExample.hpp>
-#include <auv_mission_control/TaskGate.hpp>
-#include <auv_mission_control/TaskMarker.hpp>
-#include <auv_mission_control/TaskTest.hpp>
+#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/task/TaskBuoy.hpp>
+#include <auv_mission_control/task/TaskExample.hpp>
+#include <auv_mission_control/task/TaskGate.hpp>
+#include <auv_mission_control/task/TaskMarker.hpp>
+#include <auv_mission_control/task/TaskTest.hpp>
 #include <auv_mission_control/Vision.hpp>
 #include <ros/ros.h>
 

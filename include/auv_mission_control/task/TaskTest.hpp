@@ -1,7 +1,7 @@
 #ifndef TaskTest_H
 #define TaskTest_H
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class TaskTest : public Task {
 public:
@@ -26,7 +26,7 @@ public:
 
     AUV_STATE(Top);
 
-    createMachineFunctions();
+    AUV_MACHINE_FUNCTIONS();
 
     virtual void run() { setState<Init>(); }
 
@@ -54,7 +54,7 @@ public:
 
   Macho::Machine<Top> sm_;
 
-  createQueue(TaskTest, sm_);
+  AUV_CREATE_QUEUE(TaskTest, sm_);
 };
 
 #endif

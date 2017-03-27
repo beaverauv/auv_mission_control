@@ -1,4 +1,4 @@
-#include <auv_mission_control/TaskTest.hpp>
+#include <auv_mission_control/task/TaskTest.hpp>
 #include <auv_mission_control/template_states.hpp>
 
 int TaskTest::execute() {

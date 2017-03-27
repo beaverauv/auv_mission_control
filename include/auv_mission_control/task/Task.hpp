@@ -67,14 +67,14 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
     return str + state_tag;                                                    \
   }
 
-#define createTaskFunctions(T)                                                 \
+#define AUV_CREATE_FUNCTIONS(T)                                                \
   std::shared_ptr<PointerHandler> ph_;                                         \
                                                                                \
   Macho::Machine<T::Top> sm_;                                                  \
                                                                                \
-  createQueue(T, sm_);
+  AUV_CREATE_QUEUE(T, sm_);
 
-#define AUV_CREATE_TOP_STATE(Class)                                                  \
+#define AUV_CREATE_TOP_STATE(Class)                                            \
                                                                                \
   int execute();                                                               \
                                                                                \
@@ -90,7 +90,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
                                                                                \
     AUV_STATE(Top);                                                            \
                                                                                \
-    createMachineFunctions();                                                  \
+    AUV_MACHINE_FUNCTIONS();                                                   \
                                                                                \
     virtual void run() { setState<Init>(); }                                   \
                                                                                \
@@ -103,7 +103,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
     }                                                                          \
   };
 
-#define AUV_CREATE_STATE(State)                                                     \
+#define AUV_CREATE_STATE(State)                                                \
   AUV_SUBSTATE(State, Top) {                                                   \
                                                                                \
     AUV_STATE(State);                                                          \
@@ -111,7 +111,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
     void run();                                                                \
   };
 
-#define AUV_CREATE_EMPTY_STATE(State)                                                 \
+#define AUV_CREATE_EMPTY_STATE(State)                                          \
   AUV_SUBSTATE(State, Top) {                                                   \
                                                                                \
     AUV_STATE(State);                                                          \
@@ -154,7 +154,7 @@ protected:
   Task(const Task &task) {}
 };
 
-#define createMachineFunctions()                                               \
+#define AUV_MACHINE_FUNCTIONS()                                                \
   template <class S> void setMachineState() { setState<S>(); }                 \
                                                                                \
   template <class S> void setMachineState(double wait_time) {                  \
@@ -175,7 +175,7 @@ protected:
                                                                                \
   void setMachineStateAlias(Macho::Alias alias) { setState(alias); }
 
-#define createQueue(T, state)                                                  \
+#define AUV_CREATE_QUEUE(T, state)                                             \
 public:                                                                        \
   typedef std::vector<Macho::IEvent<typename T::Top> *> EventQueue;            \
   EventQueue eventqueue_;                                                      \

@@ -1,4 +1,4 @@
-#include <auv_mission_control/TaskBuoy.hpp>
+#include <auv_mission_control/task/TaskBuoy.hpp>
 #include <auv_mission_control/template_states.hpp>
 
 int TaskBuoy::execute() {

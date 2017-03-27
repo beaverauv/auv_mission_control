@@ -1,7 +1,7 @@
 #ifndef TASKEXAMPLE_H_
 #define TASKEXAMPLE_H_
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class TaskExample : public Task {
 public:
@@ -16,7 +16,7 @@ public:
 
   AUV_CREATE_STATE(Init);
 
-  AUV_CREATE_EMPTY_STATE(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Idle);
 
   AUV_SUBSTATE(Whatever, Top) {
 
@@ -25,7 +25,7 @@ public:
     void run();
   };
 
-  createTaskFunctions(TaskExample);
+  AUV_CREATE_FUNCTIONS(TaskExample);
 };
 
 #endif

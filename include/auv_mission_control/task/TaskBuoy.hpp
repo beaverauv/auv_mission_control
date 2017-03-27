@@ -1,7 +1,7 @@
 #ifndef TaskBuoy_H
 #define TaskBuoy_H
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class TaskBuoy : public Task {
 public:
@@ -25,7 +25,7 @@ public:
     void run();
   };
 
-  createTaskFunctions(TaskBuoy);
+  AUV_CREATE_FUNCTIONS(TaskBuoy);
 
 private:
   // variables go here

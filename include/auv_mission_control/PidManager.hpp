@@ -15,7 +15,7 @@
 #include <std_msgs/String.h>
 
 #include <auv_mission_control/Axis.hpp>
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 // Axis definitions
 #define AXIS_SURGE 0

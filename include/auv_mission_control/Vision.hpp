@@ -11,7 +11,7 @@
 #include <ros/ros.h>
 
 #include <auv_mission_control/Camera.hpp>
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class Vision : public Task {
 public:

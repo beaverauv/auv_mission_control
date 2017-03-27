@@ -8,7 +8,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
 
-#include <auv_mission_control/Task.hpp>
+#include <auv_mission_control/task/Task.hpp>
 
 class Camera : public Task {
 private:
