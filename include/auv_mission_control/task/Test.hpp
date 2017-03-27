@@ -1,27 +1,29 @@
-#ifndef TaskTest_H
-#define TaskTest_H
+#ifndef TASKTEST_H
+#define TASKTEST_H
 
-#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/Task.hpp>
 
-class TaskTest : public TaskBase {
+namespace Task {
+
+class Test : public Base {
 public:
-  TaskTest(std::shared_ptr<PointerHandler> ph)
+  Test(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
 
-  ~TaskTest() {}
+  ~Test() {}
 
   int execute();
 
-  virtual TaskTest &self(void) { return *this; }
+  virtual Test &self(void) { return *this; }
   virtual PointerHandler &ph(void) { return *ph_; }
 
-  AUV_LOG_TAG(TaskTest);
+  AUV_LOG_TAG(Test);
 
   AUV_TOPSTATE(Top) {
 
     struct Box {
       Box() {}
-      std::shared_ptr<TaskTest> self_;
+      std::shared_ptr<Test> self_;
     };
 
     AUV_STATE(Top);
@@ -30,12 +32,12 @@ public:
 
     virtual void run() { setState<Init>(); }
 
-    TaskTest &self() { return *box().self_; }
+    Test &self() { return *box().self_; }
     PointerHandler &ph() { return *self().ph_; }
 
   private:
-    void init(TaskTest * self, std::shared_ptr<PointerHandler> ph) {
-      box().self_ = std::shared_ptr<TaskTest>(self);
+    void init(Test * self, std::shared_ptr<PointerHandler> ph) {
+      box().self_ = std::shared_ptr<Test>(self);
     }
   };
 
@@ -54,7 +56,8 @@ public:
 
   Macho::Machine<Top> sm_;
 
-  AUV_CREATE_QUEUE(TaskTest, sm_);
+  AUV_CREATE_QUEUE(Test, sm_);
 };
+}
 
 #endif

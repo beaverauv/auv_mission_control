@@ -1,10 +1,12 @@
-#include <auv_mission_control/task/TaskBase.hpp>
+#include <auv_mission_control/task/Base.hpp>
 
-TaskBase::TaskBase() {}
+namespace Task {
 
-TaskBase::~TaskBase() {}
+Base::Base() {}
 
-void TaskBase::AUV_FATAL(const char *format, ...) {
+Base::~Base() {}
+
+void Base::AUV_FATAL(const char *format, ...) {
   char buffer[1024];
   std::va_list args;
   va_start(args, format);
@@ -16,7 +18,7 @@ void TaskBase::AUV_FATAL(const char *format, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_FATAL(std::string string, ...) {
+void Base::AUV_FATAL(std::string string, ...) {
   const char *format = string.c_str();
   char buffer[1024];
   std::va_list args;
@@ -29,7 +31,7 @@ void TaskBase::AUV_FATAL(std::string string, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_ERROR(const char *format, ...) {
+void Base::AUV_ERROR(const char *format, ...) {
   char buffer[1024];
   std::va_list args;
   va_start(args, format);
@@ -41,7 +43,7 @@ void TaskBase::AUV_ERROR(const char *format, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_ERROR(std::string string, ...) {
+void Base::AUV_ERROR(std::string string, ...) {
   const char *format = string.c_str();
   char buffer[1024];
   std::va_list args;
@@ -54,7 +56,7 @@ void TaskBase::AUV_ERROR(std::string string, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_WARN(const char *format, ...) {
+void Base::AUV_WARN(const char *format, ...) {
   char buffer[1024];
   std::va_list args;
   va_start(args, format);
@@ -66,7 +68,7 @@ void TaskBase::AUV_WARN(const char *format, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_WARN(std::string string, ...) {
+void Base::AUV_WARN(std::string string, ...) {
   const char *format = string.c_str();
   char buffer[1024];
   std::va_list args;
@@ -79,7 +81,7 @@ void TaskBase::AUV_WARN(std::string string, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_INFO(const char *format, ...) {
+void Base::AUV_INFO(const char *format, ...) {
   char buffer[1024];
   std::va_list args;
   va_start(args, format);
@@ -91,7 +93,7 @@ void TaskBase::AUV_INFO(const char *format, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_INFO(std::string string, ...) {
+void Base::AUV_INFO(std::string string, ...) {
   const char *format = string.c_str();
   char buffer[1024];
   std::va_list args;
@@ -104,7 +106,7 @@ void TaskBase::AUV_INFO(std::string string, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_DEBUG(const char *format, ...) {
+void Base::AUV_DEBUG(const char *format, ...) {
   char buffer[1024];
   std::va_list args;
   va_start(args, format);
@@ -116,7 +118,7 @@ void TaskBase::AUV_DEBUG(const char *format, ...) {
   va_end(args);
 }
 
-void TaskBase::AUV_DEBUG(std::string string, ...) {
+void Base::AUV_DEBUG(std::string string, ...) {
   const char *format = string.c_str();
   char buffer[1024];
   std::va_list args;
@@ -129,4 +131,5 @@ void TaskBase::AUV_DEBUG(std::string string, ...) {
   va_end(args);
 }
 
-std::string TaskBase::getTag() { return std::string("[Default Task]"); }
+std::string Base::getTag() { return std::string("[Default Task]"); }
+}

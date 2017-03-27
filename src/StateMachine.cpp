@@ -14,11 +14,11 @@ int main(int argc, char *argv[]) {
   ph->pm_ = std::make_shared<PidManager>();
   ph->cam_ = std::make_shared<Camera>();
   ph->vision_ = std::make_shared<Vision>(ph);
-  ph->test_ = std::make_shared<TaskTest>(ph);
-  ph->example_ = std::make_shared<TaskExample>(ph);
-  ph->gate_ = std::make_shared<TaskGate>(ph);
-  ph->buoy_ = std::make_shared<TaskBuoy>(ph);
-  ph->marker_ = std::make_shared<TaskMarker>(ph);
+  ph->test_ = std::make_shared<Task::Test>(ph);
+  ph->example_ = std::make_shared<Task::Example>(ph);
+  ph->gate_ = std::make_shared<Task::Gate>(ph);
+  ph->buoy_ = std::make_shared<Task::Buoy>(ph);
+  ph->marker_ = std::make_shared<Task::Marker>(ph);
 
   ph->sm_->queueEnable();
   ph->sm_->queueState<StateMachine::Init>();

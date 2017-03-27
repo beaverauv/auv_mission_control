@@ -1,19 +1,21 @@
-#include <auv_mission_control/task/TaskTest.hpp>
+#include <auv_mission_control/task/Test.hpp>
 #include <auv_mission_control/template_states.hpp>
 
-int TaskTest::execute() {
+namespace Task {
+
+int Test::execute() {
   if (checkEventQueue()) {
     sm_->run();
   }
 }
 
-void TaskTest::Init::run() {
+void Test::Init::run() {
   // setState<Timer::TimerOld<Whatever>>(3.0, Macho::Event(&Top::here));
   // setState<Timer::TimerOld<Init> >(3.0, Top::box().self_);
   // setState<Timer::TimerOld<Init> >(3.0, StateMachine::Test::alias());
 
   // setState<Timer::TimerOld<Whatever>>(3.0, Macho::State<Whatever>(),
-  //                                  Macho::Event(&TaskTest::Whatever::here));
+  //                                  Macho::Event(&Test::Whatever::here));
 
   self().queueEnable();
 
@@ -30,6 +32,7 @@ void TaskTest::Init::run() {
   self().queueState<Timer<Whatever>>(1.0);
 }
 
-void TaskTest::Whatever::run() {
+void Test::Whatever::run() {
   setState<Timer<Init>>(0.0, StateMachine::Example::alias());
+}
 }

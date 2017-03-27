@@ -5,13 +5,14 @@
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/Mission.hpp>
 #include <auv_mission_control/PidManager.hpp>
-#include <auv_mission_control/task/Task.hpp>
-#include <auv_mission_control/task/TaskBuoy.hpp>
-#include <auv_mission_control/task/TaskExample.hpp>
-#include <auv_mission_control/task/TaskGate.hpp>
-#include <auv_mission_control/task/TaskMarker.hpp>
-#include <auv_mission_control/task/TaskTest.hpp>
+#include <auv_mission_control/Task.hpp>
 #include <auv_mission_control/Vision.hpp>
+
+#include <auv_mission_control/task/Buoy.hpp>
+#include <auv_mission_control/task/Example.hpp>
+#include <auv_mission_control/task/Gate.hpp>
+#include <auv_mission_control/task/Marker.hpp>
+#include <auv_mission_control/task/Test.hpp>
 #include <ros/ros.h>
 
 class PointerHandler {
@@ -24,11 +25,11 @@ public:
   std::shared_ptr<PidManager> pm_;
   std::shared_ptr<Camera> cam_;
   std::shared_ptr<Vision> vision_;
-  std::shared_ptr<TaskTest> test_;
-  std::shared_ptr<TaskExample> example_;
-  std::shared_ptr<TaskGate> gate_;
-  std::shared_ptr<TaskBuoy> buoy_;
-  std::shared_ptr<TaskMarker> marker_;
+  std::shared_ptr<Task::Test> test_;
+  std::shared_ptr<Task::Example> example_;
+  std::shared_ptr<Task::Gate> gate_;
+  std::shared_ptr<Task::Buoy> buoy_;
+  std::shared_ptr<Task::Marker> marker_;
 
   // StateMachine &sm() { return *sm_; }
   // Mission &mission() { return *mission_; }

@@ -15,7 +15,7 @@
 #include <std_msgs/String.h>
 
 #include <auv_mission_control/Axis.hpp>
-#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/Task.hpp>
 
 // Axis definitions
 #define AXIS_SURGE 0
@@ -34,7 +34,7 @@
 #define INPUT_DEPTH 4
 // #define IMU_YAW 5
 
-class PidManager : public TaskBase {
+class PidManager : public Task::Base {
 public:
   PidManager();
   ~PidManager();

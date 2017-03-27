@@ -11,9 +11,9 @@
 #include <ros/ros.h>
 
 #include <auv_mission_control/Camera.hpp>
-#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/Task.hpp>
 
-class Vision : public TaskBase {
+class Vision : public Task::Base {
 public:
   Vision(std::shared_ptr<PointerHandler> ph) : ph_(ph) {}
   ~Vision() {}

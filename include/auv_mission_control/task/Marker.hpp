@@ -1,18 +1,20 @@
 #ifndef TASKMARKER_H
 #define TASKMARKER_H
 
-#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/Task.hpp>
 
-class TaskMarker : public TaskBase {
+namespace Task {
+
+class Marker : public Base {
 public:
-  TaskMarker(std::shared_ptr<PointerHandler> ph)
+  Marker(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
 
-  ~TaskMarker() {}
+  ~Marker() {}
 
-  AUV_LOG_TAG(TaskMarker);
+  AUV_LOG_TAG(Marker);
 
-  AUV_CREATE_TOP_STATE(TaskMarker);
+  AUV_CREATE_TOP_STATE(Marker);
 
   AUV_CREATE_STATE(Init);
 
@@ -25,7 +27,7 @@ public:
     void run();
   };
 
-  AUV_CREATE_FUNCTIONS(TaskMarker);
+  AUV_CREATE_FUNCTIONS(Marker);
 
 private:
   // variables go here;
@@ -39,5 +41,6 @@ private:
   int counter_sway = 0;
   int counter_depth = 0;
 };
+}
 
 #endif

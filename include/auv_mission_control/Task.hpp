@@ -2,7 +2,7 @@
 #define TASK_H
 
 #include <auv_mission_control/Macho.hpp>
-#include <auv_mission_control/task/TaskBase.hpp>
+#include <auv_mission_control/task/Base.hpp>
 #include <boost/type_index.hpp>
 
 class StateMachine;
@@ -18,7 +18,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 
 #define MAXWIDTH 7
 
-#define AUV_TOPSTATE(Top) TOPSTATE(Top), TaskBase
+#define AUV_TOPSTATE(Top) TOPSTATE(Top), Task::Base
 
 #define AUV_SUBSTATE(STATE, SUPERSTATE) SUBSTATE(STATE, SUPERSTATE)
 

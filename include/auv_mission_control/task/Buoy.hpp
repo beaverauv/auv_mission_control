@@ -1,18 +1,20 @@
-#ifndef TASKGATE_H
-#define TASKGATE_H
+#ifndef TASKBUOY_H
+#define TASKBUOY_H
 
-#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/Task.hpp>
 
-class TaskGate : public TaskBase {
+namespace Task {
+
+class Buoy : public Base {
 public:
-  TaskGate(std::shared_ptr<PointerHandler> ph)
+  Buoy(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
 
-  ~TaskGate() {}
+  ~Buoy() {}
 
-  AUV_LOG_TAG(TaskGate);
+  AUV_LOG_TAG(Buoy);
 
-  AUV_CREATE_TOP_STATE(TaskGate);
+  AUV_CREATE_TOP_STATE(Buoy);
 
   AUV_CREATE_STATE(Init);
 
@@ -25,31 +27,21 @@ public:
     void run();
   };
 
-  AUV_CREATE_FUNCTIONS(TaskGate);
+  AUV_CREATE_FUNCTIONS(Buoy);
 
 private:
-  // variables go here;
-  bool startTimer = 0;
-  double thisDepth = -0.25;
-
-  int ColorSpace = 0;
-  int minObjectArea = 20 * 20; // 20x20 blob
-  bool objectFound;
-
-  bool killSwitch = 0;
-
+  // variables go here
+  int currentColor;
+  int objectFound;
   int action = 0;
   // Timer goToDepth_time;
   int depthCounter = 0;
   // Timer driveForwards_time;
   int forwardCounter = 0;
-  // Timer markerTimer;
-  int markerCounter = 0;
-  int reZeroCounter = 0;
+  // Timer waitTimer;
+  int waitCounter = 0;
   double surgeSpeed = 25;
   double previousDepth;
-  double currentDepth;
-  int rosInfoCounter;
   double distanceFromEdge_left;
   double distanceFromEdge_right;
   bool outOfSight;
@@ -59,6 +51,12 @@ private:
   double setpoint_heave;
   double setpoint_surge;
   double plantState_surge;
+
+  double redDepth; // depth of red buoy
+
+  // Timer ramRed;
+  int ramRedCounter = 0;
 };
+}
 
 #endif

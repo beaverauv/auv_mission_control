@@ -1,17 +1,20 @@
-#include <auv_mission_control/task/TaskExample.hpp>
+#include <auv_mission_control/task/Example.hpp>
 #include <auv_mission_control/template_states.hpp>
 
-int TaskExample::execute() {
+namespace Task {
+
+int Example::execute() {
   if (checkEventQueue()) {
     sm_->run();
   }
 }
 
-void TaskExample::Init::run() {
+void Example::Init::run() {
   //
   self().queueState<Timer<Whatever>>(1.0);
 }
 
-void TaskExample::Whatever::run() {
+void Example::Whatever::run() {
   setState<Timer<Init>>(0.0, StateMachine::Marker::alias());
+}
 }

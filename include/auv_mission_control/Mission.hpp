@@ -1,9 +1,9 @@
 #ifndef MISSION_H_
 #define MISSION_H_
 
-#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/Task.hpp>
 
-class Mission : public TaskBase {
+class Mission : public Task::Base {
 public:
   Mission(std::shared_ptr<PointerHandler> ph) : ph_(ph) {}
 

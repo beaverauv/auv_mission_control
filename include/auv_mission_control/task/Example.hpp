@@ -1,16 +1,18 @@
 #ifndef TASKEXAMPLE_H_
 #define TASKEXAMPLE_H_
 
-#include <auv_mission_control/task/Task.hpp>
+#include <auv_mission_control/Task.hpp>
 
-class TaskExample : public TaskBase {
+namespace Task {
+
+class Example : public Base {
 public:
-  TaskExample(std::shared_ptr<PointerHandler> ph)
+  Example(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
 
-  ~TaskExample() {}
+  ~Example() {}
 
-  AUV_CREATE_TOP_STATE(TaskExample);
+  AUV_CREATE_TOP_STATE(Example);
 
   AUV_LOG_TAG(TaskExampl);
 
@@ -25,7 +27,8 @@ public:
     void run();
   };
 
-  AUV_CREATE_FUNCTIONS(TaskExample);
+  AUV_CREATE_FUNCTIONS(Example);
 };
+}
 
 #endif
