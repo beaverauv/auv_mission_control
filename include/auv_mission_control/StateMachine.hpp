@@ -7,7 +7,7 @@
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/PointerHandler.hpp>
 
-class StateMachine : public Task {
+class StateMachine : public TaskBase {
 public:
   StateMachine(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this)) {}

@@ -3,7 +3,7 @@
 
 #include <auv_mission_control/task/Task.hpp>
 
-class TaskTest : public Task {
+class TaskTest : public TaskBase {
 public:
   TaskTest(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}

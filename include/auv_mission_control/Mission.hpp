@@ -3,7 +3,7 @@
 
 #include <auv_mission_control/task/Task.hpp>
 
-class Mission : public Task {
+class Mission : public TaskBase {
 public:
   Mission(std::shared_ptr<PointerHandler> ph) : ph_(ph) {}
 

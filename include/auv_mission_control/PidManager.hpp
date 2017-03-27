@@ -34,7 +34,7 @@
 #define INPUT_DEPTH 4
 // #define IMU_YAW 5
 
-class PidManager : public Task {
+class PidManager : public TaskBase {
 public:
   PidManager();
   ~PidManager();

@@ -10,7 +10,7 @@
 
 #include <auv_mission_control/task/Task.hpp>
 
-class Camera : public Task {
+class Camera : public TaskBase {
 private:
   cv::VideoCapture capFront;
   cv::VideoCapture capBottom;
