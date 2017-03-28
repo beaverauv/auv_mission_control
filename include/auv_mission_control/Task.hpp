@@ -1,8 +1,8 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <auv_mission_control/Logger.hpp>
 #include <auv_mission_control/Macho.hpp>
-#include <auv_mission_control/task/Base.hpp>
 #include <boost/type_index.hpp>
 
 class StateMachine;
@@ -16,9 +16,9 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define SUB_TIMEOUT 1
 #define SUB_KILL 2
 
-#define MAXWIDTH 8
+#define MAXWIDTH 7
 
-#define AUV_TOPSTATE(Top) TOPSTATE(Top), Task::Base
+#define AUV_TOPSTATE(Top) TOPSTATE(Top), Logger
 
 #define AUV_SUBSTATE(STATE, SUPERSTATE) SUBSTATE(STATE, SUPERSTATE)
 

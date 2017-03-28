@@ -5,7 +5,7 @@
 
 namespace Task {
 
-class Example : public Base {
+class Example : public Logger {
 public:
   Example(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
@@ -14,7 +14,7 @@ public:
 
   AUV_CREATE_TOP_STATE(Example);
 
-  AUV_LOG_TAG(Example);
+  AUV_LOG_TAG(Exmpl);
 
   AUV_CREATE_STATE(Init);
 

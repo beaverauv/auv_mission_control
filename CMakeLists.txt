@@ -33,14 +33,14 @@ ${OpenCV_INCLUDE_DIRS}
 
 
 add_executable(state_machine_node
+  src/Logger.cpp
   src/StateMachine.cpp
-  src/Mission.cpp
   src/Macho.cpp
   src/Axis.cpp
   src/PidManager.cpp
   src/Camera.cpp
   src/Vision.cpp
-  src/task/Base.cpp
+  src/mission/Mission.cpp
   src/task/Test.cpp
   src/task/Example.cpp
   src/task/Gate.cpp

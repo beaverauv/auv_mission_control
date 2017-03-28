@@ -5,12 +5,10 @@
 #include <ros/ros.h>
 #include <stdio.h>
 
-namespace Task {
-
-class Base {
+class Logger {
 public:
-  Base();
-  ~Base();
+  Logger();
+  ~Logger();
 
   void AUV_FATAL(const char *format, ...);
   void AUV_FATAL(std::string string, ...);
@@ -31,8 +29,7 @@ public:
 
 private:
 protected:
-  Base(const Base &task) {}
+  Logger(const Logger &task) {}
 };
-}
 
 #endif

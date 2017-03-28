@@ -3,10 +3,10 @@
 
 #include <auv_mission_control/Camera.hpp>
 #include <auv_mission_control/Macho.hpp>
-#include <auv_mission_control/Mission.hpp>
 #include <auv_mission_control/PidManager.hpp>
 #include <auv_mission_control/Task.hpp>
 #include <auv_mission_control/Vision.hpp>
+#include <auv_mission_control/mission/Mission.hpp>
 
 #include <auv_mission_control/task/Buoy.hpp>
 #include <auv_mission_control/task/Example.hpp>

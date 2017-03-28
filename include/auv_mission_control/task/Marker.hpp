@@ -5,7 +5,7 @@
 
 namespace Task {
 
-class Marker : public Base {
+class Marker : public Logger {
 public:
   Marker(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}

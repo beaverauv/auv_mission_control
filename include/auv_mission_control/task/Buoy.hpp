@@ -5,7 +5,7 @@
 
 namespace Task {
 
-class Buoy : public Base {
+class Buoy : public Logger {
 public:
   Buoy(std::shared_ptr<PointerHandler> ph)
       : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}

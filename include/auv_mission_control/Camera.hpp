@@ -10,7 +10,7 @@
 
 #include <auv_mission_control/Task.hpp>
 
-class Camera : public Task::Base {
+class Camera : public Logger {
 private:
   cv::VideoCapture capFront;
   cv::VideoCapture capBottom;

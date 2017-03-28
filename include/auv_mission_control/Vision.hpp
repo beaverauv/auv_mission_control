@@ -13,7 +13,7 @@
 #include <auv_mission_control/Camera.hpp>
 #include <auv_mission_control/Task.hpp>
 
-class Vision : public Task::Base {
+class Vision : public Logger {
 public:
   Vision(std::shared_ptr<PointerHandler> ph) : ph_(ph) {}
   ~Vision() {}
