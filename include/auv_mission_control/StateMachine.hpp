@@ -14,7 +14,7 @@ public:
 
   ~StateMachine() {}
 
-  AUV_LOG_TAG(TaskMain);
+  AUV_LOG_TAG(Main);
 
   int execute();
 

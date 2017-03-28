@@ -16,7 +16,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define SUB_TIMEOUT 1
 #define SUB_KILL 2
 
-#define MAXWIDTH 7
+#define MAXWIDTH 8
 
 #define AUV_TOPSTATE(Top) TOPSTATE(Top), Task::Base
 
@@ -41,9 +41,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define AUV_LOG_TAG(Class)                                                     \
   std::string getTag() {                                                       \
     std::stringstream ss;                                                      \
-    std::string task =                                                         \
-        std::string(#Class).substr(4, std::string(#Class).length()) +          \
-        std::string("]");                                                      \
+    std::string task = std::string(#Class) + std::string("]");                 \
                                                                                \
     ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
        << std::setfill(' ') << task;                                           \
@@ -53,9 +51,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   }                                                                            \
   std::string getTag(std::string state_tag) {                                  \
     std::stringstream ss;                                                      \
-    std::string task =                                                         \
-        std::string(#Class).substr(4, std::string(#Class).length()) +          \
-        std::string("]");                                                      \
+    std::string task = std::string(#Class) + std::string("]");                 \
                                                                                \
     ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
        << std::setfill(' ') << task;                                           \
@@ -109,14 +105,6 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   };
 
 #define AUV_CREATE_EMPTY_STATE(State)                                          \
-  AUV_SUBSTATE(State, Top) {                                                   \
-                                                                               \
-    AUV_STATE(State);                                                          \
-                                                                               \
-    void run() {}                                                              \
-  };
-
-#define createTaskState(State)                                                 \
   AUV_SUBSTATE(State, Top) {                                                   \
                                                                                \
     AUV_STATE(State);                                                          \

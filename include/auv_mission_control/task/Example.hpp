@@ -14,7 +14,7 @@ public:
 
   AUV_CREATE_TOP_STATE(Example);
 
-  AUV_LOG_TAG(TaskExampl);
+  AUV_LOG_TAG(Example);
 
   AUV_CREATE_STATE(Init);
 
