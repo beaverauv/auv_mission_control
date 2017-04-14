@@ -103,11 +103,11 @@ private:
   ros::Subscriber sub_start_switch_;
   ros::Subscriber sub_kill_switch_;
 
-  double position_heave_, velocity_surge_, velocity_sway_;
-  double position_roll_, position_pitch_, position_yaw_;
+  double position_heave_, velocity_surge_, velocity_sway_ = 0;
+  double position_roll_, position_pitch_, position_yaw_ = 0;
 
-  bool should_ensure_depth_;
-  bool should_ensure_yaw_;
+  bool should_ensure_depth_ = false;
+  bool should_ensure_yaw_ = false;
 
   bool is_sub_imu_called_ = false;
   bool is_sub_depth_called_ = false;

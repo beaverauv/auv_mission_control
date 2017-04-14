@@ -40,7 +40,8 @@ add_executable(state_machine_node
   src/PidManager.cpp
   src/Camera.cpp
   src/Vision.cpp
-  src/mission/Mission.cpp
+  src/mission/Base.cpp
+  src/mission/Test.cpp
   src/task/Test.cpp
   src/task/Example.cpp
   src/task/Gate.cpp

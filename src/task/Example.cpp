@@ -4,6 +4,7 @@
 namespace Task {
 
 int Example::execute() {
+
   if (checkEventQueue()) {
     sm_->run();
   }
@@ -15,6 +16,6 @@ void Example::Init::run() {
 }
 
 void Example::Whatever::run() {
-  setState<Timer<Init>>(0.0, StateMachine::Marker::alias());
+  setState<Timer<Init>>(0.0, ph().alias("Marker"));
 }
 }

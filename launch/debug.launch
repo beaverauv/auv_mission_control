@@ -2,8 +2,11 @@
 
   <rosparam file="$(find auv_mission_control)/cfg/pid.yaml" />
 
-  <node pkg="auv_mission_control" type="state_machine_node" name="$(anon state_machine_cont)" 
-  output="screen" launch-prefix="valgrind --track-origins=yes">
+  <node pkg="auv_mission_control" type="state_machine_node" name="$(anon state_machine_cont)"
+                  output="screen" launch-prefix="valgrind --track-origins=yes">
+    <param name="debug" type="bool" value="true" />
+    <param name="mission" type="str" value="mission_test" />
+
   </node>
 
 

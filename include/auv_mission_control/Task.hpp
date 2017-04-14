@@ -8,7 +8,8 @@
 class StateMachine;
 class PointerHandler;
 
-enum class MISSION { FULL, GATE_ONLY };
+enum class MISSION { TEST, FULL, GATE_ONLY };
+enum class TASK { TEST, EXAMPLE, GATE, BUOY, MARKER };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 
@@ -58,6 +59,18 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
     std::string str = ss.str();                                                \
     std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
     return str + state_tag;                                                    \
+  }
+
+#define AUV_LOG_TAG_NO_SM(Class)                                               \
+  std::string getTag() {                                                       \
+    std::stringstream ss;                                                      \
+    std::string task = std::string(#Class) + std::string("]");                 \
+                                                                               \
+    ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
+       << std::setfill(' ') << task;                                           \
+    std::string str = ss.str();                                                \
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
+    return str;                                                                \
   }
 
 #define AUV_CREATE_FUNCTIONS(T)                                                \

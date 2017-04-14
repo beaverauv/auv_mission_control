@@ -10,6 +10,7 @@ int Test::execute() {
 }
 
 void Test::Init::run() {
+
   // setState<Timer::TimerOld<Whatever>>(3.0, Macho::Event(&Top::here));
   // setState<Timer::TimerOld<Init> >(3.0, Top::box().self_);
   // setState<Timer::TimerOld<Init> >(3.0, StateMachine::Test::alias());
@@ -33,6 +34,6 @@ void Test::Init::run() {
 }
 
 void Test::Whatever::run() {
-  setState<Timer<Init>>(0.0, StateMachine::Example::alias());
+  setState<Timer<Init>>(0.0, ph().alias("Example"));
 }
 }

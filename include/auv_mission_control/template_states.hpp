@@ -48,8 +48,8 @@ template <class T> TSUBSTATE(Timer, T) {
       }
       printstate();
       if (box().isAliasSet) {
-        T::ph().sm_->queueEnable();
-        T::ph().sm_->template queueStateAlias(box().alias_);
+        T::ph().mission()->queueEnable();
+        T::ph().mission()->template queueStateAlias(box().alias_);
         TOP::setState(T::alias());
       } else {
         T::self().queueEnable();
@@ -124,15 +124,14 @@ template <class T> TSUBSTATE(Move, T) {
         T::AUV_ERROR("[Template State] State received mismatched parameters");
         printstate();
         if (box().isAliasSet) {
-          T::ph().sm_->queueEnable();
-          T::ph().sm_->template queueStateAlias(box().alias_);
+          T::ph().mission()->queueEnable();
+          T::ph().mission()->template queueStateAlias(box().alias_);
         } else {
           T::self().queueEnable();
           T::self().template queueStateAlias(T::alias());
         }
         return;
       }
-
       for (unsigned i : util::lang::indices(box().axis_)) {
         INPUT input;
         switch (box().axis_.at(i)) {
@@ -164,8 +163,8 @@ template <class T> TSUBSTATE(Move, T) {
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
       printstate();
       if (box().isAliasSet) {
-        T::ph().sm_->queueEnable();
-        T::ph().sm_->template queueStateAlias(box().alias_);
+        T::ph().mission()->queueEnable();
+        T::ph().mission()->template queueStateAlias(box().alias_);
       } else {
         T::self().queueEnable();
         T::setState(T::alias());
