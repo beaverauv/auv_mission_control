@@ -122,7 +122,7 @@ template <class T> TSUBSTATE(Move, T) {
 
       if (box().axis_.size() != box().values_.size()) {
         T::AUV_ERROR("[Template State] State received mismatched parameters");
-        printstate();
+        // printstate();
         if (box().isAliasSet) {
           T::ph().mission()->queueEnable();
           T::ph().mission()->template queueStateAlias(box().alias_);
@@ -132,31 +132,18 @@ template <class T> TSUBSTATE(Move, T) {
         }
         return;
       }
-      for (unsigned i : util::lang::indices(box().axis_)) {
-        INPUT input;
-        switch (box().axis_.at(i)) {
-        case AXIS::SURGE:
-        case AXIS::SWAY:
-          T::ph().pm_->setEnabled(box().axis_.at(i), false);
-          T::ph().pm_->setControlEffort(box().axis_.at(i), box().values_.at(i));
-          continue;
-
-          break;
-        case AXIS::ROLL:
-        case AXIS::PITCH:
-        case AXIS::YAW:
-          input = INPUT::IMU_POS;
-          break;
-        case AXIS::HEAVE:
-          input = INPUT::DEPTH;
-          break;
-        }
-        T::ph().pm_->setEnabled(box().axis_.at(i), true);
-        T::ph().pm_->setSetpoint(box().axis_.at(i), input, box().values_.at(i));
-      }
     }
-
     for (auto axis : box().axis_) {
+      if (hasPidFeedback(axis)) {
+        T::ph().pm_->setEnabled(box().axis_.at((int)axis), true);
+        T::ph().pm_->setSetpoint(box().axis_.at((int)axis), getAxisInput(axis),
+                                 box().values_.at((int)axis));
+      } else {
+        T::ph().pm_->setEnabled(box().axis_.at((int)axis), false);
+        T::ph().pm_->setControlEffort(box().axis_.at((int)axis),
+                                      box().values_.at((int)axis));
+      }
+
       T::ph().pm_->updatePlantState(axis);
     }
 
@@ -172,6 +159,7 @@ template <class T> TSUBSTATE(Move, T) {
       return;
     }
   }
+
   inline bool isAliasNamed(std::string state) {
     return !state.compare(T::alias().name());
   }
@@ -191,6 +179,21 @@ template <class T> TSUBSTATE(Move, T) {
                   T::ph().pm_->getAxisName(box().axis_.at(i)).c_str(),
                   box().values_.at(i));
     }
+  }
+
+  inline bool hasPidFeedback(AXIS axis) {
+    if (axis == AXIS::YAW || axis == AXIS::HEAVE) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  inline INPUT getAxisInput(AXIS axis) {
+    if (axis == AXIS::YAW)
+      return INPUT::IMU_POS;
+    else if (axis == AXIS::HEAVE)
+      return INPUT::DEPTH;
   }
 
 private:
