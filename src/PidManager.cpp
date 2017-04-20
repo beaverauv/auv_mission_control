@@ -126,6 +126,25 @@ double PidManager::getSetpoint(AXIS axis) {
   return getAxis(axis)->getSetpoint();
 }
 
+bool checkPidStability(AXIS axis, int setpoint, int deadband, int wait_time_){
+  if(pidFirstRun){
+    start_time_ = ros::Time::now().toSec();
+  }
+
+  error = fabs(setpoint - getPlantState(axis));
+
+  if(error <= deadband){
+    if(ros::Time::now().toSec() - start_time_ >= wait_time_){
+      return true;
+    }
+  }
+  else{
+    start_time_ = ros::Time::now().toSec();
+  }
+
+  pidFirstRun = false;
+}
+
 double PidManager::getYaw() { return yaw_.getLimitedPlantState(); }
 
 double PidManager::getDepth() {

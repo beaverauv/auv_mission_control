@@ -97,6 +97,8 @@ public:
 
   void callbackKillSwitch(const std_msgs::Bool::ConstPtr &msg_kill_switch);
 
+  bool stabilizePidLoop(AXIS axis)
+
 private:
   ros::Subscriber sub_imu_;
   ros::Subscriber sub_depth_;
@@ -117,6 +119,8 @@ private:
 
   Axis surge_, sway_, heave_;
   Axis roll_, pitch_, yaw_;
+
+  bool pidFirstRun = true;
 };
 
 #endif

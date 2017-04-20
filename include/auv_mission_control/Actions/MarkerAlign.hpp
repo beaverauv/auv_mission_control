@@ -54,13 +54,13 @@ inline void run(){
 
   }
   else{
-    T::ph().pm_->setSetpoint(AXIS::YAW, INPUT_CAM_BTM, 0);
+        T::ph().pm_->setSetpoint(AXIS::YAW, INPUT_CAM_BTM, 0);
     T::ph().pm_->updatePlantState(AXIS::YAW);
     box().wasCentered = true;
   }
 
   if(fabs(T::ph().pm_->getPlantState()) <= box().markerThreshold){
-    box().isAligned = true;
+          box().isAligned = true;
   }
 
   if(box().isAligned){
