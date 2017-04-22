@@ -1,5 +1,5 @@
 #include <auv_mission_control/StateMachine.hpp>
-#include <auv_mission_control/template_states.hpp>
+#include <auv_mission_control/TemplateStates.hpp>
 
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "state_machine");

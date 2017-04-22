@@ -1,5 +1,5 @@
 #include <auv_mission_control/mission/Test.hpp>
-#include <auv_mission_control/template_states.hpp>
+#include <auv_mission_control/TemplateStates.hpp>
 
 namespace Mission {
 

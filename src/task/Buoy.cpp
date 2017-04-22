@@ -1,5 +1,5 @@
 #include <auv_mission_control/task/Buoy.hpp>
-#include <auv_mission_control/template_states.hpp>
+#include <auv_mission_control/TemplateStates.hpp>
 
 namespace Task {
 

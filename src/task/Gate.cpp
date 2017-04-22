@@ -1,5 +1,5 @@
 #include <auv_mission_control/task/Gate.hpp>
-#include <auv_mission_control/template_states.hpp>
+#include <auv_mission_control/TemplateStates.hpp>
 
 namespace Task {
 
