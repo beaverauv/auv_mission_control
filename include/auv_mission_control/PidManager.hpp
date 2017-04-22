@@ -109,8 +109,8 @@ private:
   ros::Subscriber sub_start_switch_;
   ros::Subscriber sub_kill_switch_;
 
-  double position_heave_, velocity_surge_, velocity_sway_ = 0;
-  double position_roll_, position_pitch_, position_yaw_ = 0;
+  double position_heave_ = 0, velocity_surge_ = 0, velocity_sway_ = 0;
+  double position_roll_ = 0, position_pitch_ = 0, position_yaw_ = 0;
 
   bool should_ensure_depth_ = false;
   bool should_ensure_yaw_ = false;
