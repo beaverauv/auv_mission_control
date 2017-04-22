@@ -67,17 +67,26 @@ public:
 
   void setLimit(double limit);
 
+  void setPidFirstRun(bool pid_first_run);
+
+  void resetPidFirstRun();
+
   double getPlantState();
 
   double getLimitedPlantState();
 
   double getSetpoint();
 
+  bool isPidStable(int deadband, int wait_time);
+
   double plant_state_zero_ = 0;
   double plant_state_current_ = 0;
   double plant_state_limit_ = 0;
 
   double setpoint_current_ = 0;
+
+  bool pid_first_run_ = true;
+  double pid_start_time_ = 0;
 
 private:
   std::string axis_name_;

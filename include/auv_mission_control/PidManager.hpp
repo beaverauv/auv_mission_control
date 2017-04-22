@@ -57,6 +57,10 @@ public:
 
   void setEnabled(AXIS axis, bool enabled);
 
+  void setPidFirstRun(AXIS axis, bool pid_first_run);
+
+  void resetPidFirstRun(AXIS axis);
+
   void updatePlantState(AXIS axis);
 
   double getPlantState(AXIS axis);
@@ -74,6 +78,8 @@ public:
   bool isKilled();
 
   bool isImuCalled();
+
+  bool isPidStable(AXIS axis, int deadband, int wait_time);
 
   void ensureDepth();
 

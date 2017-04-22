@@ -89,6 +89,14 @@ void PidManager::setEnabled(AXIS axis, bool enabled) {
   getAxis(axis)->setEnabled(enabled);
 }
 
+void PidManager::setPidFirstRun(AXIS axis, bool pid_first_run) {
+  getAxis(axis)->setPidFirstRun(pid_first_run);
+}
+
+void PidManager::resetPidFirstRun(AXIS axis) {
+  getAxis(axis)->resetPidFirstRun();
+}
+
 void PidManager::updatePlantState(AXIS axis) {
   // ROS_INFO("update plant state called AXIS: %d", (int)axis);
 
@@ -137,6 +145,10 @@ bool PidManager::isStarted() { return start_switch_; }
 bool PidManager::isKilled() { return kill_switch_; }
 
 bool PidManager::isImuCalled() { return is_sub_imu_called_; }
+
+bool PidManager::isPidStable(AXIS axis, int deadband, int wait_time) {
+  return getAxis(axis)->isPidStable(deadband, wait_time);
+}
 
 void PidManager::ensureDepth() {
   if (should_ensure_depth_)

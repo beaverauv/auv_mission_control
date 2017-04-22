@@ -140,6 +140,12 @@ void Axis::setZero() { plant_state_zero_ = plant_state_current_; }
 
 void Axis::setLimit(double limit) { plant_state_limit_ = limit; }
 
+void Axis::setPidFirstRun(bool pid_first_run) {
+  pid_first_run_ = pid_first_run;
+}
+
+void Axis::resetPidFirstRun() { pid_first_run_ = false; }
+
 double Axis::getPlantState() { return plant_state_current_; }
 
 double Axis::getLimitedPlantState() {
@@ -155,3 +161,21 @@ double Axis::getLimitedPlantState() {
 }
 
 double Axis::getSetpoint() { return setpoint_current_; }
+
+bool Axis::isPidStable(int deadband, int wait_time) {
+  if (pid_first_run_) {
+    pid_start_time_ = ros::Time::now().toSec();
+    pid_first_run_ = false;
+  }
+
+  double error = fabs(getSetpoint() - getPlantState());
+
+  if (error <= deadband) {
+    if (ros::Time::now().toSec() - pid_start_time_ >= wait_time) {
+      return true;
+    }
+  } else {
+    pid_start_time_ = ros::Time::now().toSec();
+  }
+  return false;
+}
