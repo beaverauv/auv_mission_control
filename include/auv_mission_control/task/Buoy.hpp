@@ -30,6 +30,7 @@ public:
   AUV_CREATE_FUNCTIONS(Buoy);
 
 private:
+  int iterator = 0;
   // variables go here
   int currentColor;
   int objectFound;
