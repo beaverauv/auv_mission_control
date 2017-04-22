@@ -10,4 +10,10 @@ int Gate::execute() {
 }
 
 void Gate::Init::run() { setState<Timer<Init>>(3.0); }
+
+void Gate::Whatever::run() {
+  setState<Timer<Init>>(3.0, ph().alias("Marker"));
+  ph().pm->
+
+}
 }

@@ -97,8 +97,7 @@ public:
 
   void callbackKillSwitch(const std_msgs::Bool::ConstPtr &msg_kill_switch);
 
-  bool stabilizePidLoop(AXIS axis)
-
+  bool checkPidStability(AXIS axis, int setpoint, int deadband, int wait_time_);
 private:
   ros::Subscriber sub_imu_;
   ros::Subscriber sub_depth_;
