@@ -133,18 +133,18 @@ template <class T> TSUBSTATE(Move, T) {
         return;
       }
     }
-    for (auto axis : box().axis_) {
-      if (hasPidFeedback(axis)) {
-        T::ph().pm_->setEnabled(box().axis_.at((int)axis), true);
-        T::ph().pm_->setSetpoint(box().axis_.at((int)axis), getAxisInput(axis),
-                                 box().values_.at((int)axis));
+    for (unsigned i : util::lang::indices(box().axis_)) {
+      if (hasPidFeedback(box().axis_.at(i))) {
+        T::ph().pm_->setEnabled(box().axis_.at(i), true);
+        T::ph().pm_->setSetpoint(box().axis_.at(i),
+                                 getAxisInput(box().axis_.at(i)),
+                                 box().values_.at(i));
       } else {
-        T::ph().pm_->setEnabled(box().axis_.at((int)axis), false);
-        T::ph().pm_->setControlEffort(box().axis_.at((int)axis),
-                                      box().values_.at((int)axis));
+        T::ph().pm_->setEnabled(box().axis_.at(i), false);
+        T::ph().pm_->setControlEffort(box().axis_.at(i), box().values_.at(i));
       }
 
-      T::ph().pm_->updatePlantState(axis);
+      T::ph().pm_->updatePlantState(box().axis_.at(i));
     }
 
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
