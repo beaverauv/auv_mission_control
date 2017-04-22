@@ -19,6 +19,9 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 
 #define MAXWIDTH 7
 
+#define QUEUE_ACTION(Action, ...)                                              \
+  self().queueState<Action<Nowhere>>(__VA_ARGS__);
+
 #define AUV_TOPSTATE(Top) TOPSTATE(Top), Logger
 
 #define AUV_SUBSTATE(STATE, SUPERSTATE) SUBSTATE(STATE, SUPERSTATE)
