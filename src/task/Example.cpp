@@ -15,7 +15,5 @@ void Example::Init::run() {
   self().queueState<Timer<Whatever>>(1.0);
 }
 
-void Example::Whatever::run() {
-  setState<Timer<Init>>(0.0, ph().alias("Marker"));
-}
+void Example::Whatever::run() { setState(ph().alias("Marker")); }
 }

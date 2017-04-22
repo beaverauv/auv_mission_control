@@ -36,7 +36,5 @@ void Test::Init::run() {
   QUEUE_ACTION(Timer, 1.0);
 }
 
-void Test::Whatever::run() {
-  setState<Timer<Init>>(0.0, ph().alias("Example"));
-}
+void Test::Whatever::run() { setState(ph().alias("Example")); }
 }
