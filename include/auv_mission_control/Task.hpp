@@ -22,6 +22,8 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define QUEUE_ACTION(Action, ...)                                              \
   self().queueState<Action<Nowhere>>(__VA_ARGS__);
 
+#define QUEUE_STATE(State, ...) self().queueState<State>(__VA_ARGS__);
+
 #define AUV_TOPSTATE(Top) TOPSTATE(Top), Logger
 
 #define AUV_SUBSTATE(STATE, SUPERSTATE) SUBSTATE(STATE, SUPERSTATE)
@@ -131,10 +133,6 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define AUV_MACHINE_FUNCTIONS()                                                \
   void setMachineStateAlias(Macho::Alias alias) { setState(alias); }           \
                                                                                \
-  template <class S, class... P> void setMachineState(const P... p) {          \
-    setState<S>(p...);                                                         \
-  }                                                                            \
-                                                                               \
   template <class S> void setMachineState(double wait_time) {                  \
     setState<S>(wait_time);                                                    \
   }                                                                            \
@@ -168,18 +166,12 @@ public:                                                                        \
                                                                                \
   void queueDisable() { eventqueue_should_switch_ = false; }                   \
                                                                                \
-  template <class S> void queueState() {                                       \
-    eventqueue_.push_back(Macho::Event(&T::Top::setMachineState<S>));          \
+  void queueStateAlias(Macho::Alias alias) {                                   \
+    eventqueue_.push_back(Macho::Event(&T::Top::setMachineStateAlias, alias)); \
   }                                                                            \
                                                                                \
-  template <class S> void queueState(double wait_time) {                       \
-    eventqueue_.push_back(                                                     \
-        Macho::Event(&T::Top::setMachineState<S>, wait_time));                 \
-  }                                                                            \
-                                                                               \
-  template <class S> void queueState(double wait_time, Macho::Alias alias) {   \
-    eventqueue_.push_back(                                                     \
-        Macho::Event(&T::Top::setMachineState<S>, wait_time, alias));          \
+  template <class S, class... P> void queueState(P... p) {                     \
+    eventqueue_.push_back(Macho::Event(&T::Top::setMachineState<S>, p...));    \
   }                                                                            \
                                                                                \
   template <class S>                                                           \
@@ -194,10 +186,6 @@ public:                                                                        \
                   double wait_time, Macho::Alias alias) {                      \
     eventqueue_.push_back(Macho::Event(&T::Top::setMachineState<S>, axis,      \
                                        values, wait_time, alias));             \
-  }                                                                            \
-                                                                               \
-  void queueStateAlias(Macho::Alias alias) {                                   \
-    eventqueue_.push_back(Macho::Event(&T::Top::setMachineStateAlias, alias)); \
   }                                                                            \
                                                                                \
   int checkEventQueue() {                                                      \

@@ -191,7 +191,8 @@
 //	  0.9.1 (released 2006-03-30):
 //		 - Introduction of persistent boxes
 //		 - Speed and size optimizations
-//		 - Machine instance can be accessed in event handlers with method
+//		 - Machine instance can be accessed in event handlers with
+//method
 //"machine"
 //
 //	  0.9 (released 2006-01-15):

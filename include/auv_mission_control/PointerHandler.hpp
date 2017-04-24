@@ -36,16 +36,7 @@
 
 class PointerHandler {
 public:
-  PointerHandler() { ROS_ERROR("[PointerHandler] constructor called\n"); };
-
-  PointerHandler(const PointerHandler &other) {
-    ROS_ERROR("[PointerHandler] copy constructor called\n");
-  };
-
-  PointerHandler &operator=(const PointerHandler &other) {
-    ROS_ERROR("[PointerHandler] copy assignment operator called\n");
-    return *this;
-  };
+  PointerHandler(){};
 
   ~PointerHandler() {}
 
