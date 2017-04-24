@@ -10,7 +10,7 @@ template <class T> TSUBSTATE(Move, T) {
   struct Box {
     Box()
         : is_first_run_(false), wait_time_(0), start_time_(0),
-          alias_(TOP::alias()), isAliasSet(false) {}
+          alias_(TOP::alias()), is_alias_set_(false) {}
 
     bool is_first_run_;
 
@@ -18,7 +18,7 @@ template <class T> TSUBSTATE(Move, T) {
     double start_time_;
 
     Macho::Alias alias_;
-    bool isAliasSet;
+    bool is_alias_set_;
 
     std::vector<AXIS> axis_;
     std::vector<double> values_;
@@ -30,8 +30,8 @@ template <class T> TSUBSTATE(Move, T) {
 
       if (box().axis_.size() != box().values_.size()) {
         T::AUV_ERROR("[Template State] State received mismatched parameters");
-        // printstate();
-        if (box().isAliasSet) {
+        // printState();
+        if (box().is_alias_set_) {
           T::ph().mission()->queueEnable();
           T::ph().mission()->template queueStateAlias(box().alias_);
         } else {
@@ -56,8 +56,8 @@ template <class T> TSUBSTATE(Move, T) {
     }
 
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
-      printstate();
-      if (box().isAliasSet) {
+      printState();
+      if (box().is_alias_set_) {
         T::ph().mission()->queueEnable();
         T::ph().mission()->template queueStateAlias(box().alias_);
       } else {
@@ -71,8 +71,8 @@ template <class T> TSUBSTATE(Move, T) {
   inline bool isAliasNamed(std::string state) {
     return !state.compare(T::alias().name());
   }
-  inline void printstate() {
-    if (box().isAliasSet) {
+  inline void printState() {
+    if (box().is_alias_set_) {
       T::AUV_INFO("Switching to Task %s", box().alias_.name());
     } else {
       if ((isAliasNamed("Nowhere") || isAliasNamed("Test")) ||
@@ -81,7 +81,7 @@ template <class T> TSUBSTATE(Move, T) {
       T::AUV_INFO("Switching to State %s", T::alias().name());
     }
   }
-  inline void printaxis() {
+  inline void printAxis() {
     for (unsigned i : util::lang::indices(box().axis_)) {
       T::AUV_INFO("Axis %s: %.1f",
                   T::ph().pm_->getAxisName(box().axis_.at(i)).c_str(),
@@ -115,7 +115,7 @@ private:
     box().start_time_ = ros::Time::now().toSec();
     T::AUV_INFO("Switched to Move State");
     T::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
-    printaxis();
+    printAxis();
   }
 
   inline void init(std::vector<AXIS> axis, std::vector<double> values,
@@ -126,10 +126,10 @@ private:
     box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
     box().alias_ = alias;
-    box().isAliasSet = true;
+    box().is_alias_set_ = true;
     T::AUV_INFO("Switched to Move State");
     T::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
-    printaxis();
+    printAxis();
   }
 };
 

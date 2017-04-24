@@ -129,10 +129,19 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   };
 
 #define AUV_MACHINE_FUNCTIONS()                                                \
-  template <class S> void setMachineState() { setState<S>(); }                 \
+  void setMachineStateAlias(Macho::Alias alias) { setState(alias); }           \
+                                                                               \
+  template <class S, class... P> void setMachineState(const P... p) {          \
+    setState<S>(p...);                                                         \
+  }                                                                            \
                                                                                \
   template <class S> void setMachineState(double wait_time) {                  \
     setState<S>(wait_time);                                                    \
+  }                                                                            \
+                                                                               \
+  template <class S>                                                           \
+  void setMachineState(double wait_time, Macho::Alias alias) {                 \
+    setState<S>(wait_time, alias);                                             \
   }                                                                            \
                                                                                \
   template <class S>                                                           \
@@ -145,9 +154,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   void setMachineState(std::vector<AXIS> axis, std::vector<double> values,     \
                        double wait_time, Macho::Alias alias) {                 \
     setState<S>(axis, values, wait_time, alias);                               \
-  }                                                                            \
-                                                                               \
-  void setMachineStateAlias(Macho::Alias alias) { setState(alias); }
+  }
 
 #define AUV_CREATE_QUEUE(T, state)                                             \
 public:                                                                        \
@@ -168,6 +175,11 @@ public:                                                                        \
   template <class S> void queueState(double wait_time) {                       \
     eventqueue_.push_back(                                                     \
         Macho::Event(&T::Top::setMachineState<S>, wait_time));                 \
+  }                                                                            \
+                                                                               \
+  template <class S> void queueState(double wait_time, Macho::Alias alias) {   \
+    eventqueue_.push_back(                                                     \
+        Macho::Event(&T::Top::setMachineState<S>, wait_time, alias));          \
   }                                                                            \
                                                                                \
   template <class S>                                                           \

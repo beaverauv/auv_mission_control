@@ -1,5 +1,5 @@
-#include <auv_mission_control/task/Test.hpp>
 #include <auv_mission_control/TemplateStates.hpp>
+#include <auv_mission_control/task/Test.hpp>
 
 namespace Task {
 
@@ -19,22 +19,20 @@ void Test::Init::run() {
   //                                  Macho::Event(&Test::Whatever::here));
 
   self().queueEnable();
-
+  //
   // self().queueState<Move<Nowhere>>({AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
   //                                  {6.0, 5.0, 45.0}, 3.0);
 
   QUEUE_ACTION(Move, {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {6.0, 5.0, 45.0},
                3.0);
 
-  // Top::box().self_->queueState<MoveOld<Nowhere>>(
-  //     {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {14.0, 6.0, 46.0}, 3.0,
-  //     StateMachine::Marker::alias());
-  //
   QUEUE_ACTION(Move, {AXIS::YAW, AXIS::HEAVE, AXIS::ROLL}, {14.0, 6.0, 46.0},
                3.0);
 
-  QUEUE_ACTION(Timer, 1.0);
+  // self().queueState<Move<Nowhere>>({AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
+  //                                  {14.0, 6.0, 46.0}, 3.0);
+  QUEUE_ACTION(Timer, 1.0, Whatever::alias());
 }
 
-void Test::Whatever::run() { setState(ph().alias("Example")); }
+void Test::Whatever::run() { ph().queueTask("Example"); }
 }

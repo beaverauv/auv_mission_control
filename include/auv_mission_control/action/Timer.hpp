@@ -28,26 +28,26 @@
 template <class T> TSUBSTATE(Timer, T) {
   struct Box {
     Box()
-        : wait_time_(0), start_time_(0), event_(0), isEventSet(false),
-          alias_(TOP::alias()), isAliasSet(false) {}
+        : wait_time_(0), start_time_(0), event_(0), is_event_set_(false),
+          alias_(TOP::alias()), is_alias_set_(false) {}
 
     double wait_time_;
     double start_time_;
 
     Macho::IEvent<typename T::Top> *event_;
-    bool isEventSet;
+    bool is_event_set_;
 
     Macho::Alias alias_;
-    bool isAliasSet;
+    bool is_alias_set_;
   };
   AUV_TSTATE(Timer);
   inline void run() {
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
-      if (box().isEventSet) {
+      if (box().is_event_set_) {
         LINK::dispatch(box().event_);
       }
-      printstate();
-      if (box().isAliasSet) {
+      printState();
+      if (box().is_alias_set_) {
         T::ph().mission()->queueEnable();
         T::ph().mission()->template queueStateAlias(box().alias_);
         TOP::setState(T::alias());
@@ -61,8 +61,8 @@ template <class T> TSUBSTATE(Timer, T) {
   inline bool isAliasNamed(std::string state) {
     return !state.compare(T::alias().name());
   }
-  inline void printstate() {
-    if (box().isAliasSet) {
+  inline void printState() {
+    if (box().is_alias_set_) {
       T::AUV_INFO("Switching to Task %s", box().alias_.name());
     } else {
       if ((isAliasNamed("Nowhere") || isAliasNamed("Test")) ||
@@ -82,17 +82,16 @@ private:
   inline void init(double wait_time, Macho::IEvent<typename T::Top> *event) {
     box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
-    box().isEventSet = true;
+    box().is_event_set_ = true;
     box().event_ = event;
     T::AUV_INFO("Switched to Timer State");
     T::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
   }
-  // void init(double waitTime, int i);
   inline void init(double wait_time, Macho::Alias alias) {
     box().wait_time_ = wait_time;
     box().start_time_ = ros::Time::now().toSec();
     box().alias_ = alias;
-    box().isAliasSet = true;
+    box().is_alias_set_ = true;
     T::AUV_INFO("Switched to Timer State");
     T::AUV_INFO("Waiting for %.1f seconds", box().wait_time_);
   }

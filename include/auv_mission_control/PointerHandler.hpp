@@ -36,7 +36,17 @@
 
 class PointerHandler {
 public:
-  PointerHandler() {}
+  PointerHandler() { ROS_ERROR("[PointerHandler] constructor called\n"); };
+
+  PointerHandler(const PointerHandler &other) {
+    ROS_ERROR("[PointerHandler] copy constructor called\n");
+  };
+
+  PointerHandler &operator=(const PointerHandler &other) {
+    ROS_ERROR("[PointerHandler] copy assignment operator called\n");
+    return *this;
+  };
+
   ~PointerHandler() {}
 
   std::shared_ptr<StateMachine> sm_;
@@ -67,11 +77,6 @@ public:
     }
   }
 
-  // template <class S> auto alias() {
-  //   return
-  //   std::remove_reference_t<decltype(mission_test_.get())>::Top::alias();
-  // }
-
   auto mission() {
     switch (current_mission_) {
     case MISSION::TEST:
@@ -86,6 +91,11 @@ public:
   auto alias(std::string task) {
     CHECK_MISSION(Test, TEST);
     // CHECK_MISSION(FullRun, FULLRUN);
+  }
+
+  void queueTask(std::string task) {
+    mission()->queueEnable();
+    mission()->queueStateAlias(alias(task));
   }
 
   // StateMachine &sm() { return *sm_; }
