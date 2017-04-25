@@ -7,12 +7,11 @@ namespace Mission {
 
 class Base : public Logger {
 public:
-  Base(std::shared_ptr<PointerHandler> ph) : ph_(ph) {}
+  Base(std::shared_ptr<PointerHandler> ph) : INHERITED(ph) {}
 
   ~Base() {}
 
-  virtual Base &self(void) { return *this; }
-  virtual PointerHandler &ph(void) { return *ph_; }
+  auto self() { return this; }
 
   AUV_TOPSTATE(Top) {
 
@@ -25,8 +24,8 @@ public:
 
     virtual void run() {}
 
-    Base &self(void) { return *box().self_; }
-    PointerHandler &ph(void) { return self().ph(); }
+    std::shared_ptr<Base> self() { return box().self_; }
+    std::shared_ptr<PointerHandler> ph() { return self()->ph(); }
 
   private:
     void init(Base * self);
@@ -40,8 +39,8 @@ public:
 
   void virtual queueStateAlias(Macho::Alias alias) {}
 
-  std::shared_ptr<PointerHandler> ph_;
   Macho::Machine<Base::Top> sm_;
+  typedef Logger INHERITED;
 };
 }
 

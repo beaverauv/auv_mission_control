@@ -8,7 +8,7 @@ namespace Task {
 class Example : public Logger {
 public:
   Example(std::shared_ptr<PointerHandler> ph)
-      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+      : INHERITED(ph), sm_(Macho::State<Top>(this)) {}
 
   ~Example() {}
 
@@ -28,6 +28,7 @@ public:
   };
 
   AUV_CREATE_FUNCTIONS(Example);
+  typedef Logger INHERITED;
 };
 }
 

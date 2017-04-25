@@ -1,11 +1,11 @@
-#include <auv_mission_control/mission/Test.hpp>
 #include <auv_mission_control/TemplateStates.hpp>
+#include <auv_mission_control/mission/Test.hpp>
 
 namespace Mission {
 
 int Test::execute() {
-  ph().pm_->ensureDepth();
-  ph().pm_->ensureYaw();
+  pm()->ensureDepth();
+  pm()->ensureYaw();
 
   if (checkEventQueue()) {
     sm_->run();
@@ -28,7 +28,7 @@ void Test::Init::run() {
   // setState<MoveOld<Test>>(AxisVec{AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
   //                      ValuesVec{10.0, 5.0, 45.0}, 3.0);
   // AUV_INFO("%s", ph().pm_->getAxisName(0).c_str());
-  self().queueEnable();
+  self()->queueEnable();
 
   AUV_INFO("Starting movement...");
 
@@ -40,7 +40,7 @@ void Test::Init::run() {
   // Top::box().self_->queueState<MoveOld<Test>>({AXIS::YAW, AXIS::SURGE},
   //                                          {6.0, 10.0}, 400.0);
 
-  self().queueState<Move<Tested>>({AXIS::SURGE}, {26.0}, 10.0);
+  self()->queueState<Move<Tested>>({AXIS::SURGE}, {26.0}, 10.0);
 
   // std::vector<INPUT> in1 = {INPUT::IMU_POS};
   // std::vector<double> in2 = {10.0};
@@ -51,15 +51,15 @@ void Test::Init::run() {
   // setState<MoveOld<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
 }
 
-void Test::Tested::run() { ph().test_->execute(); }
+void Test::Tested::run() { test()->execute(); }
 
-void Test::Example::run() { ph().example_->execute(); }
+void Test::Example::run() { example()->execute(); }
 
-void Test::Gate::run() { ph().gate_->execute(); }
+void Test::Gate::run() { gate()->execute(); }
 
-void Test::Buoy::run() { ph().buoy_->execute(); }
+void Test::Buoy::run() { buoy()->execute(); }
 
-void Test::Marker::run() { ph().marker_->execute(); }
+void Test::Marker::run() { marker()->execute(); }
 
 void Test::Kill::run() {
   // AUV_ERROR("Kill::run");

@@ -8,7 +8,7 @@ namespace Task {
 class Marker : public Logger {
 public:
   Marker(std::shared_ptr<PointerHandler> ph)
-      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+      : INHERITED(ph), sm_(Macho::State<Top>(this)) {}
 
   ~Marker() {}
 
@@ -40,6 +40,7 @@ private:
   double setpoint_sway;
   int counter_sway = 0;
   int counter_depth = 0;
+  typedef Logger INHERITED;
 };
 }
 

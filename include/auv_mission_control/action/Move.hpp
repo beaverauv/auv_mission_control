@@ -32,36 +32,35 @@ template <class T> TSUBSTATE(Move, T) {
         T::AUV_ERROR("[Template State] State received mismatched parameters");
         // printState();
         if (box().is_alias_set_) {
-          T::ph().mission()->queueEnable();
-          T::ph().mission()->template queueStateAlias(box().alias_);
+          T::mission()->queueEnable();
+          T::mission()->template queueStateAlias(box().alias_);
         } else {
-          T::self().queueEnable();
-          T::self().template queueStateAlias(T::alias());
+          T::self()->queueEnable();
+          T::self()->template queueStateAlias(T::alias());
         }
         return;
       }
     }
     for (unsigned i : util::lang::indices(box().axis_)) {
       if (hasPidFeedback(box().axis_.at(i))) {
-        T::ph().pm_->setEnabled(box().axis_.at(i), true);
-        T::ph().pm_->setSetpoint(box().axis_.at(i),
-                                 getAxisInput(box().axis_.at(i)),
-                                 box().values_.at(i));
+        T::pm()->setEnabled(box().axis_.at(i), true);
+        T::pm()->setSetpoint(box().axis_.at(i), getAxisInput(box().axis_.at(i)),
+                             box().values_.at(i));
       } else {
-        T::ph().pm_->setEnabled(box().axis_.at(i), false);
-        T::ph().pm_->setControlEffort(box().axis_.at(i), box().values_.at(i));
+        T::pm()->setEnabled(box().axis_.at(i), false);
+        T::pm()->setControlEffort(box().axis_.at(i), box().values_.at(i));
       }
 
-      T::ph().pm_->updatePlantState(box().axis_.at(i));
+      T::pm()->updatePlantState(box().axis_.at(i));
     }
 
     if ((ros::Time::now().toSec() - box().start_time_) > box().wait_time_) {
       printState();
       if (box().is_alias_set_) {
-        T::ph().mission()->queueEnable();
-        T::ph().mission()->template queueStateAlias(box().alias_);
+        T::mission()->queueEnable();
+        T::mission()->template queueStateAlias(box().alias_);
       } else {
-        T::self().queueEnable();
+        T::self()->queueEnable();
         T::setState(T::alias());
       }
       return;
@@ -84,7 +83,7 @@ template <class T> TSUBSTATE(Move, T) {
   inline void printAxis() {
     for (unsigned i : util::lang::indices(box().axis_)) {
       T::AUV_INFO("Axis %s: %.1f",
-                  T::ph().pm_->getAxisName(box().axis_.at(i)).c_str(),
+                  T::pm()->getAxisName(box().axis_.at(i)).c_str(),
                   box().values_.at(i));
     }
   }

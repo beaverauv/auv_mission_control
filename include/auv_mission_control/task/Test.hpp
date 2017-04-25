@@ -8,14 +8,13 @@ namespace Task {
 class Test : public Logger {
 public:
   Test(std::shared_ptr<PointerHandler> ph)
-      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+      : INHERITED(ph), sm_(Macho::State<Top>(this)) {}
 
   ~Test() {}
 
   int execute();
 
-  virtual Test &self(void) { return *this; }
-  virtual PointerHandler &ph(void) { return *ph_; }
+  auto self() { return this; }
 
   AUV_LOG_TAG(Test);
 
@@ -32,13 +31,11 @@ public:
 
     virtual void run() { setState<Init>(); }
 
-    Test &self() { return *box().self_; }
-    PointerHandler &ph() { return *self().ph_; }
+    auto self() { return box().self_; }
+    auto ph() { return self()->ph_; }
 
   private:
-    void init(Test * self, std::shared_ptr<PointerHandler> ph) {
-      box().self_ = std::shared_ptr<Test>(self);
-    }
+    void init(Test * self) { box().self_ = std::shared_ptr<Test>(self); }
   };
 
   AUV_CREATE_STATE(Init);
@@ -52,11 +49,11 @@ public:
     void run();
   };
 
-  std::shared_ptr<PointerHandler> ph_;
-
   Macho::Machine<Top> sm_;
 
   AUV_CREATE_QUEUE(Test, sm_);
+
+  typedef Logger INHERITED;
 };
 }
 

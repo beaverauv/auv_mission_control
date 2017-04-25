@@ -20,9 +20,9 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define MAXWIDTH 7
 
 #define QUEUE_ACTION(Action, ...)                                              \
-  self().queueState<Action<Nowhere>>(__VA_ARGS__);
+  self()->queueState<Action<Nowhere>>(__VA_ARGS__);
 
-#define QUEUE_STATE(State, ...) self().queueState<State>(__VA_ARGS__);
+#define QUEUE_STATE(State, ...) self()->queueState<State>(__VA_ARGS__);
 
 #define AUV_TOPSTATE(Top) TOPSTATE(Top), Logger
 
@@ -79,7 +79,6 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   }
 
 #define AUV_CREATE_FUNCTIONS(T)                                                \
-  std::shared_ptr<PointerHandler> ph_;                                         \
                                                                                \
   Macho::Machine<T::Top> sm_;                                                  \
                                                                                \
@@ -89,8 +88,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
                                                                                \
   int execute();                                                               \
                                                                                \
-  virtual Class &self(void) { return *this; }                                  \
-  virtual PointerHandler &ph(void) { return *ph_; }                            \
+  auto self() { return this; }                                                 \
                                                                                \
   AUV_TOPSTATE(Top) {                                                          \
                                                                                \
@@ -105,13 +103,11 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
                                                                                \
     virtual void run() { setState<Init>(); }                                   \
                                                                                \
-    Class &self() { return *box().self_; }                                     \
-    PointerHandler &ph() { return *self().ph_; }                               \
+    auto self() { return box().self_; }                                        \
+    auto ph() { return self()->ph_; }                                          \
                                                                                \
   private:                                                                     \
-    void init(Class *self, std::shared_ptr<PointerHandler> ph) {               \
-      box().self_ = std::shared_ptr<Class>(self);                              \
-    }                                                                          \
+    void init(Class *self) { box().self_ = std::shared_ptr<Class>(self); }     \
   };
 
 #define AUV_CREATE_STATE(State)                                                \

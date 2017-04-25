@@ -9,7 +9,7 @@
 
 class StateMachine : public Logger {
 public:
-  StateMachine(std::shared_ptr<PointerHandler> ph) : ph_(ph) {}
+  StateMachine(std::shared_ptr<PointerHandler> ph) : INHERITED(ph) {}
 
   ~StateMachine() {}
 
@@ -17,10 +17,9 @@ public:
 
   int execute();
 
-  virtual StateMachine &self(void) { return *this; }
-  virtual PointerHandler &ph(void) { return *ph_; }
+  auto self() { return this; }
 
-  std::shared_ptr<PointerHandler> ph_;
+  typedef Logger INHERITED;
 };
 
 #endif

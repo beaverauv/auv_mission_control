@@ -41,7 +41,7 @@ public:
   ~PointerHandler() {}
 
   std::shared_ptr<StateMachine> sm_;
-  std::shared_ptr<Mission::Test> mission_test_;
+  std::shared_ptr<Mission::Base> mission_;
   std::shared_ptr<PidManager> pm_;
   std::shared_ptr<Camera> cam_;
   std::shared_ptr<Vision> vision_;
@@ -56,28 +56,19 @@ public:
   void setMission(std::string mission) {
     if (!mission.compare("mission_test")) {
       current_mission_ = MISSION::TEST;
-      mission_test_ = makeMission<Mission::Test>();
+      mission_ = makeMission<Mission::Test>();
     }
   }
 
   template <class S> std::shared_ptr<S> makeMission() {
-    switch (current_mission_) {
-    case MISSION::TEST:
-      return std::make_shared<S>(std::shared_ptr<PointerHandler>(this));
-      break;
-    }
+    return std::make_shared<S>(std::shared_ptr<PointerHandler>(this));
   }
 
-  auto mission() {
-    switch (current_mission_) {
-    case MISSION::TEST:
-      return mission_test_;
-    }
-  }
+  std::shared_ptr<Mission::Base> mission() { return mission_; }
 
-  auto missionType() {
-    return std::remove_reference_t<decltype(mission().get())>();
-  }
+  // auto missionType() {
+  //   return std::remove_reference_t<decltype(mission().get())>();
+  // }
 
   auto alias(std::string task) {
     CHECK_MISSION(Test, TEST);

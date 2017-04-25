@@ -1,8 +1,17 @@
 #include <auv_mission_control/Logger.hpp>
+#include <auv_mission_control/TemplateStates.hpp>
 
-Logger::Logger() {}
-
-Logger::~Logger() {}
+std::shared_ptr<PointerHandler> Logger::ph() { return ph_; }
+std::shared_ptr<StateMachine> Logger::sm() { return ph()->sm_; }
+std::shared_ptr<Mission::Base> Logger::mission() { return ph()->mission(); }
+std::shared_ptr<PidManager> Logger::pm() { return ph()->pm_; }
+std::shared_ptr<Camera> Logger::cam() { return ph()->cam_; }
+std::shared_ptr<Vision> Logger::vision() { return ph()->vision_; }
+std::shared_ptr<Task::Test> Logger::test() { return ph()->test_; }
+std::shared_ptr<Task::Example> Logger::example() { return ph()->example_; }
+std::shared_ptr<Task::Gate> Logger::gate() { return ph()->gate_; }
+std::shared_ptr<Task::Buoy> Logger::buoy() { return ph()->buoy_; }
+std::shared_ptr<Task::Marker> Logger::marker() { return ph()->marker_; }
 
 void Logger::AUV_FATAL(const char *format, ...) {
   char buffer[1024];

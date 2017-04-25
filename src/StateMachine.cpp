@@ -38,20 +38,20 @@ int StateMachine::execute() {
   ros::Rate state_rate(20);
 
   AUV_INFO("Waiting for IMU initialization...");
-  while (!ph().pm_->isImuCalled() && ros::ok() && !ph().debug_) {
+  while (!pm()->isImuCalled() && ros::ok() && !ph()->debug_) {
     ros::spinOnce();
-    ph().pm_->updatePlantState(AXIS::YAW);
-    ph().pm_->setZero(AXIS::YAW);
+    pm()->updatePlantState(AXIS::YAW);
+    pm()->setZero(AXIS::YAW);
   }
 
-  ph().pm_->startEnsuringDepth();
-  ph().pm_->startEnsuringYaw();
+  pm()->startEnsuringDepth();
+  pm()->startEnsuringYaw();
 
   while (ros::ok()) {
     ros::spinOnce();
 
     state_rate.sleep();
 
-    ph().mission()->execute();
+    mission()->execute();
   }
 }

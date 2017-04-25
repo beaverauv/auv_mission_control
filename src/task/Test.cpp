@@ -18,7 +18,7 @@ void Test::Init::run() {
   // setState<Timer::TimerOld<Whatever>>(3.0, Macho::State<Whatever>(),
   //                                  Macho::Event(&Test::Whatever::here));
 
-  self().queueEnable();
+  self()->queueEnable();
   //
   // self().queueState<Move<Nowhere>>({AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
   //                                  {6.0, 5.0, 45.0}, 3.0);
@@ -35,5 +35,5 @@ void Test::Init::run() {
   // QUEUE_STATE(Whatever);
 }
 
-void Test::Whatever::run() { ph().queueTask("Example"); }
+void Test::Whatever::run() { ph()->queueTask("Example"); }
 }

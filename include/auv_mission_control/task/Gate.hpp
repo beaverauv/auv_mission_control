@@ -8,7 +8,7 @@ namespace Task {
 class Gate : public Logger {
 public:
   Gate(std::shared_ptr<PointerHandler> ph)
-      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+      : INHERITED(ph), sm_(Macho::State<Top>(this)) {}
 
   ~Gate() {}
 
@@ -61,6 +61,7 @@ private:
   double setpoint_heave;
   double setpoint_surge;
   double plantState_surge;
+  typedef Logger INHERITED;
 };
 }
 

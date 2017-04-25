@@ -8,7 +8,7 @@ namespace Task {
 class Buoy : public Logger {
 public:
   Buoy(std::shared_ptr<PointerHandler> ph)
-      : ph_(ph), sm_(Macho::State<Top>(this, ph_)) {}
+      : INHERITED(ph), sm_(Macho::State<Top>(this)) {}
 
   ~Buoy() {}
 
@@ -56,6 +56,7 @@ private:
 
   // Timer ramRed;
   int ramRedCounter = 0;
+  typedef Logger INHERITED;
 };
 }
 

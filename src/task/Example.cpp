@@ -12,8 +12,8 @@ int Example::execute() {
 
 void Example::Init::run() {
   //
-  self().queueState<Timer<Whatever>>(1.0);
+  self()->queueState<Timer<Whatever>>(1.0);
 }
 
-void Example::Whatever::run() { ph().queueTask("Marker"); }
+void Example::Whatever::run() { ph()->queueTask("Marker"); }
 }

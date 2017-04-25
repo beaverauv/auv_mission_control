@@ -8,7 +8,7 @@ namespace Mission {
 class Test : public Base {
 public:
   Test(std::shared_ptr<PointerHandler> ph)
-      : Base(ph), sm_(Macho::State<Top>(this)) {}
+      : INHERITED(ph), sm_(Macho::State<Top>(this)) {}
 
   ~Test() {}
 
@@ -16,8 +16,7 @@ public:
 
   int execute();
 
-  virtual Test &self(void) { return *this; }
-  virtual PointerHandler &ph(void) { return *Base::ph_; }
+  auto self() { return this; }
 
   AUV_TOPSTATE(Top) {
 
@@ -32,8 +31,8 @@ public:
 
     virtual void run() { setState<Test::Init>(); }
 
-    Test &self(void) { return *box().self_; }
-    PointerHandler &ph(void) { return self().ph(); }
+    auto self() { return box().self_; }
+    auto ph() { return self()->ph(); }
 
   private:
     void init(Test * self);
@@ -59,6 +58,7 @@ public:
 
 private:
   // std::shared_ptr<PointerHandler> ph_;
+  typedef Base INHERITED;
 };
 }
 
