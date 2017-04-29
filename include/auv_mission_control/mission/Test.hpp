@@ -33,6 +33,16 @@ public:
 
     auto self() { return box().self_; }
     auto ph() { return self()->ph(); }
+    auto pm() { return self()->pm(); }
+    auto sm() { return self()->sm(); }
+    auto mission() { return self()->mission(); }
+    auto cam() { return self()->cam(); }
+    auto vision() { return self()->vision(); }
+    auto test() { return self()->test(); }
+    auto example() { return self()->example(); }
+    auto gate() { return self()->gate(); }
+    auto buoy() { return self()->buoy(); }
+    auto marker() { return self()->marker(); }
 
   private:
     void init(Test * self);

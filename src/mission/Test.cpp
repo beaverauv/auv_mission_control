@@ -59,7 +59,10 @@ void Test::Gate::run() { gate()->execute(); }
 
 void Test::Buoy::run() { buoy()->execute(); }
 
-void Test::Marker::run() { marker()->execute(); }
+void Test::Marker::run() {
+  ROS_INFO("HERE");
+  marker()->execute();
+}
 
 void Test::Kill::run() {
   // AUV_ERROR("Kill::run");

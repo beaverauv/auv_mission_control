@@ -192,7 +192,7 @@
 //		 - Introduction of persistent boxes
 //		 - Speed and size optimizations
 //		 - Machine instance can be accessed in event handlers with
-//method
+// method
 //"machine"
 //
 //	  0.9 (released 2006-01-15):
@@ -475,15 +475,6 @@ public:
 
   static bool isChild(Key key) { return false; }
 
-protected:
-  _StateSpecification(_StateInstance &instance) : _myStateInstance(instance) {}
-
-  // Initiate transition to a new state.
-  // Template parameter S is the new state to enter.
-  // Transition is performed AFTER control flow returns to the Machine object.
-  // Initiating more than one transition is considered an error!
-  // The new state may receive parameters for its 'init' methods:
-  // setState<StateA>("someData");
   template <class S> void setState();
 
   template <class S, class P1> void setState(const P1 &p1);
@@ -504,6 +495,16 @@ protected:
   template <class S, class P1, class P2, class P3, class P4, class P5, class P6>
   void setState(const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4,
                 const P5 &p5, const P6 &p6);
+
+protected:
+  _StateSpecification(_StateInstance &instance) : _myStateInstance(instance) {}
+
+  // Initiate transition to a new state.
+  // Template parameter S is the new state to enter.
+  // Transition is performed AFTER control flow returns to the Machine object.
+  // Initiating more than one transition is considered an error!
+  // The new state may receive parameters for its 'init' methods:
+  // setState<StateA>("someData");
 
   // Initiate transition to a state's history.
   // If state has no history, transition is to the state itself.
@@ -1118,6 +1119,174 @@ template <class R, class TOP> inline IEvent<TOP> *Event(R (TOP::*handler)()) {
   return new _Event0<TOP, R>(handler);
 }
 
+template <class TOP, class S> class _StateEvent0 : public IEvent<TOP> {
+
+public:
+  _StateEvent0() {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.template setState<S>();
+  }
+
+private:
+};
+
+template <class TOP, class S, class P1>
+class _StateEvent1 : public IEvent<TOP> {
+
+public:
+  _StateEvent1(P1 p1) : myParam1(p1) {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.template setState<S>(myParam1);
+  }
+
+private:
+  P1 myParam1;
+};
+
+template <class TOP, class S, class P1, class P2>
+class _StateEvent2 : public IEvent<TOP> {
+
+public:
+  _StateEvent2(P1 p1, P2 p2) : myParam1(p1), myParam2(p2) {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.template setState<S>(myParam1, myParam2);
+  }
+
+private:
+  P1 myParam1;
+  P2 myParam2;
+};
+
+template <class TOP, class S, class P1, class P2, class P3>
+class _StateEvent3 : public IEvent<TOP> {
+
+public:
+  _StateEvent3(P1 p1, P2 p2, P3 p3)
+      : myParam1(p1), myParam2(p2), myParam3(p3) {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.template setState<S>(myParam1, myParam2, myParam3);
+  }
+
+private:
+  P1 myParam1;
+  P2 myParam2;
+  P3 myParam3;
+};
+
+template <class TOP, class S, class P1, class P2, class P3, class P4>
+class _StateEvent4 : public IEvent<TOP> {
+
+public:
+  _StateEvent4(P1 p1, P2 p2, P3 p3, P4 p4)
+      : myParam1(p1), myParam2(p2), myParam3(p3), myParam4(p4) {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.template setState<S>(myParam1, myParam2, myParam3, myParam4);
+  }
+
+private:
+  P1 myParam1;
+  P2 myParam2;
+  P3 myParam3;
+  P4 myParam4;
+};
+
+template <class TOP, class S, class P1, class P2, class P3, class P4, class P5>
+class _StateEvent5 : public IEvent<TOP> {
+
+public:
+  _StateEvent5(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+      : myParam1(p1), myParam2(p2), myParam3(p3), myParam4(p4), myParam5(p5) {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.template setState<S>(myParam1, myParam2, myParam3, myParam4,
+                                   myParam5);
+  }
+
+private:
+  P1 myParam1;
+  P2 myParam2;
+  P3 myParam3;
+  P4 myParam4;
+  P5 myParam5;
+};
+
+template <class TOP, class S, class P1, class P2, class P3, class P4, class P5,
+          class P6>
+class _StateEvent6 : public IEvent<TOP> {
+
+public:
+  _StateEvent6(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
+      : myParam1(p1), myParam2(p2), myParam3(p3), myParam4(p4), myParam5(p5),
+        myParam6(p6) {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.template setState<S>(myParam1, myParam2, myParam3, myParam4,
+                                   myParam5, myParam6);
+  }
+
+private:
+  P1 myParam1;
+  P2 myParam2;
+  P3 myParam3;
+  P4 myParam4;
+  P5 myParam5;
+  P6 myParam6;
+};
+
+template <class TOP, class S> inline IEvent<TOP> *StateEvent() {
+  return new _StateEvent0<TOP, S>();
+}
+
+template <class TOP, class S, class P1> inline IEvent<TOP> *StateEvent(P1 p1) {
+  return new _StateEvent1<TOP, S, P1>(p1);
+}
+
+template <class TOP, class S, class P1, class P2>
+inline IEvent<TOP> *StateEvent(P1 p1, P2 p2) {
+  return new _StateEvent2<TOP, S, P1, P2>(p1, p2);
+}
+
+template <class TOP, class S, class P1, class P2, class P3>
+inline IEvent<TOP> *StateEvent(P1 p1, P2 p2, P3 p3) {
+  return new _StateEvent3<TOP, S, P1, P2, P3>(p1, p2, p3);
+}
+
+template <class TOP, class S, class P1, class P2, class P3, class P4>
+inline IEvent<TOP> *StateEvent(P1 p1, P2 p2, P3 p3, P4 p4) {
+  return new _StateEvent4<TOP, S, P1, P2, P3, P4>(p1, p2, p3, p4);
+}
+
+template <class TOP, class S, class P1, class P2, class P3, class P4, class P5>
+inline IEvent<TOP> *StateEvent(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) {
+  return new _StateEvent5<TOP, S, P1, P2, P3, P4, P5>(p1, p2, p3, p4, p5);
+}
+
+template <class TOP, class S, class P1, class P2, class P3, class P4, class P5,
+          class P6>
+inline IEvent<TOP> *StateEvent(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6) {
+  return new _StateEvent6<TOP, S, P1, P2, P3, P4, P5, P6>(p1, p2, p3, p4, p5,
+                                                          p6);
+}
+
 } // namespace Macho
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1365,15 +1534,15 @@ class _MachineBase {
 public:
   class Alias currentState() const;
 
-protected:
-  _MachineBase();
-  ~_MachineBase();
-
   // Transition to new state.
   void setState(_StateInstance &instance, _Initializer *init);
 
   // Transition to new state specified by state alias.
   void setState(const Alias &state);
+
+protected:
+  _MachineBase();
+  ~_MachineBase();
 
   // Prepare transition to new state (performed on call to 'rattleOn').
   // There can be only one state transition pending (asserts otherwise)!

@@ -18,7 +18,7 @@ public:
 
   AUV_CREATE_STATE(Init);
 
-  AUV_CREATE_EMPTY_STATE(Idle);
+  AUV_CREATE_EMPTY_STATE(Nowhere);
 
   AUV_SUBSTATE(Whatever, Top) {
 

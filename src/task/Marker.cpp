@@ -1,5 +1,5 @@
-#include <auv_mission_control/task/Marker.hpp>
 #include <auv_mission_control/TemplateStates.hpp>
+#include <auv_mission_control/task/Marker.hpp>
 
 namespace Task {
 
@@ -9,5 +9,5 @@ int Marker::execute() {
   }
 }
 
-void Marker::Init::run() { setState<Timer<Init>>(3.0); }
+void Marker::Init::run() { QUEUE_ACTION(Timer, 3.0); }
 }

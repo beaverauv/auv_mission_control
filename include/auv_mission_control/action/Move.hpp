@@ -28,6 +28,9 @@ template <class T> TSUBSTATE(Move, T) {
     if (!box().is_first_run_) {
       box().is_first_run_ = true;
 
+      if (!T::pm())
+        T::AUV_ERROR("[Template State] pm pointer is null");
+
       if (box().axis_.size() != box().values_.size()) {
         T::AUV_ERROR("[Template State] State received mismatched parameters");
         // printState();

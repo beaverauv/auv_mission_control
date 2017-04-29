@@ -12,8 +12,11 @@ int Example::execute() {
 
 void Example::Init::run() {
   //
-  self()->queueState<Timer<Whatever>>(1.0);
+  QUEUE_ACTION(Timer, 1.0, Whatever::alias());
 }
 
-void Example::Whatever::run() { ph()->queueTask("Marker"); }
+void Example::Whatever::run() {
+  //
+  ph()->queueTask("Marker");
+}
 }
