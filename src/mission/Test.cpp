@@ -12,8 +12,6 @@ int Test::execute() {
   }
 }
 
-void Test::Top::init(Test *self) { box().self_ = std::shared_ptr<Test>(self); }
-
 void Test::Init::run() {
   // setState<Timer::Timer>(3.0, Buoy::alias);
   // AUV_DEBUG("Test::Init::run: ID %d", Macho::State<Top>()._KeyData)
@@ -40,13 +38,14 @@ void Test::Init::run() {
   // Top::box().self_->queueState<MoveOld<Test>>({AXIS::YAW, AXIS::SURGE},
   //                                          {6.0, 10.0}, 400.0);
 
-  self()->queueState<Move<Tested>>({AXIS::SURGE}, {26.0}, 10.0);
-
+  QUEUE_ACTION(Move, {AXIS::SURGE}, {26.0}, 10.0)
   // std::vector<INPUT> in1 = {INPUT::IMU_POS};
   // std::vector<double> in2 = {10.0};
   // foo<char, int, float> f1;
   // foo<char, int> f2;
   // bar(f1, f2, 9);
+
+  QUEUE_STATE(Tested);
 
   // setState<MoveOld<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
 }
@@ -59,10 +58,7 @@ void Test::Gate::run() { gate()->execute(); }
 
 void Test::Buoy::run() { buoy()->execute(); }
 
-void Test::Marker::run() {
-  ROS_INFO("HERE");
-  marker()->execute();
-}
+void Test::Marker::run() { marker()->execute(); }
 
 void Test::Kill::run() {
   // AUV_ERROR("Kill::run");

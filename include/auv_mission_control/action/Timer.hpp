@@ -49,7 +49,7 @@ template <class T> TSUBSTATE(Timer, T) {
       printState();
       if (box().is_alias_set_) {
         T::mission()->queueEnable();
-        T::mission()->template queueStateAlias(box().alias_);
+        T::mission()->queueState(box().alias_);
         TOP::setState(T::alias());
       } else {
         T::self()->queueEnable();

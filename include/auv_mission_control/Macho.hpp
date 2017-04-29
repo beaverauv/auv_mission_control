@@ -496,6 +496,8 @@ public:
   void setState(const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4,
                 const P5 &p5, const P6 &p6);
 
+  void setState(const class Alias &state);
+
 protected:
   _StateSpecification(_StateInstance &instance) : _myStateInstance(instance) {}
 
@@ -513,7 +515,6 @@ protected:
   // Initiate transition to a new state.
   // Parameter 'state' is the new state to enter.
   // See above and class 'Alias' for more information.
-  void setState(const class Alias &state);
 
   // Deprectated!
   template <class S> void setStateBox(typename S::Box *box = 0);
@@ -906,6 +907,7 @@ public:
 template <class TOP> class IEvent : protected _IEventBase {
   friend class Machine<TOP>;
   friend class TopBase<TOP>;
+  friend class Alias;
 };
 
 // Event with four parameters
@@ -1119,6 +1121,21 @@ template <class R, class TOP> inline IEvent<TOP> *Event(R (TOP::*handler)()) {
   return new _Event0<TOP, R>(handler);
 }
 
+template <class TOP, class P1> class _StateEvent : public IEvent<TOP> {
+
+public:
+  _StateEvent(P1 p1) : myParam1(p1) {}
+
+protected:
+  void dispatch(_StateInstance &instance) {
+    TOP &behaviour = static_cast<TOP &>(instance.specification());
+    behaviour.setState(myParam1);
+  }
+
+private:
+  P1 myParam1;
+};
+
 template <class TOP, class S> class _StateEvent0 : public IEvent<TOP> {
 
 public:
@@ -1251,6 +1268,10 @@ private:
   P5 myParam5;
   P6 myParam6;
 };
+
+template <class TOP, class P1> inline IEvent<TOP> *StateEvent(P1 p1) {
+  return new _StateEvent<TOP, P1>(p1);
+}
 
 template <class TOP, class S> inline IEvent<TOP> *StateEvent() {
   return new _StateEvent0<TOP, S>();
@@ -1689,11 +1710,11 @@ public:
 
   ID id() const { return key()->id; }
 
+  void setState(_MachineBase &machine) const;
+
 protected:
   friend class _MachineBase;
   friend class _StateSpecification;
-
-  void setState(_MachineBase &machine) const;
 
   _KeyData *key() const {
     return static_cast<_KeyData *>(myInitializer->adapt(myStateKey));

@@ -1,5 +1,5 @@
-#include <auv_mission_control/task/Buoy.hpp>
 #include <auv_mission_control/TemplateStates.hpp>
+#include <auv_mission_control/task/Buoy.hpp>
 
 namespace Task {
 
@@ -10,4 +10,6 @@ int Buoy::execute() {
 }
 
 void Buoy::Init::run() { setState<Timer<Init>>(3.0); }
+
+void Buoy::SwitchTask::run() {}
 }

@@ -77,7 +77,7 @@ public:
 
   void queueTask(std::string task) {
     mission()->queueEnable();
-    mission()->queueStateAlias(alias(task));
+    mission()->queueState(alias(task));
   }
 
   // StateMachine &sm() { return *sm_; }

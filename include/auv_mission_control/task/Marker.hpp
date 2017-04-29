@@ -18,14 +18,9 @@ public:
 
   AUV_CREATE_STATE(Init);
 
-  AUV_CREATE_EMPTY_STATE(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Idle);
 
-  SUBSTATE(Whatever, Top) {
-
-    STATE(Whatever);
-
-    void run();
-  };
+  AUV_CREATE_STATE(SwitchTask);
 
   AUV_CREATE_FUNCTIONS(Marker);
 
@@ -40,7 +35,6 @@ private:
   double setpoint_sway;
   int counter_sway = 0;
   int counter_depth = 0;
-  typedef Logger INHERITED;
 };
 }
 

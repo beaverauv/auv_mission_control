@@ -31,9 +31,9 @@ void Test::Init::run() {
 
   // self().queueState<Move<Nowhere>>({AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
   //                                  {14.0, 6.0, 46.0}, 3.0);
-  QUEUE_ACTION(Timer, 1.0, Whatever::alias());
+  QUEUE_ACTION(Timer, 1.0, SwitchTask::alias());
   // QUEUE_STATE(Whatever);
 }
 
-void Test::Whatever::run() { ph()->queueTask("Example"); }
+void Test::SwitchTask::run() { ph()->queueTask("Example"); }
 }

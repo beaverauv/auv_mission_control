@@ -11,11 +11,13 @@ int Example::execute() {
 }
 
 void Example::Init::run() {
+  self()->queueEnable();
   //
-  QUEUE_ACTION(Timer, 1.0, Whatever::alias());
+  QUEUE_ACTION(Timer, 1.0);
+  QUEUE_STATE(SwitchTask);
 }
 
-void Example::Whatever::run() {
+void Example::SwitchTask::run() {
   //
   ph()->queueTask("Marker");
 }

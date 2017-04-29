@@ -18,14 +18,9 @@ public:
 
   AUV_CREATE_STATE(Init);
 
-  AUV_CREATE_EMPTY_STATE(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Idle);
 
-  SUBSTATE(Whatever, Top) {
-
-    STATE(Whatever);
-
-    void run();
-  };
+  AUV_CREATE_STATE(SwitchTask);
 
   AUV_CREATE_FUNCTIONS(Gate);
 
@@ -61,7 +56,6 @@ private:
   double setpoint_heave;
   double setpoint_surge;
   double plantState_surge;
-  typedef Logger INHERITED;
 };
 }
 

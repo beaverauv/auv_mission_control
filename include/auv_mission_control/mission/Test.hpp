@@ -14,45 +14,13 @@ public:
 
   AUV_LOG_TAG(Test);
 
-  int execute();
-
-  auto self() { return this; }
-
-  AUV_TOPSTATE(Top) {
-
-    struct Box {
-      Box() {}
-      std::shared_ptr<Test> self_;
-    };
-
-    AUV_STATE(Top);
-
-    AUV_MACHINE_FUNCTIONS();
-
-    virtual void run() { setState<Test::Init>(); }
-
-    auto self() { return box().self_; }
-    auto ph() { return self()->ph(); }
-    auto pm() { return self()->pm(); }
-    auto sm() { return self()->sm(); }
-    auto mission() { return self()->mission(); }
-    auto cam() { return self()->cam(); }
-    auto vision() { return self()->vision(); }
-    auto test() { return self()->test(); }
-    auto example() { return self()->example(); }
-    auto gate() { return self()->gate(); }
-    auto buoy() { return self()->buoy(); }
-    auto marker() { return self()->marker(); }
-
-  private:
-    void init(Test * self);
-  };
+  AUV_CREATE_TOP_STATE(Test);
 
   AUV_CREATE_STATE(Init);
 
   AUV_CREATE_STATE(Kill);
 
-  AUV_CREATE_EMPTY_STATE(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Idle);
 
   AUV_CREATE_STATE(Tested);
 
@@ -64,11 +32,10 @@ public:
 
   AUV_CREATE_STATE(Marker);
 
-  AUV_CREATE_FUNCTIONS(Test)
-
-private:
-  // std::shared_ptr<PointerHandler> ph_;
+  Macho::Machine<Test::Top> sm_;
   typedef Base INHERITED;
+
+  AUV_CREATE_QUEUE(Test, sm_);
 };
 }
 

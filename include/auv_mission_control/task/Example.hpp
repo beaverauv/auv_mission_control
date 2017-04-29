@@ -18,17 +18,11 @@ public:
 
   AUV_CREATE_STATE(Init);
 
-  AUV_CREATE_EMPTY_STATE(Nowhere);
+  AUV_CREATE_EMPTY_STATE(Idle);
 
-  AUV_SUBSTATE(Whatever, Top) {
-
-    AUV_STATE(Whatever);
-
-    void run();
-  };
+  AUV_CREATE_STATE(SwitchTask);
 
   AUV_CREATE_FUNCTIONS(Example);
-  typedef Logger INHERITED;
 };
 }
 

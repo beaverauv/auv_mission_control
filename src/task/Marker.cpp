@@ -9,5 +9,10 @@ int Marker::execute() {
   }
 }
 
-void Marker::Init::run() { QUEUE_ACTION(Timer, 3.0); }
+void Marker::Init::run() {
+  QUEUE_ACTION(Timer, 3.0);
+  QUEUE_STATE(Init);
+}
+
+void Marker::SwitchTask::run(){};
 }

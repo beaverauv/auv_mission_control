@@ -37,7 +37,7 @@ public:
 
   virtual void queueDisable() {}
 
-  void virtual queueStateAlias(Macho::Alias alias) {}
+  void virtual queueState(Macho::Alias alias) {}
 
   Macho::Machine<Base::Top> sm_;
   typedef Logger INHERITED;

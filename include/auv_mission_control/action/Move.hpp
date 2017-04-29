@@ -36,10 +36,10 @@ template <class T> TSUBSTATE(Move, T) {
         // printState();
         if (box().is_alias_set_) {
           T::mission()->queueEnable();
-          T::mission()->template queueStateAlias(box().alias_);
+          T::mission()->queueState(box().alias_);
         } else {
           T::self()->queueEnable();
-          T::self()->template queueStateAlias(T::alias());
+          T::self()->queueState(T::alias());
         }
         return;
       }
@@ -61,7 +61,7 @@ template <class T> TSUBSTATE(Move, T) {
       printState();
       if (box().is_alias_set_) {
         T::mission()->queueEnable();
-        T::mission()->template queueStateAlias(box().alias_);
+        T::mission()->queueState(box().alias_);
       } else {
         T::self()->queueEnable();
         T::setState(T::alias());
