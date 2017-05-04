@@ -14,7 +14,7 @@ public:
 
   AUV_LOG_TAG(Test);
 
-  AUV_CREATE_TOP_STATE(Test);
+  AUV_CREATE_MISSION_TOP_STATE(Test);
 
   AUV_CREATE_STATE(Init);
 
@@ -32,10 +32,7 @@ public:
 
   AUV_CREATE_STATE(Marker);
 
-  Macho::Machine<Test::Top> sm_;
-  typedef Base INHERITED;
-
-  AUV_CREATE_QUEUE(Test, sm_);
+  AUV_CREATE_MISSION_FUNCTIONS(Test);
 };
 }
 

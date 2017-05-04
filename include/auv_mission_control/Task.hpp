@@ -3,13 +3,14 @@
 
 #include <auv_mission_control/Logger.hpp>
 #include <auv_mission_control/Macho.hpp>
+#include <auv_mission_control/enum.hpp>
 #include <boost/type_index.hpp>
 
 class StateMachine;
 class PointerHandler;
 
-enum class MISSION { TEST, FULL, GATE_ONLY };
-enum class TASK { TEST, EXAMPLE, GATE, BUOY, MARKER };
+enum class MISSION { Base, Test, Full, GateOnly };
+enum class TASK { Test, Example, Gate, Buoy, Marker };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 
@@ -80,11 +81,59 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define AUV_CREATE_FUNCTIONS(T)                                                \
                                                                                \
   Macho::Machine<T::Top> sm_;                                                  \
+  ros::NodeHandle nh_;                                                         \
   typedef Logger INHERITED;                                                    \
-                                                                               \
+  std::string getParamPath();                                                  \
   AUV_CREATE_QUEUE(T, sm_);
 
+#define AUV_CREATE_MISSION_FUNCTIONS(T)                                        \
+  Macho::Machine<T::Top> sm_;                                                  \
+  ros::NodeHandle nh_;                                                         \
+  typedef Base INHERITED;                                                      \
+  AUV_CREATE_QUEUE(T, sm_);
+
+#define AUV_CREATE_PARAM_LOADER(T)                                             \
+  std::string T::getParamPath() {                                              \
+    return std::string(ph()->mission_str() + "/" +                             \
+                       Enum<TASK>::Parse(TASK::T));                            \
+  }
+
 #define AUV_CREATE_TOP_STATE(Class)                                            \
+                                                                               \
+  int execute();                                                               \
+                                                                               \
+  auto self() { return this; }                                                 \
+                                                                               \
+  AUV_TOPSTATE(Top) {                                                          \
+                                                                               \
+    struct Box {                                                               \
+      Box() {}                                                                 \
+      std::shared_ptr<Class> self_;                                            \
+    };                                                                         \
+                                                                               \
+    AUV_STATE(Top);                                                            \
+                                                                               \
+    virtual void run() { setState<Init>(); }                                   \
+                                                                               \
+    auto self() { return box().self_; }                                        \
+    auto ph() { return self()->ph_; }                                          \
+    auto pm() { return self()->pm(); }                                         \
+    auto sm() { return self()->sm(); }                                         \
+    auto mission() { return self()->mission(); }                               \
+    auto cam() { return self()->cam(); }                                       \
+    auto vision() { return self()->vision(); }                                 \
+    auto test() { return self()->test(); }                                     \
+    auto example() { return self()->example(); }                               \
+    auto gate() { return self()->gate(); }                                     \
+    auto buoy() { return self()->buoy(); }                                     \
+    auto marker() { return self()->marker(); }                                 \
+    auto getParamPath() { return self()->getParamPath(); }                     \
+                                                                               \
+  private:                                                                     \
+    void init(Class *self) { box().self_ = std::shared_ptr<Class>(self); }     \
+  };
+
+#define AUV_CREATE_MISSION_TOP_STATE(Class)                                    \
                                                                                \
   int execute();                                                               \
                                                                                \

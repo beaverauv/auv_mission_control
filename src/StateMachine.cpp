@@ -1,6 +1,21 @@
 #include <auv_mission_control/StateMachine.hpp>
 #include <auv_mission_control/TemplateStates.hpp>
 
+ROBOT_ENUM(MISSION) {
+  ROBOT_ENUM_MAP(MISSION::Base, "mission_base");
+  ROBOT_ENUM_MAP(MISSION::Test, "mission_test");
+  ROBOT_ENUM_MAP(MISSION::Full, "mission_full");
+  ROBOT_ENUM_MAP(MISSION::GateOnly, "mission_gate_only");
+}
+
+ROBOT_ENUM(TASK) {
+  ROBOT_ENUM_MAP(TASK::Test, "task_test");
+  ROBOT_ENUM_MAP(TASK::Example, "task_example");
+  ROBOT_ENUM_MAP(TASK::Gate, "task_gate");
+  ROBOT_ENUM_MAP(TASK::Buoy, "task_buoy");
+  ROBOT_ENUM_MAP(TASK::Marker, "task_marker");
+}
+
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "state_machine");
 

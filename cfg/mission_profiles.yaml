@@ -1,4 +1,4 @@
-gate_only:
+mission_test:
   mission_time: 65.1 #Total mission execution time
   number_of_tasks: 0 #Number of tasks
   stubbornness: 0.0 #How stubborn it is to remain within the current task
@@ -12,5 +12,19 @@ gate_only:
     idealism: 0.0 #How unlikely task removals are from the queue
 
 
-no_sonar:
-full_run:
+mission_gate_only:
+  mission_time: 65.1 #Total mission execution time
+  number_of_tasks: 0 #Number of tasks
+  stubbornness: 0.0 #How stubborn it is to remain within the current task
+  idealism: 0.0 #How unlikely task removals are from the queue
+  #TASKS
+  task_gate:
+    order: 0
+    run_time: 10
+    max_run_time: 10.00000001
+    stubbornness: 0.0 #How stubborn it is to remain within the current task
+    idealism: 0.0 #How unlikely task removals are from the queue
+
+
+mission_no_sonar:
+mission_full_run:

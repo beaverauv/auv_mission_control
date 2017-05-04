@@ -24,14 +24,20 @@
     return Mission::M::T::alias();                                             \
   }
 
-#define CHECK_MISSION(M, M_CAP)                                                \
-  if (current_mission_ == MISSION::M_CAP) {                                    \
+#define CHECK_MISSION(M)                                                       \
+  if (current_mission_ == MISSION::M) {                                        \
     CHECK_TASK(Top, M);                                                        \
     CHECK_TASK(Buoy, M);                                                       \
     CHECK_TASK(Example, M);                                                    \
     CHECK_TASK(Gate, M);                                                       \
     CHECK_TASK(Marker, M);                                                     \
     CHECK_TASK(Tested, M);                                                     \
+  }
+
+#define CHECK_SET_MISSION(M)                                                   \
+  if (!mission.compare(Enum<MISSION>::Parse(MISSION::M))) {                    \
+    mission_ = makeMission<Mission::M>();                                      \
+    current_mission_ = MISSION::M;                                             \
   }
 
 class PointerHandler {
@@ -54,10 +60,8 @@ public:
   int execute();
 
   void setMission(std::string mission) {
-    if (!mission.compare("mission_test")) {
-      current_mission_ = MISSION::TEST;
-      mission_ = makeMission<Mission::Test>();
-    }
+    CHECK_SET_MISSION(Base);
+    CHECK_SET_MISSION(Test);
   }
 
   template <class S> std::shared_ptr<S> makeMission() {
@@ -66,30 +70,17 @@ public:
 
   std::shared_ptr<Mission::Base> mission() { return mission_; }
 
-  // auto missionType() {
-  //   return std::remove_reference_t<decltype(mission().get())>();
-  // }
-
   auto alias(std::string task) {
-    CHECK_MISSION(Test, TEST);
-    // CHECK_MISSION(FullRun, FULLRUN);
+    CHECK_MISSION(Test);
+    // CHECK_MISSION(FullRun);
   }
+
+  std::string mission_str() { return Enum<MISSION>::Parse(current_mission_); }
 
   void queueTask(std::string task) {
     mission()->queueEnable();
     mission()->queueState(alias(task));
   }
-
-  // StateMachine &sm() { return *sm_; }
-  // Mission &mission() { return *mission_; }
-  // PidManager &pm() { return *pm_; }
-  // Camera &cam() { return *cam_; }
-  // Vision &vision() { return *vision_; }
-  // TaskTest &test() { return *test_; }
-  // TaskExample &example() { return *example_; }
-  // TaskGate &gate() { return *gate_; }
-  // TaskBuoy &buoy() { return *buoy_; }
-  // TaskMarker &marker() { return *marker_; }
 
   MISSION current_mission_;
   bool debug_ = true;

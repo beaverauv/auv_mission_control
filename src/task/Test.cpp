@@ -3,6 +3,8 @@
 
 namespace Task {
 
+AUV_CREATE_PARAM_LOADER(Test);
+
 int Test::execute() {
   if (checkEventQueue()) {
     sm_->run();
@@ -14,6 +16,8 @@ void Test::Init::run() {
   // setState<Timer::TimerOld<Whatever>>(3.0, Macho::Event(&Top::here));
   // setState<Timer::TimerOld<Init> >(3.0, Top::box().self_);
   // setState<Timer::TimerOld<Init> >(3.0, StateMachine::Test::alias());
+
+  AUV_INFO("Currently in: %s", getParamPath().c_str());
 
   // setState<Timer::TimerOld<Whatever>>(3.0, Macho::State<Whatever>(),
   //                                  Macho::Event(&Test::Whatever::here));

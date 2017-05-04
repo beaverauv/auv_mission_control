@@ -28,6 +28,8 @@ void Test::Init::run() {
   // AUV_INFO("%s", ph().pm_->getAxisName(0).c_str());
   self()->queueEnable();
 
+  AUV_INFO("Current mission is %s", ph()->mission_str().c_str());
+
   AUV_INFO("Starting movement...");
 
   // Top::box().self_->queueState<TimerOld<Nowhere>>(10.0);
