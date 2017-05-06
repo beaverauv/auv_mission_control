@@ -26,12 +26,7 @@
 
 #define CHECK_MISSION(M)                                                       \
   if (current_mission_ == MISSION::M) {                                        \
-    CHECK_TASK(Top, M);                                                        \
-    CHECK_TASK(Buoy, M);                                                       \
-    CHECK_TASK(Example, M);                                                    \
-    CHECK_TASK(Gate, M);                                                       \
-    CHECK_TASK(Marker, M);                                                     \
-    CHECK_TASK(Tested, M);                                                     \
+    MAP_PAIRS(CHECK_TASK, EMPTY, TASK_NAMES_M(M));                             \
   }
 
 #define CHECK_SET_MISSION(M)                                                   \
@@ -51,17 +46,12 @@ public:
   std::shared_ptr<PidManager> pm_;
   std::shared_ptr<Camera> cam_;
   std::shared_ptr<Vision> vision_;
-  std::shared_ptr<Task::Test> test_;
-  std::shared_ptr<Task::Example> example_;
-  std::shared_ptr<Task::Gate> gate_;
-  std::shared_ptr<Task::Buoy> buoy_;
-  std::shared_ptr<Task::Marker> marker_;
+  MAKE_ALL_PH_TASKS();
 
   int execute();
 
   void setMission(std::string mission) {
-    CHECK_SET_MISSION(Base);
-    CHECK_SET_MISSION(Test);
+    MAP(CHECK_SET_MISSION, SEMICOLON, MISSION_NAMES());
   }
 
   template <class S> std::shared_ptr<S> makeMission() {
@@ -71,6 +61,7 @@ public:
   std::shared_ptr<Mission::Base> mission() { return mission_; }
 
   auto alias(std::string task) {
+    // MAP(CHECK_MISSION, SEMICOLON, MISSION_NAMES());
     CHECK_MISSION(Test);
     // CHECK_MISSION(FullRun);
   }

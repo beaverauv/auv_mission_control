@@ -3,6 +3,7 @@
 
 #include <auv_mission_control/Logger.hpp>
 #include <auv_mission_control/Macho.hpp>
+#include <auv_mission_control/cpp_magic.hpp>
 #include <auv_mission_control/enum.hpp>
 #include <boost/type_index.hpp>
 
@@ -13,6 +14,18 @@ enum class MISSION { Base, Test, Full, GateOnly };
 enum class TASK { Test, Example, Gate, Buoy, Marker };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
+
+#define TASK_OBJECTS()                                                         \
+  Test, test_, Example, example_, Gate, gate_, Buoy, buoy_, Marker, marker_
+
+#define TASK_LIST() test, example, gate, buoy, marker
+
+#define TASK_NAMES() Top, Tested, Example, Gate, Buoy, Marker
+
+#define TASK_NAMES_M(M)                                                        \
+  Top, M, Tested, M, Example, M, Gate, M, Buoy, M, Marker, M
+
+#define MISSION_NAMES() Base, Test
 
 #define SUB_SUCCEEDED 0
 #define SUB_TIMEOUT 1
@@ -27,6 +40,8 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define AUV_TOPSTATE(Top) TOPSTATE(Top), Logger
 
 #define AUV_SUBSTATE(STATE, SUPERSTATE) SUBSTATE(STATE, SUPERSTATE)
+
+// #define GREET(x) ph->loadTask(std::make_shared<Task::x>(ph));
 
 #define AUV_STATE(S)                                                           \
   STATE(S);                                                                    \
@@ -98,6 +113,29 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
                        Enum<TASK>::Parse(TASK::T));                            \
   }
 
+#define MAKE_TASK(task, var) ph->var = std::make_shared<Task::task>(ph);
+
+#define MAKE_ALL_TASKS() MAP_PAIRS(MAKE_TASK, EMPTY, TASK_OBJECTS());
+
+#define MAKE_PH_TASK(task, var) std::shared_ptr<Task::task> var;
+
+#define MAKE_ALL_PH_TASKS() MAP_PAIRS(MAKE_PH_TASK, EMPTY, TASK_OBJECTS());
+
+#define MAKE_FUNCTION(name)                                                    \
+  auto name() { return self()->name(); }
+
+#define MAKE_ALL_FUNCTIONS()                                                   \
+  auto self() { return box().self_; }                                          \
+  auto ph() { return self()->ph_; }                                            \
+  auto pm() { return self()->pm(); }                                           \
+  auto sm() { return self()->sm(); }                                           \
+  auto mission() { return self()->mission(); }                                 \
+  auto cam() { return self()->cam(); }                                         \
+  auto vision() { return self()->vision(); }                                   \
+  MAP(MAKE_FUNCTION, SEMICOLON, TASK_LIST());
+
+#define MAKE_MISSION_CHECK(mission)
+
 #define AUV_CREATE_TOP_STATE(Class)                                            \
                                                                                \
   int execute();                                                               \
@@ -115,18 +153,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
                                                                                \
     virtual void run() { setState<Init>(); }                                   \
                                                                                \
-    auto self() { return box().self_; }                                        \
-    auto ph() { return self()->ph_; }                                          \
-    auto pm() { return self()->pm(); }                                         \
-    auto sm() { return self()->sm(); }                                         \
-    auto mission() { return self()->mission(); }                               \
-    auto cam() { return self()->cam(); }                                       \
-    auto vision() { return self()->vision(); }                                 \
-    auto test() { return self()->test(); }                                     \
-    auto example() { return self()->example(); }                               \
-    auto gate() { return self()->gate(); }                                     \
-    auto buoy() { return self()->buoy(); }                                     \
-    auto marker() { return self()->marker(); }                                 \
+    MAKE_ALL_FUNCTIONS();                                                      \
     auto getParamPath() { return self()->getParamPath(); }                     \
                                                                                \
   private:                                                                     \
@@ -150,18 +177,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
                                                                                \
     virtual void run() { setState<Init>(); }                                   \
                                                                                \
-    auto self() { return box().self_; }                                        \
-    auto ph() { return self()->ph_; }                                          \
-    auto pm() { return self()->pm(); }                                         \
-    auto sm() { return self()->sm(); }                                         \
-    auto mission() { return self()->mission(); }                               \
-    auto cam() { return self()->cam(); }                                       \
-    auto vision() { return self()->vision(); }                                 \
-    auto test() { return self()->test(); }                                     \
-    auto example() { return self()->example(); }                               \
-    auto gate() { return self()->gate(); }                                     \
-    auto buoy() { return self()->buoy(); }                                     \
-    auto marker() { return self()->marker(); }                                 \
+    MAKE_ALL_FUNCTIONS();                                                      \
                                                                                \
   private:                                                                     \
     void init(Class *self) { box().self_ = std::shared_ptr<Class>(self); }     \

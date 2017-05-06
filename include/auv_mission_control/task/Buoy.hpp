@@ -17,12 +17,16 @@ public:
   AUV_CREATE_TOP_STATE(Buoy);
 
   AUV_CREATE_STATE(Init);
+
   AUV_CREATE_EMPTY_STATE(Idle);
+
   AUV_CREATE_STATE(SwitchTask);
+
   AUV_CREATE_STATE(GoToDepth);
-  AUV_CREATE_EMPTY_STATE(Nowhere);
+
   AUV_CREATE_STATE(BumpBuoys);
 
+  AUV_CREATE_STATE(ScanLeft);
 
   AUV_CREATE_FUNCTIONS(Buoy);
 
@@ -50,6 +54,8 @@ private:
   double plantState_surge;
 
   double redDepth; // depth of red buoy
+
+  int iterator = 0;
 
   // Timer ramRed;
   int ramRedCounter = 0;
