@@ -5,6 +5,8 @@
 #include <auv_mission_control/StateMachine.hpp>
 #include <auv_mission_control/range.hpp>
 #include <memory>
+#define SCREEN_CENTER_VERTICAL 0
+#define SCREEN_CENTER_HORIZONTAL 1
 
 template <class T> TSUBSTATE(MarkerAlign, T) {
   struct Box {
@@ -26,7 +28,7 @@ template <class T> TSUBSTATE(MarkerAlign, T) {
     int stability_start_time_;
   };
 
-  double startYaw = T::pm()->getYaw();
+  double start_yaw = T::pm()->getYaw();
 
   AUV_TSTATE(MarkerAlign);
   inline void run() {
@@ -35,31 +37,29 @@ template <class T> TSUBSTATE(MarkerAlign, T) {
     T::pm()->setEnabled(AXIS::HEAVE, true);
     T::pm()->setEnabled(AXIS::YAW, true);
 
+    //moves fwd/bkwd/lft/right to match marker
     T::pm()->setSetpoint(AXIS::SURGE, INPUT_CAM_BTM, SCREEN_CENTER_VERTICAL);
     T::pm()->setSetpoint(AXIS::SWAY, INPUT_CAM_BTM, SCREEN_CENTER_HORIZONTAL);
-    T::pm()->setSetpoint(AXIS::HEAVE, INPUT_DEPTH, depth);
+    //locks heave at input depth
+    T::pm()->setSetpoint(AXIS::HEAVE, INPUT_DEPTH, box().depth_);
+
+    //update all plantstates
     T::pm()->updatePlantState(AXIS::SURGE);
     T::pm()->updatePlantState(AXIS::SWAY);
     T::pm()->updatePlantState(AXIS::HEAVE);
 
-    if (!box().is_centered_) {
-      if (box().was_centered_) {
-        box().startYaw = T::pm()->getYaw();
-      }
-      T::pm()->setSetpoint(AXIS::YAW, INPUT_IMU_POS, startYaw);
-      T::pm()->updatePlantState(AXIS::YAW);
-      box().was_centered_ = false;
-
-    } else {
+    //if stable in xy
+    if(T::pm()->isPidStable(AXIS::SURGE) && T::pm()->isPidStable(AXIS::SWAY)){
       T::pm()->setSetpoint(AXIS::YAW, INPUT_CAM_BTM, 0);
-      T::pm()->updatePlantState(AXIS::YAW);
-      box().was_centered_ = true;
+      Box().was_centered_ = true;
     }
-
-  if(T::pm()->isPidStable(AXIS::YAW, 10, wiat_time_){
-      T::ph().mission()->queueEnable();
-      T::setState()
+    else{ //if it's not centered
+      if(Box().was_centered_){//only reset the start yaw if first iteration off center
+        Box().start_yaw = T::pm()->getYaw();
+      }
+      T::pm()->setSetpoint(AXIS::YAW, INPUT_IMU_POS, Box().start_yaw);
+    }
+    T::pm()->updatePlantState(AXIS::YAW);
   }
-  }
-
+};
 #endif

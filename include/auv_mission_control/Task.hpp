@@ -5,7 +5,7 @@
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/cpp_magic.hpp>
 #include <auv_mission_control/enum.hpp>
-#include <boost/type_index.hpp>
+//#include <boost/type_index.hpp>
 
 class StateMachine;
 class PointerHandler;
