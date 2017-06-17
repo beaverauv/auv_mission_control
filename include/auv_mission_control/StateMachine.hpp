@@ -13,6 +13,8 @@ public:
 
   ~StateMachine() {}
 
+  // Log tag without querying state machine about current state_machine
+  // Needed because this class has no state machine
   AUV_LOG_TAG_NO_SM(Main);
 
   int execute();

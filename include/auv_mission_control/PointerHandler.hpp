@@ -60,11 +60,7 @@ public:
 
   std::shared_ptr<Mission::Base> mission() { return mission_; }
 
-  auto alias(std::string task) {
-    // MAP(CHECK_MISSION, SEMICOLON, MISSION_NAMES());
-    CHECK_MISSION(Test);
-    // CHECK_MISSION(FullRun);
-  }
+  auto alias(std::string task) { CHECK_MISSIONS(); }
 
   std::string mission_str() { return Enum<MISSION>::Parse(current_mission_); }
 

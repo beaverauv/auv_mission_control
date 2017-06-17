@@ -15,22 +15,38 @@ enum class TASK { Test, Example, Gate, Buoy, Marker };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 
+// Task objects macro
+// Includes a list of every object type and its correstpoinding variable.
 #define TASK_OBJECTS()                                                         \
   Test, test_, Example, example_, Gate, gate_, Buoy, buoy_, Marker, marker_
 
-#define TASK_LIST() test, example, gate, buoy, marker
+// List of mappings for functions to access task objects
+#define TASK_FUNCTIONS() test, example, gate, buoy, marker
 
+// List of task names, has no use ATM
 #define TASK_NAMES() Top, Tested, Example, Gate, Buoy, Marker
 
+// Task names, paired with M which is the Mission name for passing to the
+// CHECK_TASK macro
 #define TASK_NAMES_M(M)                                                        \
   Top, M, Tested, M, Example, M, Gate, M, Buoy, M, Marker, M
 
-#define MISSION_NAMES() Base, Test
+// List of mission class names / types
+#define MISSION_NAMES() Test
 
+// Each mission class needs a CHECK_MISSION macro. (Other than top)
+// Required because you can't have recursive macros inside another recursive
+// macro
+#define CHECK_MISSIONS()                                                       \
+  CHECK_MISSION(Test);                                                         \
+// CHECK_MISSION(FullRun);\
+
+// Not used ATM
 #define SUB_SUCCEEDED 0
 #define SUB_TIMEOUT 1
 #define SUB_KILL 2
 
+// Width for current task tag in log message
 #define MAXWIDTH 7
 
 #define QUEUE_ACTION(Action, ...) self()->queueState<Action<Idle>>(__VA_ARGS__);
@@ -42,6 +58,8 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
 #define AUV_SUBSTATE(STATE, SUPERSTATE) SUBSTATE(STATE, SUPERSTATE)
 
 // #define GREET(x) ph->loadTask(std::make_shared<Task::x>(ph));
+
+// Functions that replace the STATE and TSTATE macro to add better logging
 
 #define AUV_STATE(S)                                                           \
   STATE(S);                                                                    \
@@ -59,40 +77,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
                                                                                \
   std::string getTag() { return TOP::box().self_->getTag(getStateTag()); }
 
-#define AUV_LOG_TAG(Class)                                                     \
-  std::string getTag() {                                                       \
-    std::stringstream ss;                                                      \
-    std::string task = std::string(#Class) + std::string("]");                 \
-                                                                               \
-    ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
-       << std::setfill(' ') << task;                                           \
-    std::string str = ss.str();                                                \
-    std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
-    return str + sm_->getStateTag();                                           \
-  }                                                                            \
-  std::string getTag(std::string state_tag) {                                  \
-    std::stringstream ss;                                                      \
-    std::string task = std::string(#Class) + std::string("]");                 \
-                                                                               \
-    ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
-       << std::setfill(' ') << task;                                           \
-    std::string str = ss.str();                                                \
-    std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
-    return str + state_tag;                                                    \
-  }
-
-#define AUV_LOG_TAG_NO_SM(Class)                                               \
-  std::string getTag() {                                                       \
-    std::stringstream ss;                                                      \
-    std::string task = std::string(#Class) + std::string("]");                 \
-                                                                               \
-    ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
-       << std::setfill(' ') << task;                                           \
-    std::string str = ss.str();                                                \
-    std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
-    return str;                                                                \
-  }
-
+// Macro for various things needed by tasks and missions
 #define AUV_CREATE_FUNCTIONS(T)                                                \
                                                                                \
   Macho::Machine<T::Top> sm_;                                                  \
@@ -112,7 +97,8 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
     return std::string(ph()->mission_str() + "/" +                             \
                        Enum<TASK>::Parse(TASK::T));                            \
   }
-
+// Helper macros for recursive macros to make adding new tasks and missions
+// easier
 #define MAKE_TASK(task, var) ph->var = std::make_shared<Task::task>(ph);
 
 #define MAKE_ALL_TASKS() MAP_PAIRS(MAKE_TASK, EMPTY, TASK_OBJECTS());
@@ -132,10 +118,9 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   auto mission() { return self()->mission(); }                                 \
   auto cam() { return self()->cam(); }                                         \
   auto vision() { return self()->vision(); }                                   \
-  MAP(MAKE_FUNCTION, SEMICOLON, TASK_LIST());
+  MAP(MAKE_FUNCTION, SEMICOLON, TASK_FUNCTIONS());
 
-#define MAKE_MISSION_CHECK(mission)
-
+// Macro for task and mission top state
 #define AUV_CREATE_TOP_STATE(Class)                                            \
                                                                                \
   int execute();                                                               \
@@ -199,6 +184,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
     void run() {}                                                              \
   };
 
+// Macro for creating the queue and its related functions
 #define AUV_CREATE_QUEUE(T, state)                                             \
 public:                                                                        \
   typedef std::vector<Macho::IEvent<typename T::Top> *> EventQueue;            \
@@ -242,6 +228,41 @@ public:                                                                        \
     }                                                                          \
                                                                                \
     return 1;                                                                  \
+  }
+
+// Macros for adding and parsing log tags
+#define AUV_LOG_TAG(Class)                                                     \
+  std::string getTag() {                                                       \
+    std::stringstream ss;                                                      \
+    std::string task = std::string(#Class) + std::string("]");                 \
+                                                                               \
+    ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
+       << std::setfill(' ') << task;                                           \
+    std::string str = ss.str();                                                \
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
+    return str + sm_->getStateTag();                                           \
+  }                                                                            \
+  std::string getTag(std::string state_tag) {                                  \
+    std::stringstream ss;                                                      \
+    std::string task = std::string(#Class) + std::string("]");                 \
+                                                                               \
+    ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
+       << std::setfill(' ') << task;                                           \
+    std::string str = ss.str();                                                \
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
+    return str + state_tag;                                                    \
+  }
+
+#define AUV_LOG_TAG_NO_SM(Class)                                               \
+  std::string getTag() {                                                       \
+    std::stringstream ss;                                                      \
+    std::string task = std::string(#Class) + std::string("]");                 \
+                                                                               \
+    ss << std::string("[") << std::right << std::setw(MAXWIDTH)                \
+       << std::setfill(' ') << task;                                           \
+    std::string str = ss.str();                                                \
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);            \
+    return str;                                                                \
   }
 
 #endif

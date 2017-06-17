@@ -331,7 +331,7 @@
 #define MAP(...) IF(HAS_ARGS(__VA_ARGS__))(EVAL(MAP_INNER(__VA_ARGS__)))
 #define MAP_INNER(op, sep, cur_val, ...)                                       \
   op(cur_val) IF(HAS_ARGS(__VA_ARGS__))(                                       \
-      sep() DEFER2(_MAP_INNER)()(op, sep, ##__VA_ARGS__))
+      sep() DEFER4(_MAP_INNER)()(op, sep, ##__VA_ARGS__))
 #define _MAP_INNER() MAP_INNER
 
 /**
@@ -388,7 +388,7 @@
   IF(HAS_ARGS(__VA_ARGS__))(EVAL(MAP_PAIRS_INNER(op, sep, __VA_ARGS__)))
 #define MAP_PAIRS_INNER(op, sep, cur_val_1, cur_val_2, ...)                    \
   op(cur_val_1, cur_val_2) IF(HAS_ARGS(__VA_ARGS__))(                          \
-      sep() DEFER2(_MAP_PAIRS_INNER)()(op, sep, __VA_ARGS__))
+      sep() DEFER4(_MAP_PAIRS_INNER)()(op, sep, __VA_ARGS__))
 #define _MAP_PAIRS_INNER() MAP_PAIRS_INNER
 
 /**
