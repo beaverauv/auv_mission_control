@@ -67,6 +67,8 @@ public:
 
   double getLimitedPlantState(AXIS axis);
 
+  double getZero(AXIS axis);
+
   double getSetpoint(AXIS axis);
 
   double getYaw();

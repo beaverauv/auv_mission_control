@@ -10,7 +10,7 @@
 class StateMachine;
 class PointerHandler;
 
-enum class MISSION { Base, Test, Full, GateOnly };
+enum class MISSION { Base, Test, Controller, Full, GateOnly };
 enum class TASK { Test, Example, Gate, Buoy, Marker };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
@@ -32,14 +32,14 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   Top, M, Tested, M, Example, M, Gate, M, Buoy, M, Marker, M
 
 // List of mission class names / types
-#define MISSION_NAMES() Test
+#define MISSION_NAMES() Test, Controller
 
 // Each mission class needs a CHECK_MISSION macro. (Other than top)
 // Required because you can't have recursive macros inside another recursive
 // macro
 #define CHECK_MISSIONS()                                                       \
   CHECK_MISSION(Test);                                                         \
-// CHECK_MISSION(FullRun);\
+  CHECK_MISSION(Controller);
 
 // Not used ATM
 #define SUB_SUCCEEDED 0

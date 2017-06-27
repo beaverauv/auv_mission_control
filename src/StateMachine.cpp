@@ -4,6 +4,7 @@
 ROBOT_ENUM(MISSION) {
   ROBOT_ENUM_MAP(MISSION::Base, "mission_base");
   ROBOT_ENUM_MAP(MISSION::Test, "mission_test");
+  ROBOT_ENUM_MAP(MISSION::Controller, "mission_controller");
   ROBOT_ENUM_MAP(MISSION::Full, "mission_full");
   ROBOT_ENUM_MAP(MISSION::GateOnly, "mission_gate_only");
 }
@@ -58,8 +59,6 @@ int StateMachine::execute() {
 
   pm()->startEnsuringDepth();
   pm()->startEnsuringYaw();
-
-  // AUV_INFO("%s", EVAL(MAP(GREET, Mum, Dad, Adam, Joe)));
 
   while (ros::ok()) {
     ros::spinOnce();

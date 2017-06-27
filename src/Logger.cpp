@@ -138,4 +138,8 @@ void Logger::AUV_DEBUG(std::string string, ...) {
   va_end(args);
 }
 
+void Logger::AUV_HERE() { AUV_INFO("HERE"); }
+
+void Logger::AUV_HERE(int num) { AUV_INFO("HERE%d", num); }
+
 std::string Logger::getTag() { return std::string("[Default Task]"); }

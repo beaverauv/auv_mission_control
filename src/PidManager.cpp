@@ -130,6 +130,8 @@ double PidManager::getLimitedPlantState(AXIS axis) {
   return getAxis(axis)->getLimitedPlantState();
 }
 
+double PidManager::getZero(AXIS axis) { return getAxis(axis)->getZero(); }
+
 double PidManager::getSetpoint(AXIS axis) {
   return getAxis(axis)->getSetpoint();
 }

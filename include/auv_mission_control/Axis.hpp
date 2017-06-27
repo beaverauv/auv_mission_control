@@ -75,6 +75,8 @@ public:
 
   double getLimitedPlantState();
 
+  double getZero();
+
   double getSetpoint();
 
   bool isPidStable(int deadband, int wait_time);

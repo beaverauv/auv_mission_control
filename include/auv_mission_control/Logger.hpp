@@ -43,6 +43,9 @@ public:
   void AUV_DEBUG(const char *format, ...);
   void AUV_DEBUG(std::string string, ...);
 
+  void AUV_HERE();
+  void AUV_HERE(int num);
+
   virtual std::string getTag();
 
   std::shared_ptr<PointerHandler> ph();

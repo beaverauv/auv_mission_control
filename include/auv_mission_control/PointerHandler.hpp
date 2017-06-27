@@ -7,6 +7,7 @@
 #include <auv_mission_control/Task.hpp>
 #include <auv_mission_control/Vision.hpp>
 #include <auv_mission_control/mission/Base.hpp>
+#include <auv_mission_control/mission/Controller.hpp>
 #include <auv_mission_control/mission/Test.hpp>
 
 #include <auv_mission_control/task/Buoy.hpp>

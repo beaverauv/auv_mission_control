@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   cv_bridge
+  auv_thruster_control
 )
 
 
@@ -42,6 +43,7 @@ add_executable(state_machine_node
   src/Vision.cpp
   src/mission/Base.cpp
   src/mission/Test.cpp
+  src/mission/Controller.cpp
   src/task/Test.cpp
   src/task/Example.cpp
   src/task/Gate.cpp

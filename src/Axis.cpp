@@ -160,6 +160,8 @@ double Axis::getLimitedPlantState() {
   return delta;
 }
 
+double Axis::getZero() { return plant_state_zero_; }
+
 double Axis::getSetpoint() { return setpoint_current_; }
 
 bool Axis::isPidStable(int deadband, int wait_time) {
