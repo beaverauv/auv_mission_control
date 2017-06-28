@@ -9,7 +9,11 @@ int Gate::execute() {
   }
 }
 
-void Gate::Init::run() { setState<Timer<Init>>(3.0); }
+void Gate::Init::run() {
+
+  
+
+}
 
 void Gate::SwitchTask::run() {}
 }

@@ -55,6 +55,8 @@ public:
 
   void setZero(AXIS axis);
 
+  void setZeroTo(AXIS axis, double zero_value);
+
   void setEnabled(AXIS axis, bool enabled);
 
   void setPidFirstRun(AXIS axis, bool pid_first_run);

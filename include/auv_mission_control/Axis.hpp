@@ -65,6 +65,8 @@ public:
 
   void setZero();
 
+  void setZeroTo(double zero_value);
+
   void setLimit(double limit);
 
   void setPidFirstRun(bool pid_first_run);
