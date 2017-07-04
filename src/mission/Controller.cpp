@@ -38,6 +38,24 @@ LogitechF310Mapping_t Controller::getLogitechF310Mapping() {
 
   mapped_data.stick_left_ = {
       {joystick_data_->axes[0], joystick_data_->axes[1]}};
+  mapped_data.stick_right_ = {
+      {joystick_data_->axes[3], joystick_data_->axes[4]}};
+  mapped_data.triggers_ = {{joystick_data_->axes[2], joystick_data_->axes[5]}};
+  mapped_data.dpad_ = {{joystick_data_->axes[6], joystick_data_->axes[7]}};
+
+  mapped_data.stick_buttons_ = {
+      {joystick_data_->buttons[9], joystick_data_->buttons[10]}};
+  mapped_data.bumpers_ = {
+      {joystick_data_->buttons[4], joystick_data_->buttons[5]}};
+
+  mapped_data.button_a_ = joystick_data_->buttons[0];
+  mapped_data.button_b_ = joystick_data_->buttons[1];
+  mapped_data.button_x_ = joystick_data_->buttons[2];
+  mapped_data.button_y_ = joystick_data_->buttons[3];
+
+  mapped_data.button_back_ = joystick_data_->buttons[6];
+  mapped_data.button_start_ = joystick_data_->buttons[7];
+  mapped_data.button_power_ = joystick_data_->buttons[8];
 }
 
 void Controller::Init::run() {
@@ -84,6 +102,27 @@ void Controller::Default::run() {
   LogitechF310Mapping_t mapped_data = self()->getLogitechF310Mapping();
   AUV_INFO("Stick left: %f, %f", mapped_data.stick_left_[0],
            mapped_data.stick_left_[1]);
+  // rotation
+  pm()->setControlEffort(AXIS::YAW,
+                         (mapped_data.triggers_[0] + mapped_data.triggers_[1]) *
+                             self()->scale_factor_);
+
+  // left and right
+  pm()->setControlEffort(AXIS::SWAY,
+                         mapped_data.stick_left_[0] * self()->scale_factor_);
+  // forward and backward
+  pm()->setControlEffort(AXIS::SURGE,
+                         mapped_data.stick_left_[1] * self()->scale_factor_);
+
+  pm()->setControlEffort(AXIS::ROLL,
+                         mapped_data.stick_right_[0] * self()->scale_factor_);
+
+  pm()->setControlEffort(AXIS::PITCH,
+                         mapped_data.stick_right_[1] * self()->scale_factor_);
+
+  pm()->setControlEffort(AXIS::HEAVE, (mapped_data.stick_buttons_[1] -
+                                       mapped_data.stick_buttons_[0]) *
+                                          self()->scale_factor_);
 }
 
 void Controller::Tested::run() {}

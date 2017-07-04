@@ -41,6 +41,8 @@ public:
 
   bool does_joy_data_exist_ = false;
 
+  int scale_factor_ = 50;
+
   void joystickDataCallback(const sensor_msgs::Joy::ConstPtr &joy);
 
   LogitechF310Mapping_t getLogitechF310Mapping();
