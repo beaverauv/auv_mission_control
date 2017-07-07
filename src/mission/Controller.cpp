@@ -100,12 +100,10 @@ void Controller::Init::run() {
 
 void Controller::Default::run() {
   LogitechF310Mapping_t mapped_data = self()->getLogitechF310Mapping();
-  AUV_INFO("Stick left: %f, %f", mapped_data.stick_left_[0],
-           mapped_data.stick_left_[1]);
   // rotation
-  pm()->setControlEffort(AXIS::YAW,
-                         (mapped_data.triggers_[0] + mapped_data.triggers_[1]) *
-                             self()->scale_factor_);
+  pm()->setControlEffort(AXIS::YAW, (((mapped_data.triggers_[0] + 1) / 2) -
+                                     ((mapped_data.triggers_[1] + 1) / 2)) *
+                                        self()->scale_factor_);
 
   // left and right
   pm()->setControlEffort(AXIS::SWAY,
