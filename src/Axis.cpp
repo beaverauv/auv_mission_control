@@ -138,9 +138,7 @@ void Axis::setEnabled(bool enabled) {
 
 void Axis::setZero() { plant_state_zero_ = plant_state_current_; }
 
-void Axis::setZeroTo(double zero_value){
-  plant_state_zero_ = zero_value;
-}
+void Axis::setZeroTo(double zero_value) { plant_state_zero_ = zero_value; }
 
 void Axis::setLimit(double limit) { plant_state_limit_ = limit; }
 

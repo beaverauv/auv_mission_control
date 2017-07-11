@@ -85,7 +85,7 @@ void PidManager::setPlantState(AXIS axis, double plant_value) {
 
 void PidManager::setZero(AXIS axis) { getAxis(axis)->setZero(); }
 
-void PidManager::setZeroTo(AXIS axis, double zero_value){
+void PidManager::setZeroTo(AXIS axis, double zero_value) {
   getAxis(axis)->setZeroTo(zero_value);
 }
 

@@ -17,17 +17,6 @@ void Controller::joystickDataCallback(const sensor_msgs::Joy::ConstPtr &joy) {
     does_joy_data_exist_ = true;
 
   joystick_data_ = joy;
-  // stick_left_[0] = joy->axes[0];
-  // stick_left_[1] = joy->axes[1];
-  //
-  // stick_right_[0] = joy->axes[3];
-  // stick_right_[1] = joy->axes[4];
-  //
-  // trigger_[0] = joy->axes[2];
-  // trigger_[1] = joy->axes[5];
-  //
-  // pad_[0] = joy->axes[6];
-  // pad_[1] = joy->axes[7];
 }
 
 LogitechF310Mapping_t Controller::getLogitechF310Mapping() {
