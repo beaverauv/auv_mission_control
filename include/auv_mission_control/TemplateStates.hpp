@@ -5,5 +5,7 @@
 #include <auv_mission_control/action/Move.hpp>
 #include <auv_mission_control/action/Timer.hpp>
 #include <auv_mission_control/action/MarkerAlign.hpp>
+#include <auv_mission_control/action/Turn.hpp>
+
 
 #endif
