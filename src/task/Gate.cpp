@@ -30,7 +30,7 @@ void Gate::GoToDepth::run() {
 
 void Gate::DriveForwards::run() {
   pm()->updatePlantState(AXIS::YAW);
-  pm()->setControlEffort(AXIS::SURGE, 25);
+  pm()->setControlEffort(AXIS::SURGE, 15);
   timer = ros::Time::now().toSec();
   if(timer >= 25){
     self()->queueEnable();
@@ -39,6 +39,6 @@ void Gate::DriveForwards::run() {
 }
 
 void Gate::SwitchTask::run() {
-  ph()->queueTask("Buoy");
+  ph()->queueTask("Kill");
 }
 }
