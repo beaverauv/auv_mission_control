@@ -42,21 +42,18 @@ template <class T> TSUBSTATE(Turn, T) {
 
 private:
   inline void init(double angle){
-    if(!isPidStable(AXIS::YAW, box().angle_/4, .5)){
-      box().angle_ = angle;
-      T::pm()->setZeroTo(AXIS::YAW, box().start_yaw_);
-      box().start_yaw_ = T::pm()->getYaw();
-    }
-    else{
-
-    }
-
+    box().angle_ = angle;
+    T::pm()->setZeroTo(AXIS::YAW, box().start_yaw_);
+    box().start_yaw_ = T::pm()->getYaw();
+    box().is_alias_set_ = false;
   }
   inline void init(double angle, Macho::Alias alias) {
     box().angle_ = angle;
     box().old_zero_ = T::pm()->getZero();
     box().start_yaw_ = T::pm()->getYaw();
     box().alias_ = alias;
+    box().is_alias_set_ = true;
+
   }
 };
 
