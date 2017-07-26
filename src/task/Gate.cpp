@@ -22,7 +22,7 @@ void Gate::GoToDepth::run() {
   pm()->setSetpoint(AXIS::HEAVE, INPUT::DEPTH, 1);//go down to 1m
   pm()->updatePlantState(AXIS::HEAVE);//sets current controller state to depth
   if(pm()->isPidStable(AXIS::SURGE, 0.1, 2)){
-    ROS_INFO("Stable at depth of %f", pm()->getYaw());
+    ROS_INFO("Stable at depth of %f", pm()->getDepth());
     self()->queueEnable();
     QUEUE_STATE(DriveForwards);
   }
