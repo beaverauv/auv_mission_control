@@ -16,6 +16,7 @@ class Buoy;
 class Marker;
 }
 
+class BackplaneManager;
 class PidManager;
 class PointerHandler;
 class StateMachine;
@@ -52,6 +53,7 @@ public:
   std::shared_ptr<StateMachine> sm();
   std::shared_ptr<Mission::Base> mission();
   std::shared_ptr<PidManager> pm();
+  std::shared_ptr<BackplaneManager> bm();
   std::shared_ptr<Camera> cam();
   std::shared_ptr<Vision> vision();
   std::shared_ptr<Task::Test> test();

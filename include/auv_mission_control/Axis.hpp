@@ -47,6 +47,8 @@ public:
 
   void printPids();
 
+  void Init();
+
   void loadParam(INPUT input, std::vector<double> values);
 
   void loadParams();
@@ -106,6 +108,8 @@ private:
   std_msgs::Float64 msg_effort_;
 
   std_msgs::Bool msg_enabled_;
+
+  INPUT last_setpoint_input_;
 
   PidParam pid_cam_front_, pid_cam_bottom_, pid_imu_pos_, pid_imu_vel_,
       pid_depth_;

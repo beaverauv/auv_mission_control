@@ -7,8 +7,9 @@
     <param name="mission" type="str" value="mission_controller" />
   </node>
 
-  <node pkg="joy" type="joy_node" name="$(anon joy)">
-  </node>
+  <!-- <node pkg="joy" type="joy_node" name="$(anon joy)">
+  </node> -->
   <include file="$(find auv_thruster_control)/launch/thruster_control_pid.launch" />
+  <include file="$(find imu_vn_100)/launch/imu.launch" />
 
 </launch>

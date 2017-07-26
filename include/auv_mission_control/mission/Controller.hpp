@@ -43,6 +43,11 @@ public:
 
   int scale_factor_ = 50;
 
+  double depth_setpoint_ = -0.1;
+  double yaw_setpoint_ = 0.0;
+
+  LogitechF310Mapping_t last_joystick_data_;
+
   void joystickDataCallback(const sensor_msgs::Joy::ConstPtr &joy);
 
   LogitechF310Mapping_t getLogitechF310Mapping();

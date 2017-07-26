@@ -12,6 +12,14 @@ Axis::Axis(std::string axis_name) : axis_name_(axis_name) {
 }
 Axis::~Axis() {}
 
+void Axis::Init() {
+  updateParams(*getPid(INPUT::CAM_FRONT));
+  updateParams(*getPid(INPUT::CAM_BOTTOM));
+  updateParams(*getPid(INPUT::IMU_POS));
+  updateParams(*getPid(INPUT::IMU_ACCEL));
+  updateParams(*getPid(INPUT::DEPTH));
+}
+
 PidParam *Axis::getPid(INPUT input) {
   switch (input) {
   case INPUT::CAM_FRONT:
@@ -68,11 +76,11 @@ void Axis::loadParams() {
 void Axis::loadParam(INPUT input, std::vector<double> values) {
   PidParam *pid = getPid(input);
   pid->kP = values.at(0);
-  pid->kD = values.at(1);
-  pid->kI = values.at(2);
+  pid->kI = values.at(1);
+  pid->kD = values.at(2);
   pid->kP_scale = values.at(3);
-  pid->kD_scale = values.at(4);
-  pid->kI_scale = values.at(5);
+  pid->kI_scale = values.at(4);
+  pid->kD_scale = values.at(5);
 }
 
 void Axis::updateParams(PidParam pid) {
@@ -116,7 +124,13 @@ void Axis::setControlEffort(double speed) {
 
 void Axis::setSetpoint(INPUT input, double setpoint) {
   setpoint_current_ = setpoint;
-  updateParams(*getPid(input));
+
+  if (last_setpoint_input_ != input) {
+    last_setpoint_input_ = input;
+    updateParams(*getPid(input));
+  }
+
+  //updateParams(*getPid(input));
   msg_setpoint_.data = setpoint;
   pub_setpoint_.publish(msg_setpoint_);
 }

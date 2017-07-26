@@ -1,6 +1,7 @@
 #ifndef POINTER_CONTROLLER_
 #define POINTER_CONTROLLER_
 
+#include <auv_mission_control/BackplaneManager.hpp>
 #include <auv_mission_control/Camera.hpp>
 #include <auv_mission_control/Macho.hpp>
 #include <auv_mission_control/PidManager.hpp>
@@ -45,6 +46,7 @@ public:
   std::shared_ptr<StateMachine> sm_;
   std::shared_ptr<Mission::Base> mission_;
   std::shared_ptr<PidManager> pm_;
+  std::shared_ptr<BackplaneManager> bm_;
   std::shared_ptr<Camera> cam_;
   std::shared_ptr<Vision> vision_;
   MAKE_ALL_PH_TASKS();

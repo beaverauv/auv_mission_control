@@ -13,6 +13,7 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Float32.h>
 
 #include <auv_mission_control/Axis.hpp>
 #include <auv_mission_control/Task.hpp>
@@ -46,6 +47,8 @@ public:
   Axis *getAxis(AXIS axis);
 
   std::string getAxisName(AXIS axis);
+
+  void Init();
 
   void setControlEffort(AXIS axis, double speed);
 
@@ -101,7 +104,7 @@ public:
 
   void callbackImu(const sensor_msgs::Imu::ConstPtr &imu_msg);
 
-  void callbackDepth(const std_msgs::Float64::ConstPtr &msg_depth);
+  void callbackDepth(const std_msgs::Float32::ConstPtr &msg_depth);
 
   void callbackStartSwitch(const std_msgs::Bool::ConstPtr &msg_start_switch);
 

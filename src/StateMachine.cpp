@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
 
   ph->sm_ = std::make_shared<StateMachine>(ph);
   ph->pm_ = std::make_shared<PidManager>();
+  ph->bm_ = std::make_shared<BackplaneManager>();
   ph->cam_ = std::make_shared<Camera>();
   ph->vision_ = std::make_shared<Vision>(ph);
 
@@ -47,6 +48,8 @@ int main(int argc, char *argv[]) {
 
 int StateMachine::execute() {
   AUV_INFO("Execute");
+
+  //pm()->Init();
 
   ros::Rate state_rate(20);
 

@@ -2,7 +2,7 @@
 
 PidManager::PidManager() {
   sub_imu_ = nh_.subscribe("/imu/imu", 1, &PidManager::callbackImu, this);
-  sub_depth_ = nh_.subscribe("/depth", 1, &PidManager::callbackDepth, this);
+  sub_depth_ = nh_.subscribe("/backplane/depth", 1, &PidManager::callbackDepth, this);
   sub_start_switch_ =
       nh_.subscribe("/start", 1, &PidManager::callbackStartSwitch, this);
   sub_kill_switch_ =
@@ -29,6 +29,17 @@ PidManager::PidManager() {
 }
 
 PidManager::~PidManager() {}
+
+void PidManager::Init() {
+  getAxis(AXIS::SURGE)->Init();
+  getAxis(AXIS::SWAY)->Init();
+  getAxis(AXIS::HEAVE)->Init();
+  getAxis(AXIS::ROLL)->Init();
+  getAxis(AXIS::PITCH)->Init();
+  getAxis(AXIS::YAW)->Init();
+
+
+}
 
 Axis *PidManager::getAxis(AXIS axis) {
   switch (axis) {
@@ -185,7 +196,7 @@ void PidManager::callbackImu(const sensor_msgs::Imu::ConstPtr &msg_imu) {
   is_sub_imu_called_ = true;
 }
 
-void PidManager::callbackDepth(const std_msgs::Float64::ConstPtr &msg_depth) {
+void PidManager::callbackDepth(const std_msgs::Float32::ConstPtr &msg_depth) {
   position_heave_ = msg_depth->data;
   is_sub_depth_called_ = true;
 }

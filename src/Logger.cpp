@@ -5,6 +5,7 @@ std::shared_ptr<PointerHandler> Logger::ph() { return ph_; }
 std::shared_ptr<StateMachine> Logger::sm() { return ph()->sm_; }
 std::shared_ptr<Mission::Base> Logger::mission() { return ph()->mission(); }
 std::shared_ptr<PidManager> Logger::pm() { return ph()->pm_; }
+std::shared_ptr<BackplaneManager> Logger::bm() { return ph()->bm_; }
 std::shared_ptr<Camera> Logger::cam() { return ph()->cam_; }
 std::shared_ptr<Vision> Logger::vision() { return ph()->vision_; }
 std::shared_ptr<Task::Test> Logger::test() { return ph()->test_; }

@@ -39,6 +39,7 @@ add_executable(state_machine_node
   src/Macho.cpp
   src/Axis.cpp
   src/PidManager.cpp
+  src/BackplaneManager.cpp
   src/Camera.cpp
   src/Vision.cpp
   src/mission/Base.cpp
