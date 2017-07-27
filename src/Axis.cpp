@@ -100,7 +100,6 @@ void Axis::updateParams(PidParam pid) {
   double_param.name = "Kd";
   double_param.value = pid.kD;
   conf.doubles.push_back(double_param);
-  srv_req.config = conf;
 
   double_param.name = "Kp_scale";
   double_param.value = pid.kP_scale;
@@ -113,6 +112,8 @@ void Axis::updateParams(PidParam pid) {
   double_param.name = "Ki_scale";
   double_param.value = pid.kI_scale;
   conf.doubles.push_back(double_param);
+
+  srv_req.config = conf;
 
   ros::service::call("/" + axis_name_ + "/set_parameters", srv_req, srv_resp);
 }

@@ -63,11 +63,10 @@ void Controller::Init::run() {
   // setState<MoveOld<Test>>(AxisVec{AXIS::YAW, AXIS::HEAVE, AXIS::ROLL},
   //                      ValuesVec{10.0, 5.0, 45.0}, 3.0);
   // AUV_INFO("%s", ph().pm_->getAxisName(0).c_str());
-  self()->queueEnable();
 
-  AUV_INFO("Current mission is %s", ph()->mission_str().c_str());
-
-  AUV_INFO("Starting movement...");
+  // AUV_INFO("Current mission is %s", ph()->mission_str().c_str());
+  //
+  // AUV_INFO("Starting movement...");
 
   // Top::box().self_->queueState<TimerOld<Nowhere>>(10.0);
   //
@@ -84,7 +83,12 @@ void Controller::Init::run() {
   // // foo<char, int> f2;
   // // bar(f1, f2, 9);
   //
-  QUEUE_STATE(Default);
+
+ // if (bm()->getStartSwitchState()) {
+    AUV_INFO("Start switch hit, starting movement");
+    self()->queueEnable();
+    QUEUE_STATE(Default);
+  //}
   //
   // setState<MoveOld<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
 }
@@ -134,11 +138,11 @@ void Controller::Default::run() {
   pm()->setSetpoint(AXIS::ROLL, INPUT::IMU_POS, 0);
   pm()->updatePlantState(AXIS::ROLL);
 
-  pm()->setControlEffort(AXIS::PITCH,
-                         mapped_data.stick_right_[1] * self()->scale_factor_);
+  //pm()->setControlEffort(AXIS::PITCH,
+  //                       mapped_data.stick_right_[1] * self()->scale_factor_);
 
-  // pm()->setSetpoint(AXIS::PITCH, INPUT::IMU_POS, 0);
-  // pm()->updatePlantState(AXIS::PITCH);
+  pm()->setSetpoint(AXIS::PITCH, INPUT::IMU_POS, 0);
+  pm()->updatePlantState(AXIS::PITCH);
   //
   // left and right
   pm()->setControlEffort(AXIS::SWAY,

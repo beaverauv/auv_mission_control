@@ -26,7 +26,7 @@ public:
 
 private:
   // variables go here;
-  const float timer = 0;
+  float timer = 0;
 };
 }
 

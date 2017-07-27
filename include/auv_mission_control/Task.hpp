@@ -114,6 +114,7 @@ enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
   auto self() { return box().self_; }                                          \
   auto ph() { return self()->ph_; }                                            \
   auto pm() { return self()->pm(); }                                           \
+  auto bm() { return self()->bm(); }                                           \
   auto sm() { return self()->sm(); }                                           \
   auto mission() { return self()->mission(); }                                 \
   auto cam() { return self()->cam(); }                                         \

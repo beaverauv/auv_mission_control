@@ -40,14 +40,14 @@ void Test::Init::run() {
   // Top::box().self_->queueState<MoveOld<Test>>({AXIS::YAW, AXIS::SURGE},
   //                                          {6.0, 10.0}, 400.0);
 
-  QUEUE_ACTION(Move, {AXIS::SURGE}, {26.0}, 10.0)
+  // QUEUE_ACTION(Move, {AXIS::SURGE}, {26.0}, 10.0)
   // std::vector<INPUT> in1 = {INPUT::IMU_POS};
   // std::vector<double> in2 = {10.0};
   // foo<char, int, float> f1;
   // foo<char, int> f2;
   // bar(f1, f2, 9);
 
-  QUEUE_STATE(Tested);
+  QUEUE_STATE(Gate);
 
   // setState<MoveOld<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);
 }

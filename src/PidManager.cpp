@@ -126,7 +126,7 @@ void PidManager::updatePlantState(AXIS axis) {
     setPlantState(axis, getDepth());
     break;
   case AXIS::ROLL:
-    setPlantState(axis, position_roll_);
+    setPlantState(axis, position_roll_ * -1 * -1 * -1);
     break;
   case AXIS::PITCH:
     setPlantState(axis, position_pitch_);
