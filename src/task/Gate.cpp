@@ -52,6 +52,9 @@ void Gate::GoToDepth::run() { //go to depth
 }
 
 void Gate::DriveForwards::run() {
+  if(self()->firstRun){
+    timerStart = ros::Time::now().toSec();
+  }
   AUV_INFO("here");
   AUV_INFO("Zero is %f", pm()->getZero(AXIS::YAW));
   pm()->setSetpoint(AXIS::YAW, INPUT::IMU_POS, 0); // don't you turn
@@ -59,9 +62,10 @@ void Gate::DriveForwards::run() {
   pm()->updatePlantState(AXIS::ROLL);
   pm()->updatePlantState(AXIS::PITCH);
   pm()->setControlEffort(AXIS::SURGE, 120);
-  self()->queueEnable();
-  QUEUE_ACTION(Timer, 28.0);
-  QUEUE_STATE(SwitchTask);
+  if(ros::Time::now().toSec() - timerStart >= 28){
+    self()->queueEnable();
+    QUEUE_STATE(SwitchTask);
+  }
 
 }
 
