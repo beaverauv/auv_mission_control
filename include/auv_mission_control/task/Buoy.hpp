@@ -20,16 +20,14 @@ public:
 
   AUV_CREATE_EMPTY_STATE(Idle);
 
-  AUV_CREATE_STATE(SwitchTask);
-
-  AUV_CREATE_STATE(GoToDepth);
-
-  AUV_CREATE_STATE(BumpBuoys);
-
-  AUV_CREATE_STATE(ScanLeft);
+  AUV_CREATE_STATE(Scan);
+  AUV_CREATE_STATE(Heave);
+  AUV_CREATE_STATE(Sway);
+  AUV_CREATE_STATE(YawDrive);
+  AUV_CREATE_STATE(BackScan);
+  AUV_CREATE_STATE(Kill);
 
   AUV_CREATE_FUNCTIONS(Buoy);
-
 private:
   // variables go here
   int currentColor;
@@ -52,11 +50,12 @@ private:
   double setpoint_heave;
   double setpoint_surge;
   double plantState_surge;
+  void checkForBuoy();
 
   double redDepth; // depth of red buoy
 
-  int iterator = 0;
-
+  int scanIterator = 0;
+  double scanAngle = 0;
   // Timer ramRed;
   int ramRedCounter = 0;
 };

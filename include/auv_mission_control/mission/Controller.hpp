@@ -43,7 +43,7 @@ public:
 
   int scale_factor_ = 50;
 
-  double depth_setpoint_ = -0.1;
+  double depth_setpoint_ = 0.15;
   double yaw_setpoint_ = 0.0;
 
   LogitechF310Mapping_t last_joystick_data_;

@@ -2,11 +2,14 @@
 
 PidManager::PidManager() {
   sub_imu_ = nh_.subscribe("/imu/imu", 1, &PidManager::callbackImu, this);
-  sub_depth_ = nh_.subscribe("/backplane/depth", 1, &PidManager::callbackDepth, this);
+  sub_depth_ =
+      nh_.subscribe("/backplane/depth", 1, &PidManager::callbackDepth, this);
   sub_start_switch_ =
       nh_.subscribe("/start", 1, &PidManager::callbackStartSwitch, this);
   sub_kill_switch_ =
       nh_.subscribe("/kill", 1, &PidManager::callbackKillSwitch, this);
+
+  sub_red_buoy_ = nh_.subscribe("detector/buoy_red", 0, &PidManager::callbackBuoyRed, this);
 
   surge_ = Axis("surge");
   surge_.loadParams();
@@ -37,8 +40,6 @@ void PidManager::Init() {
   getAxis(AXIS::ROLL)->Init();
   getAxis(AXIS::PITCH)->Init();
   getAxis(AXIS::YAW)->Init();
-
-
 }
 
 Axis *PidManager::getAxis(AXIS axis) {
@@ -95,7 +96,7 @@ void PidManager::setPlantState(AXIS axis, double plant_value) {
 }
 
 void PidManager::setZero(AXIS axis) { getAxis(axis)->setZero(); }
-
+void PidManager::setOtherZero(AXIS axis) {getAxis(axis)->setOtherZero();}
 void PidManager::setZeroTo(AXIS axis, double zero_value) {
   getAxis(axis)->setZeroTo(zero_value);
 }
@@ -141,6 +142,10 @@ double PidManager::getPlantState(AXIS axis) {
   return getAxis(axis)->getPlantState();
 }
 
+double PidManager::getOtherPlantState(AXIS axis) {
+  return getAxis(axis)->getOtherPlantState();
+}
+
 double PidManager::getLimitedPlantState(AXIS axis) {
   return getAxis(axis)->getLimitedPlantState();
 }
@@ -154,7 +159,8 @@ double PidManager::getSetpoint(AXIS axis) {
 double PidManager::getYaw() { return yaw_.getLimitedPlantState(); }
 
 double PidManager::getDepth() {
-  return is_sub_depth_called_ ? position_heave_ : 0;
+  ROS_INFO("position_heave_= %f", position_heave_);
+  return is_sub_depth_called_ ? position_heave_ - PidManager::getZero(AXIS::HEAVE) : 0;
 }
 
 bool PidManager::isStarted() { return start_switch_; }
@@ -163,7 +169,7 @@ bool PidManager::isKilled() { return kill_switch_; }
 
 bool PidManager::isImuCalled() { return is_sub_imu_called_; }
 
-bool PidManager::isPidStable(AXIS axis, int deadband, int wait_time) {
+bool PidManager::isPidStable(AXIS axis, float deadband, int wait_time) {
   return getAxis(axis)->isPidStable(deadband, wait_time);
 }
 
@@ -175,6 +181,51 @@ void PidManager::ensureDepth() {
 void PidManager::ensureYaw() {
   if (should_ensure_yaw_)
     updatePlantState(AXIS::YAW);
+}
+
+bool PidManager::isDetected(OBJECT object) {
+  switch (object) {
+  case OBJECT::BUOY_RED:
+    if (!is_sub_buoy_red_called_) {
+      return false;
+    } else {
+      return buoy_red_detection_->is_object_detected;
+    }
+  }
+}
+
+int PidManager::getCenterPointX(OBJECT object) {
+  switch (object) {
+  case OBJECT::BUOY_RED:
+    if (!is_sub_buoy_red_called_) {
+      return 0;
+    } else {
+      return buoy_red_detection_->x_center;
+    }
+  }
+}
+
+int PidManager::getCenterPointY(OBJECT object) {
+  switch (object) {
+  case OBJECT::BUOY_RED:
+    if (!is_sub_buoy_red_called_) {
+      ROS_INFO("Here");
+      return 0;
+    } else {
+      return buoy_red_detection_->y_center;
+    }
+  }
+}
+
+double PidManager::getDistance(OBJECT object) {
+  switch (object) {
+  case OBJECT::BUOY_RED:
+    if (!is_sub_buoy_red_called_) {
+      return 0;
+    } else {
+      return buoy_red_detection_->distance;
+    }
+  }
 }
 
 void PidManager::startEnsuringDepth() { should_ensure_depth_ = true; }
@@ -207,4 +258,13 @@ void PidManager::callbackStartSwitch(const std_msgs::Bool::ConstPtr &start) {
 
 void PidManager::callbackKillSwitch(const std_msgs::Bool::ConstPtr &kill) {
   kill_switch_ = kill->data;
+}
+
+void PidManager::callbackBuoyRed(
+    const frcnn_object_detector::ObjectDetection::ConstPtr
+        &msg_object_detection) {
+  if (!is_sub_buoy_red_called_) {
+    is_sub_buoy_red_called_ = true;
+  }
+  buoy_red_detection_ = msg_object_detection;
 }

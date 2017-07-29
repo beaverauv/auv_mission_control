@@ -27,6 +27,7 @@ public:
 private:
   // variables go here;
   float timer = 0;
+  float sketchZero;
 };
 }
 

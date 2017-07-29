@@ -4,8 +4,7 @@
 namespace Mission {
 
 int Controller::execute() {
-  pm()->ensureDepth();
-  pm()->ensureYaw();
+
 
   if (checkEventQueue()) {
     sm_->run();
@@ -131,8 +130,8 @@ void Controller::Default::run() {
   //                                    ((mapped_data.triggers_[1] + 1) / 2)) *
   //                                       self()->scale_factor_);
 
-  pm()->setSetpoint(AXIS::YAW, INPUT::IMU_POS, self()->yaw_setpoint_);
-
+  pm()->setSetpoint(AXIS::YAW, INPUT::CAM_FRONT, 240);
+  pm()->setSetpoint(AXIS::SWAY, INPUT::CAM_FRONT, 240);
   // pm()->setControlEffort(AXIS::ROLL,
   //                       mapped_data.stick_right_[0] * self()->scale_factor_);
   pm()->setSetpoint(AXIS::ROLL, INPUT::IMU_POS, 0);
@@ -156,8 +155,10 @@ void Controller::Default::run() {
   //                                      mapped_data.stick_buttons_[0]) *
   //                                         self()->scale_factor_);
 
-  pm()->setSetpoint(AXIS::HEAVE, INPUT::DEPTH, self()->depth_setpoint_);
-
+  pm()->setSetpoint(AXIS::HEAVE, INPUT::CAM_FRONT, 320);
+  pm()->setPlantState(AXIS::HEAVE, pm()->getCenterPointY(OBJECT::BUOY_RED));
+  pm()->setPlantState(AXIS::SWAY, pm()->getCenterPointX(OBJECT::BUOY_RED));
+  pm()->setPlantState(AXIS::YAW, pm()->getCenterPointX(OBJECT::BUOY_RED));
   self()->last_joystick_data_ = mapped_data;
 }
 

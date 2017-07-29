@@ -68,7 +68,7 @@ public:
   void setZero();
 
   void setZeroTo(double zero_value);
-
+  void setOtherZero();
   void setLimit(double limit);
 
   void setPidFirstRun(bool pid_first_run);
@@ -83,10 +83,13 @@ public:
 
   double getSetpoint();
 
-  bool isPidStable(int deadband, int wait_time);
+  bool isPidStable(float deadband, int wait_time);
+
+  double getOtherPlantState();
 
   double plant_state_zero_ = 0;
   double plant_state_current_ = 0;
+  double plant_state_current_other_ = 0;
   double plant_state_limit_ = 0;
 
   double setpoint_current_ = 0;

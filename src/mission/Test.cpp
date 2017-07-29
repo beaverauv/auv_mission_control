@@ -5,7 +5,7 @@ namespace Mission {
 
 int Test::execute() {
   pm()->ensureDepth();
-  pm()->ensureYaw();
+//  pm()->ensureYaw();
 
   if (checkEventQueue()) {
     sm_->run();
@@ -46,7 +46,7 @@ void Test::Init::run() {
   // foo<char, int, float> f1;
   // foo<char, int> f2;
   // bar(f1, f2, 9);
-
+  QUEUE_ACTION(Timer, 2.0);
   QUEUE_STATE(Gate);
 
   // setState<MoveOld<Init>>(INPUTS{INPUT::IMU_POS}, 3.0);

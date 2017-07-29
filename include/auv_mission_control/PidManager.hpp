@@ -10,13 +10,15 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Float32.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
-#include <std_msgs/Float32.h>
 
 #include <auv_mission_control/Axis.hpp>
 #include <auv_mission_control/Task.hpp>
+
+#include <frcnn_object_detector/ObjectDetection.h>
 
 // Axis definitions
 #define AXIS_SURGE 0
@@ -57,6 +59,7 @@ public:
   void setPlantState(AXIS axis, double plant_value);
 
   void setZero(AXIS axis);
+  void setOtherZero(AXIS AXIS);
 
   void setZeroTo(AXIS axis, double zero_value);
 
@@ -86,7 +89,7 @@ public:
 
   bool isImuCalled();
 
-  bool isPidStable(AXIS axis, int deadband, int wait_time);
+  bool isPidStable(AXIS axis, float deadband, int wait_time);
 
   void ensureDepth();
 
@@ -102,6 +105,16 @@ public:
 
   // bool getTimeout();
 
+  double getOtherPlantState(AXIS axis);
+
+  bool isDetected(OBJECT object);
+
+  int getCenterPointX(OBJECT object);
+
+  int getCenterPointY(OBJECT object);
+
+  double getDistance(OBJECT object);
+
   void callbackImu(const sensor_msgs::Imu::ConstPtr &imu_msg);
 
   void callbackDepth(const std_msgs::Float32::ConstPtr &msg_depth);
@@ -110,20 +123,27 @@ public:
 
   void callbackKillSwitch(const std_msgs::Bool::ConstPtr &msg_kill_switch);
 
+  void callbackBuoyRed(const frcnn_object_detector::ObjectDetection::ConstPtr
+                           &msg_object_detection);
+
 private:
   ros::Subscriber sub_imu_;
   ros::Subscriber sub_depth_;
   ros::Subscriber sub_start_switch_;
   ros::Subscriber sub_kill_switch_;
+  ros::Subscriber sub_red_buoy_;
 
   double position_heave_ = 0, velocity_surge_ = 0, velocity_sway_ = 0;
   double position_roll_ = 0, position_pitch_ = 0, position_yaw_ = 0;
+
+  frcnn_object_detector::ObjectDetection::ConstPtr buoy_red_detection_;
 
   bool should_ensure_depth_ = false;
   bool should_ensure_yaw_ = false;
 
   bool is_sub_imu_called_ = false;
   bool is_sub_depth_called_ = false;
+  bool is_sub_buoy_red_called_ = false;
 
   bool start_switch_ = false;
   bool kill_switch_ = false;

@@ -14,6 +14,7 @@ enum class MISSION { Base, Test, Controller, Full, GateOnly };
 enum class TASK { Test, Example, Gate, Buoy, Marker };
 enum class AXIS { SURGE, SWAY, HEAVE, ROLL, PITCH, YAW };
 enum class INPUT { CAM_FRONT, CAM_BOTTOM, IMU_POS, IMU_ACCEL, DEPTH };
+enum class OBJECT { BUOY_RED };
 
 // Task objects macro
 // Includes a list of every object type and its correstpoinding variable.

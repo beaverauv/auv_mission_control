@@ -130,6 +130,7 @@ void Axis::setSetpoint(INPUT input, double setpoint) {
     last_setpoint_input_ = input;
     updateParams(*getPid(input));
   }
+  updateParams(*getPid(input));
 
   //updateParams(*getPid(input));
   msg_setpoint_.data = setpoint;
@@ -140,6 +141,8 @@ void Axis::setPlantState(double plant_value) {
   msg_plant_state_.data = plant_value;
   // plant_state_current_ = plant_value;
   pub_plant_state_.publish(msg_plant_state_);
+  plant_state_current_other_ = plant_value;
+
 }
 
 void Axis::setPlantStateVal(double plant_value) {
@@ -151,8 +154,12 @@ void Axis::setEnabled(bool enabled) {
   pub_enabled_.publish(msg_enabled_);
 }
 
-void Axis::setZero() { plant_state_zero_ = plant_state_current_; }
+double Axis::getOtherPlantState() {
+  return plant_state_current_other_;
+}
 
+void Axis::setZero() { plant_state_zero_ = plant_state_current_;}
+void Axis::setOtherZero() {plant_state_zero_ = plant_state_current_other_;}
 void Axis::setZeroTo(double zero_value) { plant_state_zero_ = zero_value; }
 
 void Axis::setLimit(double limit) { plant_state_limit_ = limit; }
@@ -181,19 +188,22 @@ double Axis::getZero() { return plant_state_zero_; }
 
 double Axis::getSetpoint() { return setpoint_current_; }
 
-bool Axis::isPidStable(int deadband, int wait_time) {
+bool Axis::isPidStable(float deadband, int wait_time) {
   if (pid_first_run_) {
+    ROS_INFO("First Run PID");
     pid_start_time_ = ros::Time::now().toSec();
     pid_first_run_ = false;
   }
 
-  double error = fabs(getSetpoint() - getPlantState());
+  double error = fabs(getSetpoint() - getOtherPlantState());
 
   if (error <= deadband) {
+    ROS_INFO("Within deadband");
     if (ros::Time::now().toSec() - pid_start_time_ >= wait_time) {
       return true;
     }
   } else {
+    ROS_INFO("HERE %f. Deadband %f", error, deadband);
     pid_start_time_ = ros::Time::now().toSec();
   }
   return false;

@@ -7,7 +7,7 @@
 
   <node pkg="auv_mission_control" type="state_machine_node" name="$(anon state_machine_cont)" output="screen">
     <param name="debug" type="bool" value="false" />
-    <param name="mission" type="str" value="mission_controller" />
+    <param name="mission" type="str" value="mission_test" />
   </node>
 
 </launch>
