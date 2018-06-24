@@ -59,7 +59,7 @@ int TaskGate::execute(){
           break;
         }
 
-        ROS_INFO("Vroom Vroom going do depth");
+        ROS_INFO("Vroom Vroom going to depth");
 
         pm_.setSetpoint(AXIS_YAW, INPUT_IMU_POS, 0);
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
