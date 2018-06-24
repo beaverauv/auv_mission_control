@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 
-find_package(OpenCV 2.4.11)
+find_package(OpenCV 3.1.0)
 
 
 ## System dependencies are found with CMake's conventions
@@ -179,11 +179,12 @@ ${OpenCV_INCLUDE_DIRS}
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
+ install(FILES
+  plugin.xml
 #   # myfile1
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+ )
 
 #############
 ## Testing ##
