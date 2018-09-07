@@ -1,0 +1,19 @@
+<launch>
+  <node pkg="auv_motor_control" type="motor_controller" name="$(anon motor_control)"> </node>
+
+  <node name="heave_pid" pkg="pid" type="controller" output="screen">
+    <param name="Kp" value="0.4" />
+    <param name="Ki" value="0" />
+    <param name="Kd" value="0" />
+    <param name="rate" value="20" />
+    <param name="upper_limit" value="100" />
+    <param name="lower_limit" value="-100" />
+    <param name="windup_limit" value="10" />
+    <param name="cutoff_frequency" value="20" />
+    <param name="diagnostic_period" value="0.25" />
+    <param name="topic_from_controller" value="controlEffort_heave" />
+    <param name="topic_from_plant" value="state_heave" />
+    <param name="setpoint_topic" value="depth" />
+  </node>
+
+</launch>

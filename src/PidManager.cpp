@@ -206,7 +206,7 @@ void PidManager::setSetpoint(int axis, int input_type, double value){
 
   else if (axis == AXIS_YAW){
     std_msgs::Float64 msgSetpointYaw;
-      ROS_INFO("set yaw called");
+    //  ROS_INFO("set yaw called");
 
     if (input_type == INPUT_IMU_POS){
       paramYaw.kP = .003;
@@ -271,7 +271,7 @@ void PidManager::setPlantState(int axis, double plantValue){
 }
   else if(axis == AXIS_YAW){
     pubStateYaw.publish(msgPlantValue);
-    ROS_INFO("publishing yaw %f", msgPlantValue);
+  //  ROS_INFO("publishing yaw %f", msgPlantValue);
 }
   else{
     ROS_ERROR("bad input type");

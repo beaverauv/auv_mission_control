@@ -65,9 +65,10 @@ int TaskGate::execute(){
         pm_.setSetpoint(AXIS_HEAVE, INPUT_DEPTH, thisDepth);
 
         while(ros::ok){
-          pm_.setPlantState(AXIS_HEAVE, pm_.getDepth());
 
           currentDepth = pm_.getDepth();
+          pm_.setPlantState(AXIS_HEAVE, currentDepth);
+
           double error = fabs(currentDepth - thisDepth);
           if(rosInfoCounter%20000000 == 0)
 //            ROS_INFO("YAW = %f", pm_.getYaw());

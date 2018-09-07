@@ -34,7 +34,7 @@ while(ros::ok){ //careful
       }
       //calibrate sensors
       if(killSwitch){
-        currentState = 9;
+        currentState = 9; 
       }
       else if(pm.getStart()){
         currentState = 1;
