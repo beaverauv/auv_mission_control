@@ -1,6 +1,6 @@
 # AUV Mission Control
 
-The Mission control package handles task queuing and execution for BeaverAUV's Prospero Mark II autonomous underwater vehicle. It primarily implements a C++ hirearchical state machine. It is specifically written for the 2017 BeaverAUV submission to the international RoboSub competition. This package makes all major decisions regarding what tasks to execute when. Each task may call other sub-tasks. This is a drastic improvement over our previous state machine not only because it allows us to execute tasks in a hirearchical manner, but also because it allows us to seamlessly run top-level 'system-checks' constantly. For example, we never need to worry about breaching the surface of the water (which in RoboSub causes your run to end) because the state machine constantly checks the depth and will interrupt the tasks if a minimum depth is reached. Not having this feature caused issues in the 2016 competition.
+The Mission control package handles task queuing and execution for BeaverAUV's Prospero Mark II autonomous underwater vehicle. It primarily implements a C++ hirearchical state machine. It is specifically written for the 2017 BeaverAUV submission to the international RoboSub competition. This package makes all major decisions regarding what tasks to execute when. Each task may call other sub-tasks. This is a drastic improvement over our previous state machine not only because it allows us to execute tasks in a hirearchical manner, but also because it allows us to seamlessly and constantly run top-level 'system-checks'. For example, we never need to worry about breaching the surface of the water (which in RoboSub causes your run to end) because the state machine constantly checks the depth and will interrupt the tasks if a minimum depth is reached. Not having this feature caused issues in the 2016 competition.
 
 It's primary outputs are to the eight PID controllers (via ROS). Depending on the task, it will send the desired steady-state values which may be based on inputs from our IMU (interial measurement unit), depth sensor, [F-RCNN deap-learning vision algorithms](https://github.com/beaverauv/ros_frcnn_object_detector), or our sonar multilateration algortithms (although at the time of the 2017 competition, these have not been fully implemented). The PID controllers send vectors representing the desired direction of travel to control algorithms, which determine how fast to spin each motor.
 
@@ -82,7 +82,7 @@ Each mission must first enable the task queue:
  self()->queueEnable();
  ```
  
- You should then queue a timer 'action' (mini template states) to wait an appropriate amount of time between starting the task - usually initialized with a physical switch - and actually spinning motors (for human swimmer safety):
+ You should then queue a timer 'action' (mini template states, using C++ templates) to wait an appropriate amount of time between starting the task - usually initialized with a physical switch - and actually spinning motors (for human swimmer safety):
  
  ```C++
   QUEUE_ACTION(timer, 2.0);   //starts a 2 second timer once the queue is run
@@ -95,7 +95,7 @@ QUEUE_STATE(Gate);        //adds the task specified in the gate class to the que
 
 Note that substates and other actions are queued from within these states, this is just the top-level.
 
-Other states can then be added to the queue or run directly as follows. Note that you can tell the sub to run many tasks one after another, and it will wait until each has finished to run the others.
+Other states can then be added to the queue or run directly as follows. Note that you can tell the sub to run many tasks one after another, and it will wait until each has finished to run the next.
 
 ```C++
 void Test::Tested::run() { test()->execute(); }
